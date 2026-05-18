@@ -69,44 +69,27 @@ function App() {
 
       {/* painel de controles */}
       <Group>
+      
         {/* diminuir tom */}
-        <Button
-          onClick={() =>
-            setTranspose(transpose - 1)
-          }
-        >
+        <Button onClick={() => setTranspose(transpose - 1) } >
           Tom -
         </Button>
 
         {/* exibe tom atual */}
-        <Text size="lg">
-          Tom: {currentKey}
-        </Text>
+        <Text size="lg"> Tom: {currentKey} </Text>
 
         {/* aumentar tom */}
-        <Button
-          onClick={() =>
-            setTranspose(transpose + 1)
-          }
-        >
-          Tom +
+        <Button onClick={() => setTranspose(transpose + 1) } > 
+          Tom + 
         </Button>
 
         {/* iniciar/parar auto-scroll */}
-        <Button
-          onClick={() =>
-            setIsScrolling(!isScrolling)
-          }
-        >
+        <Button onClick={() => setIsScrolling(!isScrolling) } >
           {isScrolling ? "Parar" : "Scroll"}
         </Button>
 
         {/* diminuir velocidade */}
-        <Button
-          onClick={() =>
-            setScrollSpeed(scrollSpeed - 1)
-          }
-        >
+        <Button onClick={() => setScrollSpeed(scrollSpeed - 1) } >
           -
         </Button>
 
@@ -116,13 +99,10 @@ function App() {
         </Text>
 
         {/* aumentar velocidade */}
-        <Button
-          onClick={() =>
-            setScrollSpeed(scrollSpeed + 1)
-          }
-        >
+        <Button onClick={() => setScrollSpeed(scrollSpeed + 1) } >
           +
         </Button>
+      
       </Group>
 
       {/* renderizador da cifra */}

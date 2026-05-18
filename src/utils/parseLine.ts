@@ -1,9 +1,6 @@
-type Token = {
-    type: "chord" | "text"
-    value: string
-}
+import type { Token, ParsedLine  } from "../types/music"
 
-export function parseLine(line: string): Token[] {
+export function parseLine(line: string): ParsedLineS {
     const tokens: Token[] = []
 
     const regex = /\[(.*?)\]/g
@@ -41,5 +38,8 @@ export function parseLine(line: string): Token[] {
         })
     }
 
-    return tokens
+    return {
+        raw: line,
+        tokens,
+    }
 }
