@@ -1,5 +1,5 @@
 import { parseSong } from "../utils/parseSong";
-import LineRenderer from "./renderers/LineRenderer";
+import SectionRenderer from "./renderers/SectionRenderer";
 // Tipagem das propriedades recebidas pelo componente
 type Props = {
   title: string;
@@ -25,13 +25,9 @@ export default function SongViewer({ title, content, transpose = 2 }: Props) {
       {/* Título da música */}
       <h1>{title}</h1>
 
-      {/* Percorre todas as linhas já parseadas */}
-      {parsedSong.sections.map((section, sectionIndex) => (
-        <div key={sectionIndex}>
-          {section.lines.map((line, lineIndex) => (
-            <LineRenderer key={lineIndex} line={line} transpose={transpose} />
-          ))}
-        </div>
+      {/* Percorre todas as seções da música */}
+      {parsedSong.sections.map((section, index) => (
+        <SectionRenderer key={index} section={section} transpose={transpose} />
       ))}
     </div>
   );
