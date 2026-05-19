@@ -8,6 +8,13 @@ export type ParsedLine = {
   tokens: Token[];
 };
 
-export type SongDocument = {
+export type SectionType = "verse" | "chorus" | "bridge" | "intro" | "outro";
+
+export type SongSection = {
+  type: SectionType;
   lines: ParsedLine[];
+};
+
+export type SongDocument = {
+  sections: SongSection[];
 };

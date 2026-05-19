@@ -5,6 +5,11 @@ export function parseSong(content: string): SongDocument {
   const lines = content.trim().split("\n");
 
   return {
-    lines: lines.map((line) => parseLine(line)),
+    sections: [
+      {
+        type: "verse",
+        lines: lines.map((line) => parseLine(line)),
+      },
+    ],
   };
 }

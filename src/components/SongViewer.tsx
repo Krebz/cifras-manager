@@ -1,6 +1,5 @@
-import { transposeChord } from "../services/transposeChord";
 import { parseSong } from "../utils/parseSong";
-
+import LineRenderer from "./renderers/LineRenderer";
 // Tipagem das propriedades recebidas pelo componente
 type Props = {
   title: string;
@@ -27,41 +26,13 @@ export default function SongViewer({ title, content, transpose = 2 }: Props) {
       <h1>{title}</h1>
 
       {/* Percorre todas as linhas já parseadas */}
-      {parsedSong.lines.map((parsedLine, lineIndex) => {
-        return (
-          <div
-            key={lineIndex}
-            style={{
-              marginBottom: "12px",
-            }}
-          >
-            {/* Percorre os tokens da linha */}
-            {parsedLine.tokens.map((token, tokenIndex) => {
-              // Se o token for um acorde
-              if (token.type === "chord") {
-                // Aplica a transposição do acorde
-                const transposedChord = transposeChord(token.value, transpose);
-
-                return (
-                  <span
-                    key={tokenIndex}
-                    style={{
-                      color: "#2b6cb0",
-                      fontWeight: "bold",
-                      marginRight: "4px",
-                    }}
-                  >
-                    {transposedChord}
-                  </span>
-                );
-              }
-
-              // Renderiza texto normal da música
-              return <span key={tokenIndex}>{token.value}</span>;
-            })}
-          </div>
-        );
-      })}
+      {parsedSong.sections.map((section, sectionIndex) => (
+        <div key={sectionIndex}>
+          {section.lines.map((line, lineIndex) => (
+            <LineRenderer key={lineIndex} line={line} transpose={transpose} />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
