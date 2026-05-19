@@ -1,5 +1,5 @@
 export type Token = {
-  type: "chord" | "text";
+  type: "chord" | "text" | "directive";
   value: string;
 };
 

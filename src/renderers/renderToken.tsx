@@ -14,5 +14,8 @@ export function renderToken({ token, transpose }: Props) {
     return <ChordToken chord={transposeChord(token.value, transpose)} />;
   }
 
+  if (token.type === "directive") {
+    return null;
+  }
   return <TextToken text={token.value} />;
 }
