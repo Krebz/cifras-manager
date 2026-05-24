@@ -10,7 +10,12 @@ type Props = {
 export default function LineRenderer({ line, transpose }: Props) {
   return (
     <div
-      style={songViewerStyles.line}
+      style={{
+        ...songViewerStyles.line,
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "flex-start",
+      }}
     >
       {line.tokens.map((token, tokenIndex) => (
         <span key={tokenIndex}>

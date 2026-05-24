@@ -6,10 +6,17 @@ type Props = {
 
 export default function ChordToken({ chord }: Props) {
   return (
-    <span
-      style={songViewerStyles.chord}
+    <div
+      style={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginRight: "6px",
+      }}
     >
-      {chord}
-    </span>
+      <span style={songViewerStyles.chord}>
+        {chord}
+      </span>
+    </div>
   );
 }

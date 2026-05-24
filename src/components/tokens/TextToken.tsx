@@ -3,5 +3,11 @@ type Props = {
 };
 
 export default function TextToken({ text }: Props) {
-  return <span>{text}</span>;
+  return <span
+    style={{
+      whiteSpace: "pre-wrap",
+    }}
+  >
+    {text}
+  </span>;
 }
