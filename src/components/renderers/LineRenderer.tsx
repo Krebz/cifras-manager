@@ -19,10 +19,27 @@ export default function LineRenderer({ line, transpose }: Props) {
       }}
     >
       {/* linha de acordes */}
-      <div>{chordLine}</div>
+      <div
+        style={{
+          marginBottom: "8px",
+          color: "#2b6cb0",
+          fontWeight: "bold",
+          fontSize: "18px",
+          lineHeight: 1.2,
+        }}
+      >
+        {chordLine}
+      </div>
 
       {/* linha da letra */}
-      <div>{lyricLine}</div>
+      <div
+        style={{
+          fontSize: "22px",
+          lineHeight: 1.6,
+        }}
+      >
+        {lyricLine}
+      </div>
     </div>
   );
 }

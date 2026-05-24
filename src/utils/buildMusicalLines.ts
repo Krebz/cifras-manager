@@ -2,36 +2,48 @@ import type { ParsedLine } from "../types/music";
 import { transposeChord } from "../services/transposeChord";
 
 export function buildMusicalLines(line: ParsedLine, transpose: number) {
-  let chordLine = "";
-  let lyricLine = "";
+  const chordBuffer: string[] = [];
+  const lyricBuffer: string[] = [];
 
-  for (const token of line.tokens) {
-    function padToPosition(text: string, position: number) {
-      while (text.length < position) {
-        text += " ";
-      }
+  function writeText(buffer: string[], text: string, position: number) {
+    let safePosition = position;
 
-      return text;
+    while (
+      buffer[safePosition] !== undefined ||
+      buffer[safePosition - 1] !== undefined
+    ) {
+      safePosition++;
     }
 
+    for (let i = 0; i < text.length; i++) {
+      buffer[safePosition + i] = text[i];
+    }
+  }
+
+  for (const token of line.tokens) {
     if (token.type === "chord") {
       const transposedChord = transposeChord(token.value, transpose);
-
       const chordText = `${transposedChord.root}${transposedChord.suffix}`;
+      const chordLength = chordText.length;
+      const lyricLength = chordText.length;
 
-      chordLine = padToPosition(chordLine, token.position);
+      let adjustedPosition = token.position;
 
-      chordLine += chordText;
+      if (chordLength > lyricLength) {
+        adjustedPosition -= Math.floor((chordLength - lyricLength) / 2);
+      }
 
+      writeText(chordBuffer, chordText, adjustedPosition);
       continue;
     }
 
     if (token.type === "text") {
-      lyricLine = padToPosition(lyricLine, token.position);
-
-      lyricLine += token.value;
+      writeText(lyricBuffer, token.value, token.position);
     }
   }
 
-  return { chordLine, lyricLine };
+  return {
+    chordLine: chordBuffer.join(""),
+    lyricLine: lyricBuffer.join(""),
+  };
 }
