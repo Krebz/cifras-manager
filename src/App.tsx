@@ -83,6 +83,7 @@ function App() {
       {/* renderizador da cifra */}
       <SongViewer
         title={song.title}
+        songKey={currentKey}
         content={song.content}
         transpose={transpose}
       />

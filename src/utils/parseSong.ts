@@ -1,8 +1,11 @@
 import { parseLine } from "./parseLine";
 import type { SongSection, SectionType, SongDocument } from "../types/music";
-import { detectSectionType } from "./detectSectionType";
 
-export function parseSong(content: string): SongDocument {
+export function parseSong(
+  title: string,
+  key: string,
+  content: string
+): SongDocument {
   const lines = content.trim().split("\n");
   const sections: SongSection[] = [];
 
@@ -45,5 +48,9 @@ export function parseSong(content: string): SongDocument {
     sections.push(currentSection);
   }
 
-  return { sections };
+  return {
+    title,
+    key,
+    sections,
+  }
 }

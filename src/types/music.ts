@@ -16,5 +16,7 @@ export type SongSection = {
 };
 
 export type SongDocument = {
+  title: string;
+  key: string;
   sections: SongSection[];
-};
+}

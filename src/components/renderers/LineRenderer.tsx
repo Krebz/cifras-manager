@@ -1,5 +1,6 @@
 import type { ParsedLine } from "../../types/music";
 import { renderToken } from "../../renderers/renderToken";
+import { songViewerStyles } from "../../styles/songViewerStyles";
 
 type Props = {
   line: ParsedLine;
@@ -9,9 +10,7 @@ type Props = {
 export default function LineRenderer({ line, transpose }: Props) {
   return (
     <div
-      style={{
-        marginBottom: "12px",
-      }}
+      style={songViewerStyles.line}
     >
       {line.tokens.map((token, tokenIndex) => (
         <span key={tokenIndex}>
