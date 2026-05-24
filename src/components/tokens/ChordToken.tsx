@@ -1,9 +1,10 @@
 import { songViewerStyles } from "../../styles/songViewerStyles";
 
-type Props = {
-  chord: string;
-};
+import type { ChordData } from "../../types/music";
 
+type Props = {
+  chord: ChordData
+}
 export default function ChordToken({ chord }: Props) {
   return (
     <div
@@ -15,7 +16,10 @@ export default function ChordToken({ chord }: Props) {
       }}
     >
       <span style={songViewerStyles.chord}>
-        {chord}
+        {chord.root}
+        {chord.suffix}
+
+        {chord.bass && `/${chord.bass}`}
       </span>
     </div>
   );

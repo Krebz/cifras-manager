@@ -1,3 +1,5 @@
+import type { ChordData } from "../types/music";
+
 const notes = [
   "C",
   "C#",
@@ -14,10 +16,10 @@ const notes = [
 ]
 
 export function transposeChord(
-  chord: string,
+  chord: ChordData,
   steps: number
-) {
-  const index = notes.indexOf(chord)
+): ChordData {
+  const index = notes.indexOf(chord.root)
 
   if (index === -1) {
     return chord
@@ -26,5 +28,10 @@ export function transposeChord(
   const newIndex =
     (index + steps + notes.length) % notes.length
 
-  return notes[newIndex]
+  const transposedRoot = notes[newIndex]
+
+  return {
+    ...chord,
+    root: transposedRoot,
+  };
 }

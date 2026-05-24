@@ -1,4 +1,5 @@
 import type { Token, ParsedLine } from "../types/music";
+import { parseChord } from "./parseChord";
 
 export function parseLine(line: string): ParsedLine {
   const tokens: Token[] = [];
@@ -11,6 +12,7 @@ export function parseLine(line: string): ParsedLine {
     tokens.push({
       type: "directive",
       value: normalized,
+      position: 0,
     });
 
     return {
@@ -32,12 +34,14 @@ export function parseLine(line: string): ParsedLine {
       tokens.push({
         type: "text",
         value: textBefore,
+        position: matchIndex,
       });
     }
 
     tokens.push({
       type: "chord",
-      value: chord,
+      value: parseChord(chord),
+      position: matchIndex,
     });
 
     lastIndex = matchIndex + match[0].length;
@@ -49,6 +53,7 @@ export function parseLine(line: string): ParsedLine {
     tokens.push({
       type: "text",
       value: remainingText,
+      position: lastIndex,
     });
   }
 

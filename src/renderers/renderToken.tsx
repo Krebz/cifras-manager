@@ -9,13 +9,27 @@ type Props = {
   transpose: number;
 };
 
-export function renderToken({ token, transpose }: Props) {
+export function renderToken({
+  token,
+  transpose,
+}: Props) {
+
   if (token.type === "chord") {
-    return <ChordToken chord={transposeChord(token.value, transpose)} />;
+    return (
+      <ChordToken
+        chord={transposeChord(
+          token.value,
+          transpose
+        )}
+      />
+    );
   }
 
   if (token.type === "directive") {
     return null;
   }
-  return <TextToken text={token.value} />;
+
+  return (
+    <TextToken text={token.value} />
+  );
 }
