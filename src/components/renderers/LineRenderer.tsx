@@ -1,11 +1,6 @@
 import type { ParsedLine } from "../../types/music";
 import { songViewerStyles } from "../../styles/songViewerStyles";
-import { buildMusicalChunks } from "../../utils/buildMusicalChunks";
-import ChordToken from "../tokens/ChordToken";
-import TextToken from "../tokens/TextToken";
-
-import { transposeChord }
-from "../../services/transposeChord";
+import { buildMusicalLines } from "../../utils/buildMusicalLines";
 
 type Props = {
   line: ParsedLine;
@@ -13,48 +8,21 @@ type Props = {
 };
 
 export default function LineRenderer({ line, transpose }: Props) {
-
-  const chunks =  buildMusicalChunks(line);
+  const { chordLine, lyricLine } = buildMusicalLines(line, transpose);
 
   return (
     <div
       style={{
         ...songViewerStyles.line,
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "4px",
+        fontFamily: "monospace",
+        whiteSpace: "pre",
       }}
     >
-      {chunks.map((chunk, index) => (
-        <div
-          key={index}
-          style={{
-            display: "inline-flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            whiteSpace: "pre",
-            fontFamily: "monospace",
-            minWidth: `${chunk.lyric.length}ch`,
-          }}
-        >
+      {/* linha de acordes */}
+      <div>{chordLine}</div>
 
-          {/* acorde */}
-          <div>
-            {chunk.chord && (
-              <ChordToken
-                chord={transposeChord(
-                  chunk.chord,
-                  transpose
-                )}
-              />
-            )}
-          </div>
-
-          {/* letra */}
-          <TextToken text={chunk.lyric} />
-
-        </div>
-      ))}
+      {/* linha da letra */}
+      <div>{lyricLine}</div>
     </div>
   );
 }
