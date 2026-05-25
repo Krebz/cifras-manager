@@ -10,10 +10,10 @@ export const songViewerStyles = {
 
   section: {
     marginBottom: "40px",
-    padding: "20px",
+    padding: "16px",
     paddingBottom: "24px",
     borderBottom: "1px solid rgba(255,255,255,0.06)",
-    backgroundColor: "rgba(255,255,255,0.015)",
+    backgroundColor: "rgba(255,255,255,0.03)",
     borderRadius: "12px",
   },
 
@@ -29,17 +29,18 @@ export const songViewerStyles = {
   },
 
   songKey: {
-    display: "inline-block",
-
-    padding: "6px 12px",
-
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "8px 16px",
     borderRadius: "999px",
-    backgroundColor: "#2d3748",
+    backgroundColor: "rgba(59,130,246,0.12)",
     color: "#90cdf4",
     fontSize: "14px",
     fontWeight: "bold",
     letterSpacing: "1px",
-    border: "1px solid #4a5568",
+    border: "1px solid rgba(144,205,244,0.2)",
+    marginTop: "8px",
   },
 
   chorusSection: {
@@ -52,14 +53,18 @@ export const songViewerStyles = {
   },
 
   sectionTitle: {
-    marginTop: "24px",
-    marginBottom: "16px",
-    fontSize: "18px",
+    display: "inline-flex",
+    alignItems: "center",
+    padding: "6px 14px",
+    marginBottom: "18px",
+    borderRadius: "999px",
+    backgroundColor: "rgba(168,85,247,0.14)",
+    border: "1px solid rgba(168,85,247,0.22)",
+    color: "#d8b4fe",
+    fontSize: "13px",
     fontWeight: "bold",
+    letterSpacing: "1.4px",
     textTransform: "uppercase",
-    color: "#805ad5",
-    borderBottom: "1px solid #805ad5",
-    paddingBottom: "4px",
   },
 
   line: {
@@ -67,8 +72,13 @@ export const songViewerStyles = {
   },
 
   chord: {
-    color: "#2b6cb0",
+    padding: "2px 6px",
+    borderRadius: "6px",
+    backgroundColor: "rgba(144,205,244,0.08)",
+    border: "1px solid rgba(144,205,244,0.12)",
+    color: "#90cdf4",
     fontWeight: "bold",
-    marginRight: "4px",
+    textShadow: "0 0 8px rgba(144,205,244,0.25)",
+    letterSpacing: "0.5px",
   },
 };

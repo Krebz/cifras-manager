@@ -19,14 +19,8 @@ export default function LineRenderer({ line, transpose }: Props) {
         ...songViewerStyles.line,
         fontFamily: "monospace",
         whiteSpace: "pre",
-        opacity: isInstrumental ? 0.7 : 1,
-
-        backgroundColor: isInstrumental
-          ? "rgba(255,255,255,0.03)"
-          : "transparent",
-
+        opacity: isInstrumental ? 0.9 : 1,
         padding: isInstrumental ? "8px 12px" : "0",
-
         borderRadius: isInstrumental ? "8px" : "0",
         fontStyle: isInstrumental ? "italic" : "normal",
       }}
@@ -34,12 +28,13 @@ export default function LineRenderer({ line, transpose }: Props) {
       {/* linha de acordes */}
       <div
         style={{
-          marginBottom: "8px",
+          marginBottom: "2px",
           color: "#90cdf4",
-          fontWeight: 600,
+          fontWeight: 700,
           fontSize: "16px",
           lineHeight: 1.2,
-          letterSpacing: "0.5px",
+          letterSpacing: "0.8px",
+          textShadow: "0 0 8px rgba(144,205,244,0.25)",
         }}
       >
         {chordLine}

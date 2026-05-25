@@ -1,10 +1,10 @@
 import { songViewerStyles } from "../../styles/songViewerStyles";
-
 import type { ChordData } from "../../types/music";
 
 type Props = {
-  chord: ChordData
-}
+  chord: ChordData;
+};
+
 export default function ChordToken({ chord }: Props) {
   return (
     <div

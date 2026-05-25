@@ -18,5 +18,5 @@ Com mais [Cmaj7]amor
 [outro]
 [G]
 Amém
-`
-}
+`,
+};
