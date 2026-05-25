@@ -23,7 +23,7 @@ export function buildMusicalLines(line: ParsedLine, transpose: number) {
   for (const token of line.tokens) {
     if (token.type === "chord") {
       const transposedChord = transposeChord(token.value, transpose);
-      const chordText = `${transposedChord.root}${transposedChord.suffix}`;
+      const chordText = `${transposedChord.root}${transposedChord.suffix} `;
       const chordLength = chordText.length;
       const lyricLength = chordText.length;
 
@@ -45,5 +45,6 @@ export function buildMusicalLines(line: ParsedLine, transpose: number) {
   return {
     chordLine: chordBuffer.join(""),
     lyricLine: lyricBuffer.join(""),
+    isInstrumental: lyricBuffer.join("").trim() === "",
   };
 }

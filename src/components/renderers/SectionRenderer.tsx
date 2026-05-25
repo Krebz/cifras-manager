@@ -1,8 +1,7 @@
 import type { SongSection } from "../../types/music";
-
 import LineRenderer from "./LineRenderer";
-
 import { songViewerStyles } from "../../styles/songViewerStyles";
+import { getSectionLabel } from "../../utils/getSectionLabel";
 
 type Props = {
   section: SongSection;
@@ -17,22 +16,34 @@ export default function SectionRenderer({ section, transpose }: Props) {
       style={{
         ...songViewerStyles.section,
 
-        ...(isChorus
-          ? songViewerStyles.chorusSection
-          : {}),
+        ...(isChorus ? songViewerStyles.chorusSection : {}),
       }}
     >
       {/* nome da seção */}
-      <div
-        style={songViewerStyles.sectionTitle}
-      >
-        {section.type}
+      <div style={songViewerStyles.sectionTitle}>
+        {getSectionLabel(section.type)}
       </div>
 
       {/* linhas */}
-      {section.lines.map((line, index) => (
-        <LineRenderer key={index} line={line} transpose={transpose} />
-      ))}
+      {section.lines.map((line, index) => {
+        const isEven = index % 2 === 0;
+
+        return (
+          <div
+            key={index}
+            style={{
+              backgroundColor: isEven
+                ? "rgba(255,255,255,0.02)"
+                : "transparent",
+
+              borderRadius: "6px",
+              padding: "4px 8px",
+            }}
+          >
+            <LineRenderer line={line} transpose={transpose} />
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -1,11 +1,22 @@
 export const song = {
   title: "Maria de Nazaré",
   key: "G",
-content: `
+
+  content: `
+[intro]
+[G]        [D/F#]
+Aleluia, aleluia
+[verse]
 [G]Maria de Nazaré
 Tu és a [D]mãe do Senhor
-
-[G]Me ensina a viver
-Com mais [D]amor
+[chorus]
+[Em]Me ensina a viver
+Com mais [Cmaj7]amor
+[bridge]
+[F#m7]Quero seguir
+[B7]Teu coração
+[outro]
+[G]
+Amém
 `
 }

@@ -8,7 +8,10 @@ type Props = {
 };
 
 export default function LineRenderer({ line, transpose }: Props) {
-  const { chordLine, lyricLine } = buildMusicalLines(line, transpose);
+  const { chordLine, lyricLine, isInstrumental } = buildMusicalLines(
+    line,
+    transpose,
+  );
 
   return (
     <div
@@ -16,16 +19,27 @@ export default function LineRenderer({ line, transpose }: Props) {
         ...songViewerStyles.line,
         fontFamily: "monospace",
         whiteSpace: "pre",
+        opacity: isInstrumental ? 0.7 : 1,
+
+        backgroundColor: isInstrumental
+          ? "rgba(255,255,255,0.03)"
+          : "transparent",
+
+        padding: isInstrumental ? "8px 12px" : "0",
+
+        borderRadius: isInstrumental ? "8px" : "0",
+        fontStyle: isInstrumental ? "italic" : "normal",
       }}
     >
       {/* linha de acordes */}
       <div
         style={{
           marginBottom: "8px",
-          color: "#2b6cb0",
-          fontWeight: "bold",
-          fontSize: "18px",
+          color: "#90cdf4",
+          fontWeight: 600,
+          fontSize: "16px",
           lineHeight: 1.2,
+          letterSpacing: "0.5px",
         }}
       >
         {chordLine}
