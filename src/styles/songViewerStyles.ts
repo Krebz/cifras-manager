@@ -1,31 +1,31 @@
 export const songViewerStyles = {
   container: {
-    padding: "32px",
-    maxWidth: "900px",
+    padding: "20px 28px",
+    maxWidth: "1200px",
     margin: "0 auto",
     fontFamily: "monospace",
-    fontSize: "22px",
-    lineHeight: 1.8,
+    fontSize: "20px",
+    lineHeight: 1.0,
   },
 
   section: {
-    marginBottom: "40px",
-    padding: "16px",
-    paddingBottom: "24px",
+    marginBottom: "20px",
+    padding: "12px 16px",
+    paddingBottom: "16px",
     borderBottom: "1px solid rgba(255,255,255,0.06)",
     backgroundColor: "rgba(255,255,255,0.03)",
     borderRadius: "12px",
   },
 
   header: {
-    marginBottom: "40px",
+    marginBottom: "20px",
   },
 
   title: {
-    fontSize: "42px",
+    fontSize: "clamp(28px, 4vw, 32px)",
     marginBottom: "8px",
     fontWeight: "bold",
-    lineHeight: 1.1,
+    lineHeight: 1.0,
   },
 
   songKey: {
@@ -68,7 +68,7 @@ export const songViewerStyles = {
   },
 
   line: {
-    marginBottom: "18px",
+    marginBottom: "10px",
   },
 
   chord: {

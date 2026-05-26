@@ -6,9 +6,14 @@ import { getSectionLabel } from "../../utils/getSectionLabel";
 type Props = {
   section: SongSection;
   transpose: number;
+  fontSize: number;
 };
 
-export default function SectionRenderer({ section, transpose }: Props) {
+export default function SectionRenderer({
+  section,
+  transpose,
+  fontSize,
+}: Props) {
   const isChorus = section.type === "chorus";
 
   return (
@@ -40,7 +45,11 @@ export default function SectionRenderer({ section, transpose }: Props) {
               padding: "4px 8px",
             }}
           >
-            <LineRenderer line={line} transpose={transpose} />
+            <LineRenderer
+              line={line}
+              transpose={transpose}
+              fontSize={fontSize}
+            />
           </div>
         );
       })}

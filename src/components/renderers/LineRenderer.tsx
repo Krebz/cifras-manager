@@ -5,9 +5,10 @@ import { buildMusicalLines } from "../../utils/buildMusicalLines";
 type Props = {
   line: ParsedLine;
   transpose: number;
+  fontSize: number;
 };
 
-export default function LineRenderer({ line, transpose }: Props) {
+export default function LineRenderer({ line, transpose, fontSize }: Props) {
   const { chordLine, lyricLine, isInstrumental } = buildMusicalLines(
     line,
     transpose,
@@ -31,7 +32,7 @@ export default function LineRenderer({ line, transpose }: Props) {
           marginBottom: "2px",
           color: "#90cdf4",
           fontWeight: 700,
-          fontSize: "16px",
+          fontSize: `${fontSize}px`,
           lineHeight: 1.2,
           letterSpacing: "0.8px",
           textShadow: "0 0 8px rgba(144,205,244,0.25)",
@@ -43,7 +44,7 @@ export default function LineRenderer({ line, transpose }: Props) {
       {/* linha da letra */}
       <div
         style={{
-          fontSize: "22px",
+          fontSize: `${fontSize}px`,
           lineHeight: 1.6,
         }}
       >

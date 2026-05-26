@@ -7,6 +7,7 @@ type Props = {
   songKey: string;
   content: string;
   transpose?: number;
+  fontSize: number;
 };
 import { songViewerStyles } from "../styles/songViewerStyles";
 
@@ -16,13 +17,19 @@ export default function SongViewer({
   songKey,
   content,
   transpose = 2,
+  fontSize,
 }: Props) {
   // Faz o parsing completo da música
   // Transforma o texto bruto em uma estrutura renderizáveis
   const parsedSong = parseSong(title, songKey, content);
 
   return (
-    <div style={songViewerStyles.container}>
+    <div
+      style={{
+        ...songViewerStyles.container,
+        fontSize: `${fontSize}px`,
+      }}
+    >
       {/* Título da música */}
       <div style={songViewerStyles.header}>
         <h1 style={songViewerStyles.title}>{title}</h1>
@@ -32,7 +39,12 @@ export default function SongViewer({
 
       {/* Percorre todas as seções da música */}
       {parsedSong.sections.map((section, index) => (
-        <SectionRenderer key={index} section={section} transpose={transpose} />
+        <SectionRenderer
+          key={index}
+          section={section}
+          transpose={transpose}
+          fontSize={fontSize}
+        />
       ))}
     </div>
   );

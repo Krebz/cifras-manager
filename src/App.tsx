@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Stack, Text, Title } from "@mantine/core";
+import { Button, Stack, Text } from "@mantine/core";
 import SongViewer from "./components/SongViewer";
 import { song } from "./data/song";
 import { transposeKey } from "./services/transposeKey";
@@ -13,13 +13,25 @@ function App() {
 
   // velocidade da rolagem automática
   const [scrollSpeed, setScrollSpeed] = useState(1);
+  const [fontSize, setFontSize] = useState(22);
 
   // calcula o tom atual da música
   const currentKey = transposeKey(song.key, transpose);
 
   const scrollLabel =
     scrollSpeed >= 7 ? "Rápido" : scrollSpeed >= 4 ? "Médio" : "Lento";
-  const scrollStatus = isScrolling ? "Scroll ativo" : "Scroll pausado";
+  const scrollStatus = isScrolling ? "Ativo" : "Pause";
+
+  const toolbarGroupStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "2px 5px",
+    borderRadius: "18px",
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(148,163,184,0.22)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+  };
 
   // executa a rolagem automática da página
   useEffect(() => {
@@ -85,9 +97,6 @@ function App() {
           margin: "0 auto",
         }}
       >
-        {/* título principal da aplicação */}
-        <Title order={1}>Projeto Cifras</Title>
-
         {/* painel de controles */}
         <div
           style={{
@@ -99,21 +108,15 @@ function App() {
             position: "sticky",
             top: "12px",
             zIndex: 1000,
-            backdropFilter: "blur(10px)",
-            backgroundColor: "rgba(15,23,42,0.82)",
+            backdropFilter: "blur(12px)",
+            backgroundColor: "rgba(15,23,42,0.48)",
             borderRadius: "12px",
             border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 6px 18px rgba(0,0,0,0.28)",
           }}
         >
           {/* controles de tom */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+          <div style={toolbarGroupStyle}>
             <Button
               size="md"
               radius="md"
@@ -151,13 +154,7 @@ function App() {
           </div>
 
           {/* scroll */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+          <div style={toolbarGroupStyle}>
             <Button
               size="md"
               radius="md"
@@ -171,16 +168,18 @@ function App() {
             >
               {isScrolling ? "Parar" : "Scroll"}
             </Button>
-          </div>
 
-          {/* velocidade */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+            <Text
+              fw="bold"
+              style={{
+                color: isScrolling ? "#4ade80" : "#94a3b8",
+                opacity: isScrolling ? 1 : 0.7,
+                transition: "all 0.3s ease",
+              }}
+            >
+              ● {scrollStatus}
+            </Text>
+
             <Button
               size="xs"
               radius="xl"
@@ -189,6 +188,7 @@ function App() {
             >
               -
             </Button>
+
             <Text
               fw="bold"
               style={{
@@ -200,8 +200,11 @@ function App() {
                       : "#93c5fd",
               }}
             >
-              ⚡ Vel {scrollSpeed} • {scrollLabel}
+              ⚡ {scrollSpeed}
+              {" • "}
+              {scrollLabel}
             </Text>
+
             <Button
               size="xs"
               radius="xl"
@@ -212,30 +215,41 @@ function App() {
             </Button>
           </div>
 
-          <Text
-            fw="bold"
-            style={{
-              color: isScrolling ? "#4ade80" : "#94a3b8",
-              opacity: isScrolling ? 1 : 0.7,
-              transition: "all 0.3s ease",
-            }}
-          >
-            ● {scrollStatus}
-          </Text>
-          <Text
-            size="sm"
-            style={{
-              opacity: 0.7,
-            }}
-          >
-            Espaço ▶ Scroll • ← → Velocidade
-          </Text>
+          {/* fonte */}
+          <div style={toolbarGroupStyle}>
+            <Button
+              size="xs"
+              radius="xl"
+              variant="light"
+              onClick={() => setFontSize((prev) => Math.max(16, prev - 2))}
+            >
+              A-
+            </Button>
+
+            <Text
+              fw="bold"
+              style={{
+                color: "#c4b5fd",
+              }}
+            >
+              {fontSize}
+            </Text>
+
+            <Button
+              size="xs"
+              radius="xl"
+              variant="light"
+              onClick={() => setFontSize((prev) => Math.min(40, prev + 2))}
+            >
+              A+
+            </Button>
+          </div>
         </div>
 
         {/* renderizador da cifra */}
         <div
           style={{
-            marginTop: "16px",
+            marginTop: "8px",
           }}
         >
           <SongViewer
@@ -243,6 +257,7 @@ function App() {
             songKey={currentKey}
             content={song.content}
             transpose={transpose}
+            fontSize={fontSize}
           />
         </div>
       </Stack>
