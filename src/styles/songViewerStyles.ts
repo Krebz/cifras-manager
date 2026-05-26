@@ -28,6 +28,15 @@ export const songViewerStyles = {
     lineHeight: 1.0,
   },
 
+  artist: {
+    fontSize: "16px",
+    color: "#94a3b8",
+    marginTop: "-4px",
+    marginBottom: "14px",
+    letterSpacing: "0.6px",
+    fontWeight: 500,
+    opacity: 0.9,
+  },
   songKey: {
     display: "inline-flex",
     alignItems: "center",

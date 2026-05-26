@@ -4,6 +4,7 @@ import SectionRenderer from "./renderers/SectionRenderer";
 // Tipagem das propriedades recebidas pelo componente
 type Props = {
   title: string;
+  artist: string;
   songKey: string;
   content: string;
   transpose?: number;
@@ -14,6 +15,7 @@ import { songViewerStyles } from "../styles/songViewerStyles";
 // Componente responsável pela renderização da música
 export default function SongViewer({
   title,
+  artist,
   songKey,
   content,
   transpose = 2,
@@ -33,7 +35,7 @@ export default function SongViewer({
       {/* Título da música */}
       <div style={songViewerStyles.header}>
         <h1 style={songViewerStyles.title}>{title}</h1>
-
+        <div style={songViewerStyles.artist}>{artist}</div>
         <div style={songViewerStyles.songKey}>Tom: {songKey}</div>
       </div>
 

@@ -254,6 +254,7 @@ function App() {
         >
           <SongViewer
             title={song.title}
+            artist={song.artist}
             songKey={currentKey}
             content={song.content}
             transpose={transpose}

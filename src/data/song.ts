@@ -1,5 +1,6 @@
 export const song = {
   title: "Maria de Nazaré",
+  artist: "Padre Marcelo Rossi",
   key: "G",
 
   content: `
