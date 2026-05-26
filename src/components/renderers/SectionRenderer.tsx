@@ -1,33 +1,32 @@
 import type { SongSection } from "../../types/music";
 import LineRenderer from "./LineRenderer";
-import { songViewerStyles } from "../../styles/songViewerStyles";
 import { getSectionLabel } from "../../utils/getSectionLabel";
 
 type Props = {
   section: SongSection;
   transpose: number;
   fontSize: number;
+  styles: any;
 };
 
 export default function SectionRenderer({
   section,
   transpose,
   fontSize,
+  styles,
 }: Props) {
   const isChorus = section.type === "chorus";
 
   return (
     <div
       style={{
-        ...songViewerStyles.section,
+        ...styles.section,
 
-        ...(isChorus ? songViewerStyles.chorusSection : {}),
+        ...(isChorus ? styles.chorusSection : {}),
       }}
     >
       {/* nome da seção */}
-      <div style={songViewerStyles.sectionTitle}>
-        {getSectionLabel(section.type)}
-      </div>
+      <div style={styles.sectionTitle}>{getSectionLabel(section.type)}</div>
 
       {/* linhas */}
       {section.lines.map((line, index) => {

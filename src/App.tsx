@@ -1,37 +1,25 @@
 import { useEffect, useState } from "react";
-import { Button, Stack, Text } from "@mantine/core";
+import { IconMoon, IconSun } from "@tabler/icons-react";
+import {
+  Button,
+  Stack,
+  Text,
+  ActionIcon,
+  useMantineColorScheme,
+} from "@mantine/core";
 import SongViewer from "./components/SongViewer";
 import { song } from "./data/song";
 import { transposeKey } from "./services/transposeKey";
 
 function App() {
-  // controla a transposição da música em semitons
   const [transpose, setTranspose] = useState(0);
-
-  // controla se o auto-scroll está ativo
   const [isScrolling, setIsScrolling] = useState(false);
-
-  // velocidade da rolagem automática
   const [scrollSpeed, setScrollSpeed] = useState(1);
   const [fontSize, setFontSize] = useState(22);
-
-  // calcula o tom atual da música
   const currentKey = transposeKey(song.key, transpose);
-
   const scrollLabel =
     scrollSpeed >= 7 ? "Rápido" : scrollSpeed >= 4 ? "Médio" : "Lento";
   const scrollStatus = isScrolling ? "Ativo" : "Pause";
-
-  const toolbarGroupStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "2px 5px",
-    borderRadius: "18px",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(148,163,184,0.22)",
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
-  };
 
   // executa a rolagem automática da página
   useEffect(() => {
@@ -80,11 +68,28 @@ function App() {
     };
   }, []);
 
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+  const toolbarGroupStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "2px 5px",
+    borderRadius: "18px",
+    background: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.42)",
+    border: isDark
+      ? "1px solid rgba(148,163,184,0.22)"
+      : "1px solid rgba(148,163,184,0.26)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+  };
+
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom, #0f172a, #111827)",
+        background: isDark
+          ? "linear-gradient(to bottom, #0f172a, #111827)"
+          : "linear-gradient(to bottom, #f8fafc, #e2e8f0)",
         padding: "40px 20px",
       }}
     >
@@ -109,9 +114,13 @@ function App() {
             top: "12px",
             zIndex: 1000,
             backdropFilter: "blur(12px)",
-            backgroundColor: "rgba(15,23,42,0.48)",
+            backgroundColor: isDark
+              ? "rgba(15,23,42,0.42)"
+              : "rgba(255,255,255,0.42)",
             borderRadius: "12px",
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: isDark
+              ? "1px solid rgba(148,163,184,0.22)"
+              : "1px solid rgba(148,163,184,0.32)",
             boxShadow: "0 6px 18px rgba(0,0,0,0.28)",
           }}
         >
@@ -126,7 +135,13 @@ function App() {
               Tom -
             </Button>
 
-            <Text size="xl" fw="bold" c="blue.3">
+            <Text
+              size="xl"
+              fw="bold"
+              style={{
+                color: isDark ? "#93c5fd" : "#c4b5fd",
+              }}
+            >
               {currentKey}
 
               {transpose !== 0 && (
@@ -134,7 +149,9 @@ function App() {
                   style={{
                     fontSize: "14px",
                     marginLeft: "6px",
-                    opacity: 0.7,
+                    opacity: isDark ? 0.7 : 1,
+
+                    color: isDark ? "#cbd5e1" : "#94a3b8",
                   }}
                 >
                   ({transpose > 0 ? "+" : ""}
@@ -186,7 +203,7 @@ function App() {
               variant="light"
               onClick={() => setScrollSpeed(Math.max(1, scrollSpeed - 1))}
             >
-              -
+              ←
             </Button>
 
             <Text
@@ -197,7 +214,9 @@ function App() {
                     ? "#f87171"
                     : scrollSpeed >= 4
                       ? "#facc15"
-                      : "#93c5fd",
+                      : isDark
+                        ? "#93c5fd"
+                        : "#c4b5fd",
               }}
             >
               ⚡ {scrollSpeed}
@@ -211,7 +230,7 @@ function App() {
               variant="light"
               onClick={() => setScrollSpeed(Math.min(10, scrollSpeed + 1))}
             >
-              +
+              →
             </Button>
           </div>
 
@@ -229,7 +248,7 @@ function App() {
             <Text
               fw="bold"
               style={{
-                color: "#c4b5fd",
+                color: isDark ? "#93c5fd" : "#c4b5fd",
               }}
             >
               {fontSize}
@@ -243,6 +262,30 @@ function App() {
             >
               A+
             </Button>
+          </div>
+          {/* tema */}
+          <div style={toolbarGroupStyle}>
+            <ActionIcon
+              size="lg"
+              radius="xl"
+              variant="transparent"
+              color={isDark ? "yellow" : "blue"}
+              style={{
+                background: "transparent",
+                border: "none",
+              }}
+              onClick={() => toggleColorScheme()}
+            >
+              {isDark ? (
+                <IconSun
+                  size={18}
+                  stroke={2}
+                  color={isDark ? "#f8fafc" : "#f59e0b"}
+                />
+              ) : (
+                <IconMoon size={18} />
+              )}
+            </ActionIcon>
           </div>
         </div>
 

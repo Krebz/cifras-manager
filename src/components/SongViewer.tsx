@@ -1,3 +1,4 @@
+import { useMantineColorScheme } from "@mantine/core";
 import { parseSong } from "../utils/parseSong";
 import SectionRenderer from "./renderers/SectionRenderer";
 
@@ -23,20 +24,23 @@ export default function SongViewer({
 }: Props) {
   // Faz o parsing completo da música
   // Transforma o texto bruto em uma estrutura renderizáveis
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+  const styles = songViewerStyles(isDark);
   const parsedSong = parseSong(title, songKey, content);
 
   return (
     <div
       style={{
-        ...songViewerStyles.container,
+        ...styles.container,
         fontSize: `${fontSize}px`,
       }}
     >
       {/* Título da música */}
-      <div style={songViewerStyles.header}>
-        <h1 style={songViewerStyles.title}>{title}</h1>
-        <div style={songViewerStyles.artist}>{artist}</div>
-        <div style={songViewerStyles.songKey}>Tom: {songKey}</div>
+      <div style={styles.header}>
+        <h1 style={styles.title}>{title}</h1>
+        <div style={styles.artist}>{artist}</div>
+        <div style={styles.songKey}>Tom: {songKey}</div>
       </div>
 
       {/* Percorre todas as seções da música */}
@@ -46,6 +50,7 @@ export default function SongViewer({
           section={section}
           transpose={transpose}
           fontSize={fontSize}
+          styles={styles}
         />
       ))}
     </div>
