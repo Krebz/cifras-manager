@@ -6,6 +6,7 @@ type Props = {
   scrollSpeed: number;
   isDark: boolean;
   groupStyle: CSSProperties;
+  buttonStyle: CSSProperties;
   onToggle: () => void;
   onDecreaseSpeed: () => void;
   onIncreaseSpeed: () => void;
@@ -16,6 +17,7 @@ export default function ScrollControl({
   scrollSpeed,
   isDark,
   groupStyle,
+  buttonStyle,
   onToggle,
   onDecreaseSpeed,
   onIncreaseSpeed,
@@ -41,6 +43,7 @@ export default function ScrollControl({
           radius="md"
           color={isScrolling ? "red" : "blue"}
           style={{
+            ...(!isScrolling ? buttonStyle : {}),
             fontWeight: "bold",
             boxShadow: isScrolling ? "0 0 12px rgba(255,0,0,0.6)" : "none",
           }}
@@ -64,7 +67,7 @@ export default function ScrollControl({
       </Text>
 
       <Tooltip label="Diminuir velocidade (seta esquerda)">
-        <Button size="xs" radius="xl" variant="light" onClick={onDecreaseSpeed}>
+        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onDecreaseSpeed}>
           ←
         </Button>
       </Tooltip>
@@ -74,7 +77,7 @@ export default function ScrollControl({
       </Text>
 
       <Tooltip label="Aumentar velocidade (seta direita)">
-        <Button size="xs" radius="xl" variant="light" onClick={onIncreaseSpeed}>
+        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onIncreaseSpeed}>
           →
         </Button>
       </Tooltip>

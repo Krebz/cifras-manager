@@ -5,6 +5,7 @@ type Props = {
   fontSize: number;
   isDark: boolean;
   groupStyle: CSSProperties;
+  buttonStyle: CSSProperties;
   onDecrease: () => void;
   onIncrease: () => void;
 };
@@ -13,13 +14,14 @@ export default function FontControl({
   fontSize,
   isDark,
   groupStyle,
+  buttonStyle,
   onDecrease,
   onIncrease,
 }: Props) {
   return (
     <div style={groupStyle}>
       <Tooltip label="Diminuir fonte">
-        <Button size="xs" radius="xl" variant="light" onClick={onDecrease}>
+        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onDecrease}>
           A-
         </Button>
       </Tooltip>
@@ -37,7 +39,7 @@ export default function FontControl({
       </Text>
 
       <Tooltip label="Aumentar fonte">
-        <Button size="xs" radius="xl" variant="light" onClick={onIncrease}>
+        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onIncrease}>
           A+
         </Button>
       </Tooltip>

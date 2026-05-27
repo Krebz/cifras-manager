@@ -6,6 +6,7 @@ type Props = {
   currentKey: string;
   isDark: boolean;
   groupStyle: CSSProperties;
+  buttonStyle: CSSProperties;
   onDecrease: () => void;
   onIncrease: () => void;
 };
@@ -15,13 +16,14 @@ export default function TransposeControl({
   currentKey,
   isDark,
   groupStyle,
+  buttonStyle,
   onDecrease,
   onIncrease,
 }: Props) {
   return (
     <div style={groupStyle}>
       <Tooltip label="Diminuir tom">
-        <Button size="xs" radius="md" variant="light" onClick={onDecrease}>
+        <Button size="xs" radius="md" variant="light" style={buttonStyle} onClick={onDecrease}>
           Tom -
         </Button>
       </Tooltip>
@@ -51,7 +53,7 @@ export default function TransposeControl({
       </Text>
 
       <Tooltip label="Aumentar tom">
-        <Button size="xs" radius="md" variant="light" onClick={onIncrease}>
+        <Button size="xs" radius="md" variant="light" style={buttonStyle} onClick={onIncrease}>
           Tom +
         </Button>
       </Tooltip>

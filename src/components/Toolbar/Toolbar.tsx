@@ -44,6 +44,8 @@ export default function Toolbar({
 }: Props) {
   const styles = appStyles(isDark, ultraCompact);
   const group = styles.toolbarGroup;
+  const button = styles.toolbarButton;
+  const iconButton = styles.toolbarIconButton;
 
   return (
     <div style={styles.toolbar}>
@@ -52,6 +54,7 @@ export default function Toolbar({
         currentKey={currentKey}
         isDark={isDark}
         groupStyle={group}
+        buttonStyle={button}
         onDecrease={onTransposeDecrease}
         onIncrease={onTransposeIncrease}
       />
@@ -61,6 +64,7 @@ export default function Toolbar({
         scrollSpeed={scrollSpeed}
         isDark={isDark}
         groupStyle={group}
+        buttonStyle={button}
         onToggle={onScrollToggle}
         onDecreaseSpeed={onScrollSpeedDecrease}
         onIncreaseSpeed={onScrollSpeedIncrease}
@@ -70,6 +74,7 @@ export default function Toolbar({
         fontSize={fontSize}
         isDark={isDark}
         groupStyle={group}
+        buttonStyle={button}
         onDecrease={onFontDecrease}
         onIncrease={onFontIncrease}
       />
@@ -87,6 +92,7 @@ export default function Toolbar({
             radius="md"
             variant={ultraCompact ? "filled" : "light"}
             color={ultraCompact ? "grape" : "gray"}
+            style={ultraCompact ? undefined : iconButton}
             onClick={onToggleUltraCompact}
           >
             UC
@@ -101,6 +107,7 @@ export default function Toolbar({
             radius="md"
             variant="light"
             color={isDark ? "yellow" : "blue"}
+            style={iconButton}
             onClick={onToggleTheme}
           >
             {isDark ? (
