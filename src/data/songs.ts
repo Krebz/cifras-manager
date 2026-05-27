@@ -4,10 +4,12 @@ import { song as song1 } from "./song";
 export const songs: Song[] = [
   song1,
   {
+    id: "confiar",
     title: "Confiar",
     artist: "Comunidade (mock)",
     key: "D",
     category: "Adoração",
+    accessCount: 156,
     content: `
 [intro]
 [D]          [A/C#]
@@ -37,6 +39,4 @@ Amém
 `,
   },
 ];
-
-export const defaultSong = songs[0];
 

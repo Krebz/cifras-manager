@@ -36,11 +36,13 @@ export type SongSection = {
 export type SongCategory = string;
 
 export type Song = {
+  id: string;
   title: string;
   artist: string;
   key: string;
   category: SongCategory;
   content: string;
+  accessCount: number;
 };
 
 export type SongDocument = {

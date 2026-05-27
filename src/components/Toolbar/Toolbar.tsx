@@ -1,5 +1,4 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
-import { IconMoon, IconSun } from "@tabler/icons-react";
 import FontControl from "./FontControl";
 import ScrollControl from "./ScrollControl";
 import TransposeControl from "./TransposeControl";
@@ -20,7 +19,6 @@ type Props = {
   onScrollSpeedIncrease: () => void;
   onFontDecrease: () => void;
   onFontIncrease: () => void;
-  onToggleTheme: () => void;
   onToggleUltraCompact: () => void;
 };
 
@@ -39,7 +37,6 @@ export default function Toolbar({
   onScrollSpeedIncrease,
   onFontDecrease,
   onFontIncrease,
-  onToggleTheme,
   onToggleUltraCompact,
 }: Props) {
   const styles = appStyles(isDark, ultraCompact);
@@ -100,24 +97,6 @@ export default function Toolbar({
         </Tooltip>
       </div>
 
-      <div style={group}>
-        <Tooltip label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}>
-          <ActionIcon
-            size="sm"
-            radius="md"
-            variant="light"
-            color={isDark ? "yellow" : "blue"}
-            style={iconButton}
-            onClick={onToggleTheme}
-          >
-            {isDark ? (
-              <IconSun size={18} stroke={2} />
-            ) : (
-              <IconMoon size={18} />
-            )}
-          </ActionIcon>
-        </Tooltip>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { SongSection } from "../../types/music";
+import type { songViewerStyles } from "../../styles/songViewerStyles";
 import LineRenderer from "./LineRenderer";
 import { getSectionLabel } from "../../utils/getSectionLabel";
 
@@ -6,7 +7,7 @@ type Props = {
   section: SongSection;
   transpose: number;
   fontSize: number;
-  styles: any;
+  styles: ReturnType<typeof songViewerStyles>;
 };
 
 export default function SectionRenderer({
