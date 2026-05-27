@@ -1,3 +1,4 @@
+import { useMantineColorScheme } from "@mantine/core";
 import { songViewerStyles } from "../../styles/songViewerStyles";
 import type { ChordData } from "../../types/music";
 
@@ -6,6 +7,10 @@ type Props = {
 };
 
 export default function ChordToken({ chord }: Props) {
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+  const styles = songViewerStyles(isDark);
+
   return (
     <div
       style={{
@@ -15,7 +20,7 @@ export default function ChordToken({ chord }: Props) {
         marginRight: "6px",
       }}
     >
-      <span style={songViewerStyles.chord}>
+      <span style={styles.chord}>
         {chord.root}
         {chord.suffix}
 

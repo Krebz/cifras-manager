@@ -6,10 +6,12 @@ import SectionRenderer from "./renderers/SectionRenderer";
 type Props = {
   title: string;
   artist: string;
+  category: string;
   songKey: string;
   content: string;
   transpose?: number;
   fontSize: number;
+  ultraCompact?: boolean;
 };
 import { songViewerStyles } from "../styles/songViewerStyles";
 
@@ -17,16 +19,18 @@ import { songViewerStyles } from "../styles/songViewerStyles";
 export default function SongViewer({
   title,
   artist,
+  category,
   songKey,
   content,
   transpose = 2,
   fontSize,
+  ultraCompact = false,
 }: Props) {
   // Faz o parsing completo da música
   // Transforma o texto bruto em uma estrutura renderizáveis
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = songViewerStyles(isDark);
+  const styles = songViewerStyles(isDark, ultraCompact);
   const parsedSong = parseSong(title, songKey, content);
 
   return (
@@ -40,7 +44,10 @@ export default function SongViewer({
       <div style={styles.header}>
         <h1 style={styles.title}>{title}</h1>
         <div style={styles.artist}>{artist}</div>
-        <div style={styles.songKey}>Tom: {songKey}</div>
+        <div style={styles.metaRow}>
+          <div style={styles.songKey}>Tom: {songKey}</div>
+          <div style={styles.songCategory}>Categoria: {category}</div>
+        </div>
       </div>
 
       {/* Percorre todas as seções da música */}

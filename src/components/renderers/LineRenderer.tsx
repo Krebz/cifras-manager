@@ -1,5 +1,4 @@
 import type { ParsedLine } from "../../types/music";
-import { songViewerStyles } from "../../styles/songViewerStyles";
 import { buildMusicalLines } from "../../utils/buildMusicalLines";
 
 type Props = {
@@ -17,7 +16,6 @@ export default function LineRenderer({ line, transpose, fontSize }: Props) {
   return (
     <div
       style={{
-        ...songViewerStyles.line,
         fontFamily: "monospace",
         whiteSpace: "pre",
         opacity: isInstrumental ? 0.9 : 1,
@@ -34,7 +32,6 @@ export default function LineRenderer({ line, transpose, fontSize }: Props) {
           fontWeight: 700,
           fontSize: `${fontSize}px`,
           lineHeight: 1.2,
-          letterSpacing: "0.8px",
           textShadow: "0 0 8px rgba(144,205,244,0.25)",
         }}
       >

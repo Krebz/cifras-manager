@@ -33,17 +33,27 @@ export type SongSection = {
   lines: ParsedLine[];
 };
 
+export type SongCategory = string;
+
+export type Song = {
+  title: string;
+  artist: string;
+  key: string;
+  category: SongCategory;
+  content: string;
+};
+
 export type SongDocument = {
   title: string;
   key: string;
   sections: SongSection[];
-}
+};
 
 export type ChordData = {
   root: string;
   suffix: string;
   bass?: string;
-}
+};
 
 export type MusicalChunk = {
   chord?: ChordData;

@@ -1,7 +1,10 @@
-export const song = {
+import type { Song } from "../types/music";
+
+export const song: Song = {
   title: "Maria de Nazaré",
   artist: "Padre Marcelo Rossi",
   key: "G",
+  category: "Mariana",
 
   content: `
 [intro]

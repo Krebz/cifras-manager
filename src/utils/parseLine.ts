@@ -22,6 +22,8 @@ export function parseLine(line: string): ParsedLine {
   }
 
   let lastIndex = 0;
+  // Posição "visível" na linha (ignorando marcações de acordes tipo [G])
+  let visiblePos = 0;
 
   for (const match of line.matchAll(regex)) {
     const chord = match[1];
@@ -34,14 +36,15 @@ export function parseLine(line: string): ParsedLine {
       tokens.push({
         type: "text",
         value: textBefore,
-        position: matchIndex,
+        position: visiblePos,
       });
+      visiblePos += textBefore.length;
     }
 
     tokens.push({
       type: "chord",
       value: parseChord(chord),
-      position: matchIndex,
+      position: visiblePos,
     });
 
     lastIndex = matchIndex + match[0].length;
@@ -53,7 +56,7 @@ export function parseLine(line: string): ParsedLine {
     tokens.push({
       type: "text",
       value: remainingText,
-      position: lastIndex,
+      position: visiblePos,
     });
   }
 

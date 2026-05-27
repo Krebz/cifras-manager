@@ -9,8 +9,7 @@ export function buildMusicalLines(line: ParsedLine, transpose: number) {
     let safePosition = position;
 
     while (
-      buffer[safePosition] !== undefined ||
-      buffer[safePosition - 1] !== undefined
+      buffer[safePosition] !== undefined
     ) {
       safePosition++;
     }
@@ -23,7 +22,9 @@ export function buildMusicalLines(line: ParsedLine, transpose: number) {
   for (const token of line.tokens) {
     if (token.type === "chord") {
       const transposedChord = transposeChord(token.value, transpose);
-      const chordText = `${transposedChord.root}${transposedChord.suffix} `;
+      const chordText = `${transposedChord.root}${transposedChord.suffix}${
+        transposedChord.bass ? `/${transposedChord.bass}` : ""
+      }`;
       const chordLength = chordText.length;
       const lyricLength = chordText.length;
 
@@ -42,9 +43,25 @@ export function buildMusicalLines(line: ParsedLine, transpose: number) {
     }
   }
 
+  function toAlignedLine(buffer: string[]) {
+    let result = "";
+
+    for (let i = 0; i < buffer.length; i++) {
+      result += buffer[i] ?? " ";
+    }
+
+    // Evita cauda de espaços sem perder o alinhamento útil da linha.
+    return result.replace(/\s+$/g, "");
+  }
+
+  // Buffers podem ficar "sparse" (com lacunas). Precisamos transformar
+  // essas lacunas em espaços reais para preservar colunas no <pre>.
+  const chordLine = toAlignedLine(chordBuffer);
+  const lyricLine = toAlignedLine(lyricBuffer);
+
   return {
-    chordLine: chordBuffer.join(""),
-    lyricLine: lyricBuffer.join(""),
-    isInstrumental: lyricBuffer.join("").trim() === "",
+    chordLine,
+    lyricLine,
+    isInstrumental: lyricLine.trim() === "",
   };
 }
