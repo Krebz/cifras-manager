@@ -1,8 +1,15 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
+import type { CSSProperties } from "react";
 import FontControl from "./FontControl";
 import ScrollControl from "./ScrollControl";
 import TransposeControl from "./TransposeControl";
-import { appStyles } from "../../styles/appStyles";
+
+type ToolbarStyles = {
+  toolbar: CSSProperties;
+  toolbarGroup: CSSProperties;
+  toolbarButton: CSSProperties;
+  toolbarIconButton: CSSProperties;
+};
 
 type Props = {
   transpose: number;
@@ -12,6 +19,7 @@ type Props = {
   fontSize: number;
   isDark: boolean;
   ultraCompact: boolean;
+  toolbarStyles: ToolbarStyles;
   onTransposeDecrease: () => void;
   onTransposeIncrease: () => void;
   onScrollToggle: () => void;
@@ -30,6 +38,7 @@ export default function Toolbar({
   fontSize,
   isDark,
   ultraCompact,
+  toolbarStyles,
   onTransposeDecrease,
   onTransposeIncrease,
   onScrollToggle,
@@ -39,13 +48,12 @@ export default function Toolbar({
   onFontIncrease,
   onToggleUltraCompact,
 }: Props) {
-  const styles = appStyles(isDark, ultraCompact);
-  const group = styles.toolbarGroup;
-  const button = styles.toolbarButton;
-  const iconButton = styles.toolbarIconButton;
+  const group = toolbarStyles.toolbarGroup;
+  const button = toolbarStyles.toolbarButton;
+  const iconButton = toolbarStyles.toolbarIconButton;
 
   return (
-    <div style={styles.toolbar}>
+    <div style={toolbarStyles.toolbar}>
       <TransposeControl
         transpose={transpose}
         currentKey={currentKey}

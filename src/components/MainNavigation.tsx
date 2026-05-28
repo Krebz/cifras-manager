@@ -1,7 +1,6 @@
 import { IconMoon, IconSun } from "@tabler/icons-react";
+import type { NavigationPage } from "../app/routes";
 import { portalStyles } from "../styles/portalStyles";
-
-export type NavigationPage = "home" | "songs" | "management" | "contact";
 
 type Props = {
   activePage: NavigationPage;

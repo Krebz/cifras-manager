@@ -1,15 +1,13 @@
 import { useMemo, useState, type FormEvent } from "react";
-import SongCard from "../components/catalog/SongCard";
-import { portalStyles } from "../styles/portalStyles";
-import type { Song } from "../types/music";
+import { navigate } from "../../app/router";
+import { routes, songsPathFor } from "../../app/routes";
+import SongCard from "../../components/catalog/SongCard";
+import { portalStyles } from "../../styles/portalStyles";
+import type { Song } from "../../types/music";
+import { useSongCatalog } from "../song/SongCatalogContext";
 
 type Props = {
-  songs: Song[];
-  accessCounts: Record<string, number>;
   isDark: boolean;
-  onBrowse: () => void;
-  onOpenSong: (songId: string) => void;
-  onSearch: (query: string) => void;
 };
 
 type RankingItem = {
@@ -59,13 +57,9 @@ function Ranking({
 }
 
 export default function HomePage({
-  songs,
-  accessCounts,
   isDark,
-  onBrowse,
-  onOpenSong,
-  onSearch,
 }: Props) {
+  const { songs, accessCounts } = useSongCatalog();
   const [query, setQuery] = useState("");
   const styles = portalStyles(isDark);
   const featured = [...songs]
@@ -82,7 +76,7 @@ export default function HomePage({
 
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
-    onSearch(query.trim());
+    navigate(songsPathFor(query));
   };
 
   return (
@@ -111,7 +105,11 @@ export default function HomePage({
       <section>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Mais acessadas</h2>
-          <button type="button" style={styles.secondaryAction} onClick={onBrowse}>
+          <button
+            type="button"
+            style={styles.secondaryAction}
+            onClick={() => navigate(routes.songs)}
+          >
             Ver todas as músicas
           </button>
         </div>
@@ -122,7 +120,7 @@ export default function HomePage({
               song={song}
               accessCount={accessCounts[song.id]}
               isDark={isDark}
-              onOpen={onOpenSong}
+              onOpen={(songId) => navigate(routes.song(songId))}
             />
           ))}
         </div>

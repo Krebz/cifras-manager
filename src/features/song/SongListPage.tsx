@@ -1,52 +1,32 @@
-import { useMemo, useState } from "react";
-import SongCard from "../components/catalog/SongCard";
-import { portalStyles } from "../styles/portalStyles";
-import type { Song } from "../types/music";
+import { navigate } from "../../app/router";
+import { routes } from "../../app/routes";
+import SongCard from "../../components/catalog/SongCard";
+import { useSongCatalog } from "../../hooks/useSongCatalog";
+import { portalStyles } from "../../styles/portalStyles";
+import { useSongCatalog as useSongCatalogContext } from "./SongCatalogContext";
 
 type Props = {
-  songs: Song[];
-  accessCounts: Record<string, number>;
   initialQuery: string;
   isDark: boolean;
-  onOpenSong: (songId: string) => void;
 };
 
-const normalize = (value: string) =>
-  value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-
 export default function SongListPage({
-  songs,
-  accessCounts,
   initialQuery,
   isDark,
-  onOpenSong,
 }: Props) {
-  const [query, setQuery] = useState(initialQuery);
-  const [category, setCategory] = useState("");
-  const [artist, setArtist] = useState("");
+  const { songs, accessCounts } = useSongCatalogContext();
+  const {
+    filteredSongs,
+    categories,
+    artists,
+    query,
+    category,
+    artist,
+    setQuery,
+    setCategory,
+    setArtist,
+  } = useSongCatalog({ songs, accessCounts, initialQuery });
   const styles = portalStyles(isDark);
-
-  const categories = [...new Set(songs.map((song) => song.category))].sort();
-  const artists = [...new Set(songs.map((song) => song.artist))].sort();
-  const filteredSongs = useMemo(() => {
-    const search = normalize(query.trim());
-
-    return songs
-      .filter((song) => {
-        const searchable = normalize(
-          `${song.title} ${song.artist} ${song.category}`,
-        );
-        return (
-          (!search || searchable.includes(search)) &&
-          (!category || song.category === category) &&
-          (!artist || song.artist === artist)
-        );
-      })
-      .sort((left, right) => accessCounts[right.id] - accessCounts[left.id]);
-  }, [accessCounts, artist, category, query, songs]);
 
   return (
     <main style={styles.surface}>
@@ -108,7 +88,7 @@ export default function SongListPage({
               song={song}
               accessCount={accessCounts[song.id]}
               isDark={isDark}
-              onOpen={onOpenSong}
+              onOpen={(songId) => navigate(routes.song(songId))}
             />
           ))}
         </div>

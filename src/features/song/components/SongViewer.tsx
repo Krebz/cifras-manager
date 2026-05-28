@@ -1,37 +1,28 @@
 import { useMantineColorScheme } from "@mantine/core";
-import { parseSong } from "../utils/parseSong";
-import SectionRenderer from "./renderers/SectionRenderer";
+import SectionRenderer from "../../../components/renderers/SectionRenderer";
+import { songViewerStyles } from "../../../styles/songViewerStyles";
+import type { SongDocument } from "../../../types/music";
 
-// Tipagem das propriedades recebidas pelo componente
 type Props = {
-  title: string;
+  songDocument: SongDocument;
   artist: string;
   category: string;
-  songKey: string;
-  content: string;
-  transpose?: number;
+  transpose: number;
   fontSize: number;
   ultraCompact?: boolean;
 };
-import { songViewerStyles } from "../styles/songViewerStyles";
 
-// Componente responsável pela renderização da música
 export default function SongViewer({
-  title,
+  songDocument,
   artist,
   category,
-  songKey,
-  content,
-  transpose = 2,
+  transpose,
   fontSize,
   ultraCompact = false,
 }: Props) {
-  // Faz o parsing completo da música
-  // Transforma o texto bruto em uma estrutura renderizáveis
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = songViewerStyles(isDark, ultraCompact);
-  const parsedSong = parseSong(title, songKey, content);
 
   return (
     <div
@@ -40,18 +31,16 @@ export default function SongViewer({
         fontSize: `${fontSize}px`,
       }}
     >
-      {/* Título da música */}
       <div style={styles.header}>
-        <h1 style={styles.title}>{title}</h1>
+        <h1 style={styles.title}>{songDocument.title}</h1>
         <div style={styles.artist}>{artist}</div>
         <div style={styles.metaRow}>
-          <div style={styles.songKey}>Tom: {songKey}</div>
+          <div style={styles.songKey}>Tom: {songDocument.key}</div>
           <div style={styles.songCategory}>Categoria: {category}</div>
         </div>
       </div>
 
-      {/* Percorre todas as seções da música */}
-      {parsedSong.sections.map((section, index) => (
+      {songDocument.sections.map((section, index) => (
         <SectionRenderer
           key={index}
           section={section}
