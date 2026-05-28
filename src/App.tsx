@@ -5,7 +5,6 @@ import { navigate, readRoute } from "./app/router";
 import { routePathFor, type AppRoute, type NavigationPage } from "./app/routes";
 import HomePage from "./features/home/HomePage";
 import InfoPage from "./features/info/InfoPage";
-import { SongCatalogProvider } from "./features/song/SongCatalogContext";
 import SongListPage from "./features/song/SongListPage";
 import SongPage from "./features/song/SongPage";
 import { appStyles } from "./styles/appStyles";
@@ -28,30 +27,28 @@ function App() {
 
   return (
     <div style={styles.page}>
-      <SongCatalogProvider>
-        <Stack p="xs" gap="xs" style={styles.content}>
-          <MainNavigation
-            activePage={navigationPage}
-            isDark={isDark}
-            onNavigate={(page) => navigate(routePathFor(page))}
-            onToggleTheme={toggleColorScheme}
-          />
+      <Stack p="xs" gap="xs" style={styles.content}>
+        <MainNavigation
+          activePage={navigationPage}
+          isDark={isDark}
+          onNavigate={(page) => navigate(routePathFor(page))}
+          onToggleTheme={toggleColorScheme}
+        />
 
-          {route.page === "home" && <HomePage isDark={isDark} />}
+        {route.page === "home" && <HomePage isDark={isDark} />}
 
-          {route.page === "songs" && (
-            <SongListPage initialQuery={route.query} isDark={isDark} />
-          )}
+        {route.page === "songs" && (
+          <SongListPage initialQuery={route.query} isDark={isDark} />
+        )}
 
-          {(route.page === "management" || route.page === "contact") && (
-            <InfoPage kind={route.page} isDark={isDark} />
-          )}
+        {(route.page === "management" || route.page === "contact") && (
+          <InfoPage kind={route.page} isDark={isDark} />
+        )}
 
-          {route.page === "song" && (
-            <SongPage key={route.songId} songId={route.songId} isDark={isDark} />
-          )}
-        </Stack>
-      </SongCatalogProvider>
+        {route.page === "song" && (
+          <SongPage key={route.songId} songId={route.songId} isDark={isDark} />
+        )}
+      </Stack>
     </div>
   );
 }

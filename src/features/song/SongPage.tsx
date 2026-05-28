@@ -3,10 +3,10 @@ import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { transposeKey } from "../../services/transposeKey";
 import { appStyles } from "../../styles/appStyles";
 import { parseSong } from "../../utils/parseSong";
-import { getSongById } from "../../services/songRepository";
+import { getAllSongs, getSongById } from "../../services/songRepository";
 import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
-import { useSongCatalog } from "./SongCatalogContext";
+import { useSongAccessCounts } from "./songAccessStore";
 
 type Props = {
   songId: string;
@@ -14,14 +14,14 @@ type Props = {
 };
 
 export default function SongPage({ songId, isDark }: Props) {
-  const { songs, registerAccess } = useSongCatalog();
+  const { registerAccess } = useSongAccessCounts();
   const [transpose, setTranspose] = useState(0);
   const [fontSize, setFontSize] = useState(16);
   const [ultraCompact, setUltraCompact] = useState(false);
   const countedSong = useRef<string | undefined>(undefined);
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
     useAutoScroll();
-  const selectedSong = getSongById(songId) ?? songs[0];
+  const selectedSong = getSongById(songId) ?? getAllSongs()[0];
   const currentKey = transposeKey(selectedSong.key, transpose);
   const songDocument = useMemo(
     () => parseSong(selectedSong.title, currentKey, selectedSong.content),

@@ -3,18 +3,15 @@ import { routes } from "../../app/routes";
 import SongCard from "../../components/catalog/SongCard";
 import { useSongCatalog } from "../../hooks/useSongCatalog";
 import { portalStyles } from "../../styles/portalStyles";
-import { useSongCatalog as useSongCatalogContext } from "./SongCatalogContext";
+import { useSongAccessCounts } from "./songAccessStore";
 
 type Props = {
   initialQuery: string;
   isDark: boolean;
 };
 
-export default function SongListPage({
-  initialQuery,
-  isDark,
-}: Props) {
-  const { songs, accessCounts } = useSongCatalogContext();
+export default function SongListPage({ initialQuery, isDark }: Props) {
+  const { accessCounts } = useSongAccessCounts();
   const {
     filteredSongs,
     categories,
@@ -25,7 +22,7 @@ export default function SongListPage({
     setQuery,
     setCategory,
     setArtist,
-  } = useSongCatalog({ songs, accessCounts, initialQuery });
+  } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
 
   return (
