@@ -1,37 +1,23 @@
 import { useMemo, useState, type FormEvent } from "react";
-import SongCard from "../components/catalog/SongCard";
-import { portalStyles } from "../styles/portalStyles";
-import type { Song } from "../types/music";
+import { navigate } from "../../app/router";
+import { routes, songsPathFor } from "../../app/routes";
+import SongCard from "../../components/catalog/SongCard";
+import { portalStyles } from "../../styles/portalStyles";
+import {
+  getAllSongs,
+  getSongRankingByField,
+  getTopSongs,
+} from "../../services/songRepository";
+import { useSongAccessCounts } from "../song/songAccessStore";
 
 type Props = {
-  songs: Song[];
-  accessCounts: Record<string, number>;
   isDark: boolean;
-  onBrowse: () => void;
-  onOpenSong: (songId: string) => void;
-  onSearch: (query: string) => void;
 };
 
 type RankingItem = {
   label: string;
   count: number;
 };
-
-function rankBy(
-  songs: Song[],
-  accessCounts: Record<string, number>,
-  field: "category" | "artist",
-) {
-  const totals = songs.reduce<Record<string, number>>((result, song) => {
-    result[song[field]] = (result[song[field]] ?? 0) + accessCounts[song.id];
-    return result;
-  }, {});
-
-  return Object.entries(totals)
-    .map(([label, count]) => ({ label, count }))
-    .sort((left, right) => right.count - left.count)
-    .slice(0, 10);
-}
 
 function Ranking({
   title,
@@ -58,31 +44,27 @@ function Ranking({
   );
 }
 
-export default function HomePage({
-  songs,
-  accessCounts,
-  isDark,
-  onBrowse,
-  onOpenSong,
-  onSearch,
-}: Props) {
+export default function HomePage({ isDark }: Props) {
+  const songs = getAllSongs();
+  const { accessCounts } = useSongAccessCounts();
   const [query, setQuery] = useState("");
   const styles = portalStyles(isDark);
-  const featured = [...songs]
-    .sort((left, right) => accessCounts[right.id] - accessCounts[left.id])
-    .slice(0, 3);
+  const featured = useMemo(
+    () => getTopSongs(songs, accessCounts, 3),
+    [songs, accessCounts],
+  );
   const categories = useMemo(
-    () => rankBy(songs, accessCounts, "category"),
+    () => getSongRankingByField(songs, accessCounts, "category"),
     [songs, accessCounts],
   );
   const artists = useMemo(
-    () => rankBy(songs, accessCounts, "artist"),
+    () => getSongRankingByField(songs, accessCounts, "artist"),
     [songs, accessCounts],
   );
 
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
-    onSearch(query.trim());
+    navigate(songsPathFor(query));
   };
 
   return (
@@ -111,7 +93,11 @@ export default function HomePage({
       <section>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Mais acessadas</h2>
-          <button type="button" style={styles.secondaryAction} onClick={onBrowse}>
+          <button
+            type="button"
+            style={styles.secondaryAction}
+            onClick={() => navigate(routes.songs)}
+          >
             Ver todas as músicas
           </button>
         </div>
@@ -122,7 +108,7 @@ export default function HomePage({
               song={song}
               accessCount={accessCounts[song.id]}
               isDark={isDark}
-              onOpen={onOpenSong}
+              onOpen={(songId) => navigate(routes.song(songId))}
             />
           ))}
         </div>

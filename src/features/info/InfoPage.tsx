@@ -1,4 +1,4 @@
-import { portalStyles } from "../styles/portalStyles";
+import { portalStyles } from "../../styles/portalStyles";
 
 type Props = {
   kind: "management" | "contact";
