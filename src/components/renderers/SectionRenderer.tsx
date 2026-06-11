@@ -22,37 +22,35 @@ export default function SectionRenderer({
     <div
       style={{
         ...styles.section,
-
         ...(isChorus ? styles.chorusSection : {}),
       }}
     >
-      {/* nome da seção */}
       <div style={styles.sectionTitle}>{getSectionLabel(section.type)}</div>
 
-      {/* linhas */}
-      {section.lines.map((line, index) => {
-        const isEven = index % 2 === 0;
+      <div style={styles.sectionScroll}>
+        {section.lines.map((line, index) => {
+          const isEven = index % 2 === 0;
 
-        return (
-          <div
-            key={index}
-            style={{
-              backgroundColor: isEven
-                ? "rgba(255,255,255,0.02)"
-                : "transparent",
-
-              borderRadius: "6px",
-              padding: "4px 8px",
-            }}
-          >
-            <LineRenderer
-              line={line}
-              transpose={transpose}
-              fontSize={fontSize}
-            />
-          </div>
-        );
-      })}
+          return (
+            <div
+              key={index}
+              style={{
+                backgroundColor: isEven
+                  ? "rgba(255,255,255,0.02)"
+                  : "transparent",
+                borderRadius: "6px",
+                padding: "4px 8px",
+              }}
+            >
+              <LineRenderer
+                line={line}
+                transpose={transpose}
+                fontSize={fontSize}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

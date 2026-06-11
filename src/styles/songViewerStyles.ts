@@ -7,6 +7,12 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     fontSize: "16px",
     color: isDark ? "#e2e8f0" : "#1e293b",
     lineHeight: 1.0,
+    overflowX: "hidden" as const,
+  },
+
+  sectionScroll: {
+    overflowX: "auto" as const,
+    WebkitOverflowScrolling: "touch" as const,
   },
 
   section: {
