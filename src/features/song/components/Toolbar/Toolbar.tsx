@@ -1,5 +1,5 @@
 import { ActionIcon, Text, Tooltip } from "@mantine/core";
-import { IconArrowLeft, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { IconArrowLeft, IconChevronLeft, IconChevronRight, IconMaximize, IconMinimize } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 import FontControl from "./FontControl";
 import ScrollControl from "./ScrollControl";
@@ -27,6 +27,7 @@ type Props = {
   nextSongId?: string;
   onTransposeDecrease: () => void;
   onTransposeIncrease: () => void;
+  onTransposeReset: () => void;
   onScrollToggle: () => void;
   onScrollSpeedDecrease: () => void;
   onScrollSpeedIncrease: () => void;
@@ -36,6 +37,7 @@ type Props = {
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
   onNavigateSetlist?: () => void;
+  onNavigateBack?: () => void;
 };
 
 export default function Toolbar({
@@ -52,6 +54,7 @@ export default function Toolbar({
   nextSongId,
   onTransposeDecrease,
   onTransposeIncrease,
+  onTransposeReset,
   onScrollToggle,
   onScrollSpeedDecrease,
   onScrollSpeedIncrease,
@@ -61,6 +64,7 @@ export default function Toolbar({
   onNavigatePrev,
   onNavigateNext,
   onNavigateSetlist,
+  onNavigateBack,
 }: Props) {
   const group = toolbarStyles.toolbarGroup;
   const button = toolbarStyles.toolbarButton;
@@ -68,6 +72,7 @@ export default function Toolbar({
 
   return (
     <div style={toolbarStyles.toolbar}>
+      {/* Navegação de repertório (quando aberto via setlist) */}
       {onNavigateSetlist && (
         <div style={{ ...group, gap: 4 }}>
           <Tooltip label="Voltar ao repertório">
@@ -93,6 +98,17 @@ export default function Toolbar({
         </div>
       )}
 
+      {/* Voltar ao catálogo (quando NÃO está em repertório) */}
+      {!onNavigateSetlist && onNavigateBack && (
+        <div style={{ ...group, gap: 4 }}>
+          <Tooltip label="Voltar ao catálogo">
+            <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={onNavigateBack}>
+              <IconArrowLeft size={15} />
+            </ActionIcon>
+          </Tooltip>
+        </div>
+      )}
+
       <TransposeControl
         transpose={transpose}
         currentKey={currentKey}
@@ -101,6 +117,7 @@ export default function Toolbar({
         buttonStyle={button}
         onDecrease={onTransposeDecrease}
         onIncrease={onTransposeIncrease}
+        onReset={onTransposeReset}
       />
 
       <ScrollControl
@@ -124,13 +141,7 @@ export default function Toolbar({
       />
 
       <div style={group}>
-        <Tooltip
-          label={
-            ultraCompact
-              ? "Desativar modo ultra compacto"
-              : "Ativar modo ultra compacto"
-          }
-        >
+        <Tooltip label={ultraCompact ? "Sair do modo performance" : "Modo performance (oculta distrações)"}>
           <ActionIcon
             size="sm"
             radius="md"
@@ -139,7 +150,7 @@ export default function Toolbar({
             style={ultraCompact ? undefined : iconButton}
             onClick={onToggleUltraCompact}
           >
-            UC
+            {ultraCompact ? <IconMinimize size={14} /> : <IconMaximize size={14} />}
           </ActionIcon>
         </Tooltip>
       </div>

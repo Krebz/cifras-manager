@@ -74,6 +74,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
         nextSongId={nextSongId}
         onTransposeDecrease={() => setTranspose((current) => current - 1)}
         onTransposeIncrease={() => setTranspose((current) => current + 1)}
+        onTransposeReset={() => setTranspose(0)}
         onScrollToggle={() => setIsScrolling((current) => !current)}
         onScrollSpeedDecrease={() => {
           const next = Math.max(1, scrollSpeed - 1);
@@ -91,6 +92,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
         onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
         onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
         onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
+        onNavigateBack={!setlistId ? () => window.history.back() : undefined}
       />
       <div style={styles.songContainer}>
         <SongViewer
