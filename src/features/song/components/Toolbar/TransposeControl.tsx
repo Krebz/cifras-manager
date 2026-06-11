@@ -9,6 +9,7 @@ type Props = {
   buttonStyle: CSSProperties;
   onDecrease: () => void;
   onIncrease: () => void;
+  onReset: () => void;
 };
 
 export default function TransposeControl({
@@ -19,7 +20,10 @@ export default function TransposeControl({
   buttonStyle,
   onDecrease,
   onIncrease,
+  onReset,
 }: Props) {
+  const isTransposed = transpose !== 0;
+
   return (
     <div style={groupStyle}>
       <Tooltip label="Diminuir tom">
@@ -28,29 +32,38 @@ export default function TransposeControl({
         </Button>
       </Tooltip>
 
-      <Text
-        size="sm"
-        fw="bold"
-        style={{
-          color: isDark ? "#93c5fd" : "#c4b5fd",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {currentKey}
-        {transpose !== 0 && (
-          <span
-            style={{
-              fontSize: "12px",
-              marginLeft: "4px",
-              opacity: isDark ? 0.7 : 1,
-              color: isDark ? "#cbd5e1" : "#94a3b8",
-            }}
-          >
-            ({transpose > 0 ? "+" : ""}
-            {transpose})
-          </span>
-        )}
-      </Text>
+      <Tooltip label={isTransposed ? "Voltar ao tom original" : "Tom original"} disabled={!isTransposed}>
+        <Text
+          size="sm"
+          fw="bold"
+          component={isTransposed ? "button" : "span"}
+          onClick={isTransposed ? onReset : undefined}
+          style={{
+            color: isTransposed ? (isDark ? "#fbbf24" : "#d97706") : (isDark ? "#93c5fd" : "#c4b5fd"),
+            whiteSpace: "nowrap",
+            cursor: isTransposed ? "pointer" : "default",
+            background: "none",
+            border: "none",
+            padding: 0,
+            font: "inherit",
+            fontWeight: "bold",
+            textDecoration: isTransposed ? "underline dotted" : "none",
+          }}
+        >
+          {currentKey}
+          {isTransposed && (
+            <span
+              style={{
+                fontSize: "12px",
+                marginLeft: "4px",
+                opacity: 0.8,
+              }}
+            >
+              ({transpose > 0 ? "+" : ""}{transpose})
+            </span>
+          )}
+        </Text>
+      </Tooltip>
 
       <Tooltip label="Aumentar tom">
         <Button size="xs" radius="md" variant="light" style={buttonStyle} onClick={onIncrease}>
