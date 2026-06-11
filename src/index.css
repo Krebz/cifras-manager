@@ -30,3 +30,18 @@ body {
 * {
   box-sizing: border-box;
 }
+
+@keyframes songSlideFromRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes songSlideFromLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes songFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
