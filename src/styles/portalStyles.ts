@@ -261,8 +261,9 @@ export const portalStyles = (isDark: boolean) => ({
     margin: "20px 0",
   },
   select: {
+    flex: "1 1 160px",
     minHeight: "46px",
-    minWidth: "190px",
+    minWidth: 0,
     padding: "0 12px",
     borderRadius: "12px",
     border: isDark
