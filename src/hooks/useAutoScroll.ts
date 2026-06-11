@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-export function useAutoScroll() {
+export function useAutoScroll(initialSpeed = 5) {
   const [isScrolling, setIsScrolling] = useState(false);
-  const [scrollSpeed, setScrollSpeed] = useState(1);
+  const [scrollSpeed, setScrollSpeed] = useState(initialSpeed);
 
   useEffect(() => {
     if (!isScrolling) return;
