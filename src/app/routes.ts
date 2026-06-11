@@ -1,15 +1,19 @@
-export type NavigationPage = "home" | "songs" | "management" | "contact";
+export type NavigationPage = "home" | "songs" | "setlists" | "management" | "contact";
 
 export type AppRoute =
   | { page: "home" }
   | { page: "songs"; query: string }
+  | { page: "setlists" }
+  | { page: "setlist"; setlistId: string }
   | { page: "management" }
   | { page: "contact" }
-  | { page: "song"; songId: string };
+  | { page: "song"; songId: string; setlistId?: string };
 
 export const routes = {
   home: "/",
   songs: "/musicas",
+  setlists: "/repertorios",
+  setlist: (setlistId: string) => `/repertorios/${setlistId}`,
   management: "/gestao-cifras",
   contact: "/contato",
   song: (songId: string) => `/musicas/${songId}`,
@@ -29,6 +33,8 @@ export function routePathFor(page: NavigationPage) {
   switch (page) {
     case "songs":
       return routes.songs;
+    case "setlists":
+      return routes.setlists;
     case "management":
       return routes.management;
     case "contact":
@@ -36,4 +42,8 @@ export function routePathFor(page: NavigationPage) {
     default:
       return routes.home;
   }
+}
+
+export function songInSetlistPathFor(songId: string, setlistId: string) {
+  return `${routes.song(songId)}?repertorio=${setlistId}`;
 }

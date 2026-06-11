@@ -12,6 +12,7 @@ type Props = {
 const links: Array<{ id: NavigationPage; label: string }> = [
   { id: "home", label: "Home" },
   { id: "songs", label: "Lista" },
+  { id: "setlists", label: "Repertórios" },
   { id: "management", label: "Gestão de cifra" },
   { id: "contact", label: "Contato" },
 ];
