@@ -1,4 +1,5 @@
-import { ActionIcon, Tooltip } from "@mantine/core";
+import { ActionIcon, Text, Tooltip } from "@mantine/core";
+import { IconArrowLeft, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 import FontControl from "./FontControl";
 import ScrollControl from "./ScrollControl";
@@ -20,6 +21,10 @@ type Props = {
   isDark: boolean;
   ultraCompact: boolean;
   toolbarStyles: ToolbarStyles;
+  setlistId?: string;
+  setlistName?: string;
+  prevSongId?: string;
+  nextSongId?: string;
   onTransposeDecrease: () => void;
   onTransposeIncrease: () => void;
   onScrollToggle: () => void;
@@ -28,6 +33,9 @@ type Props = {
   onFontDecrease: () => void;
   onFontIncrease: () => void;
   onToggleUltraCompact: () => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  onNavigateSetlist?: () => void;
 };
 
 export default function Toolbar({
@@ -39,6 +47,9 @@ export default function Toolbar({
   isDark,
   ultraCompact,
   toolbarStyles,
+  setlistName,
+  prevSongId,
+  nextSongId,
   onTransposeDecrease,
   onTransposeIncrease,
   onScrollToggle,
@@ -47,6 +58,9 @@ export default function Toolbar({
   onFontDecrease,
   onFontIncrease,
   onToggleUltraCompact,
+  onNavigatePrev,
+  onNavigateNext,
+  onNavigateSetlist,
 }: Props) {
   const group = toolbarStyles.toolbarGroup;
   const button = toolbarStyles.toolbarButton;
@@ -54,6 +68,31 @@ export default function Toolbar({
 
   return (
     <div style={toolbarStyles.toolbar}>
+      {onNavigateSetlist && (
+        <div style={{ ...group, gap: 4 }}>
+          <Tooltip label="Voltar ao repertório">
+            <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={onNavigateSetlist}>
+              <IconArrowLeft size={15} />
+            </ActionIcon>
+          </Tooltip>
+          {setlistName && !ultraCompact && (
+            <Text size="xs" style={{ color: isDark ? "#94a3b8" : "#64748b", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {setlistName}
+            </Text>
+          )}
+          <Tooltip label={prevSongId ? "Música anterior" : "Primeira música"}>
+            <ActionIcon size="sm" variant="subtle" style={iconButton} disabled={!prevSongId} onClick={onNavigatePrev}>
+              <IconChevronLeft size={15} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label={nextSongId ? "Próxima música" : "Última música"}>
+            <ActionIcon size="sm" variant="subtle" style={iconButton} disabled={!nextSongId} onClick={onNavigateNext}>
+              <IconChevronRight size={15} />
+            </ActionIcon>
+          </Tooltip>
+        </div>
+      )}
+
       <TransposeControl
         transpose={transpose}
         currentKey={currentKey}
@@ -104,7 +143,6 @@ export default function Toolbar({
           </ActionIcon>
         </Tooltip>
       </div>
-
     </div>
   );
 }

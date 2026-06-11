@@ -4,16 +4,19 @@ import { transposeKey } from "../../services/transposeKey";
 import { appStyles } from "../../styles/appStyles";
 import { parseSong } from "../../utils/parseSong";
 import { getAllSongs, getSongById } from "../../services/songRepository";
+import { getSetlistById } from "../../services/setlistRepository";
 import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
+import { navigate, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
 
 type Props = {
   songId: string;
+  setlistId?: string;
   isDark: boolean;
 };
 
-export default function SongPage({ songId, isDark }: Props) {
+export default function SongPage({ songId, setlistId, isDark }: Props) {
   const { registerAccess } = useSongAccessCounts();
   const [transpose, setTranspose] = useState(0);
   const [fontSize, setFontSize] = useState(16);
@@ -28,6 +31,11 @@ export default function SongPage({ songId, isDark }: Props) {
     [currentKey, selectedSong.content, selectedSong.title],
   );
   const styles = appStyles(isDark, ultraCompact);
+
+  const setlist = setlistId ? getSetlistById(setlistId) : undefined;
+  const setlistIndex = setlist ? setlist.songIds.indexOf(songId) : -1;
+  const prevSongId = setlist && setlistIndex > 0 ? setlist.songIds[setlistIndex - 1] : undefined;
+  const nextSongId = setlist && setlistIndex < setlist.songIds.length - 1 ? setlist.songIds[setlistIndex + 1] : undefined;
 
   useEffect(() => {
     setTranspose(0);
@@ -54,6 +62,10 @@ export default function SongPage({ songId, isDark }: Props) {
         isDark={isDark}
         ultraCompact={ultraCompact}
         toolbarStyles={styles}
+        setlistId={setlistId}
+        setlistName={setlist?.name}
+        prevSongId={prevSongId}
+        nextSongId={nextSongId}
         onTransposeDecrease={() => setTranspose((current) => current - 1)}
         onTransposeIncrease={() => setTranspose((current) => current + 1)}
         onScrollToggle={() => setIsScrolling((current) => !current)}
@@ -70,6 +82,9 @@ export default function SongPage({ songId, isDark }: Props) {
           setFontSize((current) => Math.min(40, current + 2))
         }
         onToggleUltraCompact={() => setUltraCompact((current) => !current)}
+        onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
+        onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
+        onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
       />
       <div style={styles.songContainer}>
         <SongViewer
