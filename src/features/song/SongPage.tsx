@@ -28,6 +28,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const [transpose, setTranspose] = useState(0);
   const [ultraCompact, setUltraCompact] = useState(false);
   const countedSong = useRef<string | undefined>(undefined);
+  const swipeDir = useRef<"next" | "prev" | null>(null);
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
     useAutoScroll(savedScrollSpeed);
   const selectedSong = getSongById(songId) ?? getAllSongs()[0];
@@ -46,7 +47,40 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   useEffect(() => {
     setTranspose(0);
     setIsScrolling(false);
+    swipeDir.current = null;
   }, [setIsScrolling, songId]);
+
+  useEffect(() => {
+    if (!setlistId) return;
+
+    let startX = 0;
+    let startY = 0;
+
+    function onTouchStart(e: TouchEvent) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.75) return;
+      if (dx < 0 && nextSongId) {
+        swipeDir.current = "next";
+        navigate(songInSetlistRouteFor(nextSongId, setlistId));
+      } else if (dx > 0 && prevSongId) {
+        swipeDir.current = "prev";
+        navigate(songInSetlistRouteFor(prevSongId, setlistId));
+      }
+    }
+
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [setlistId, prevSongId, nextSongId]);
 
   useEffect(() => {
     if (countedSong.current === songId) {
@@ -94,7 +128,17 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
         onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
         onNavigateBack={!setlistId ? () => window.history.back() : undefined}
       />
-      <div style={styles.songContainer}>
+      <div
+        key={songId}
+        style={{
+          ...styles.songContainer,
+          animation: swipeDir.current === "next"
+            ? "songSlideFromRight 0.28s ease-out"
+            : swipeDir.current === "prev"
+            ? "songSlideFromLeft 0.28s ease-out"
+            : "songFadeIn 0.2s ease-out",
+        }}
+      >
         <SongViewer
           songDocument={songDocument}
           artist={selectedSong.artist}
