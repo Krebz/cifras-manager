@@ -36,13 +36,35 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
       </p>
 
       <div style={styles.filterBar}>
-        <input
-          aria-label="Pesquisar no catálogo"
-          placeholder="Título, artista ou categoria"
-          value={query}
-          style={styles.input}
-          onChange={(event) => setQuery(event.target.value)}
-        />
+        <div style={{ flex: "1 1 280px", position: "relative", display: "flex", alignItems: "center" }}>
+          <input
+            aria-label="Pesquisar no catálogo"
+            placeholder="Título, artista, categoria, tom ou letra..."
+            value={query}
+            style={{ ...styles.input, flex: "1 1 auto", paddingRight: query ? "40px" : undefined }}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          {query && (
+            <button
+              type="button"
+              aria-label="Limpar busca"
+              onClick={() => setQuery("")}
+              style={{
+                position: "absolute",
+                right: "10px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#94a3b8",
+                fontSize: "18px",
+                lineHeight: 1,
+                padding: "0 4px",
+              }}
+            >
+              ×
+            </button>
+          )}
+        </div>
         <select
           aria-label="Filtrar por categoria"
           value={category}
