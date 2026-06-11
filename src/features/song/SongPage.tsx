@@ -8,6 +8,7 @@ import { getSetlistById } from "../../services/setlistRepository";
 import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
+import { useUserPreferences } from "../../hooks/useUserPreferences";
 import { navigate, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
 
 type Props = {
@@ -18,12 +19,17 @@ type Props = {
 
 export default function SongPage({ songId, setlistId, isDark }: Props) {
   const { registerAccess } = useSongAccessCounts();
+  const {
+    fontSize,
+    scrollSpeed: savedScrollSpeed,
+    setFontSize,
+    setScrollSpeed: saveScrollSpeed,
+  } = useUserPreferences();
   const [transpose, setTranspose] = useState(0);
-  const [fontSize, setFontSize] = useState(16);
   const [ultraCompact, setUltraCompact] = useState(false);
   const countedSong = useRef<string | undefined>(undefined);
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
-    useAutoScroll();
+    useAutoScroll(savedScrollSpeed);
   const selectedSong = getSongById(songId) ?? getAllSongs()[0];
   const currentKey = transposeKey(selectedSong.key, transpose);
   const songDocument = useMemo(
@@ -69,18 +75,18 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
         onTransposeDecrease={() => setTranspose((current) => current - 1)}
         onTransposeIncrease={() => setTranspose((current) => current + 1)}
         onScrollToggle={() => setIsScrolling((current) => !current)}
-        onScrollSpeedDecrease={() =>
-          setScrollSpeed((current) => Math.max(1, current - 1))
-        }
-        onScrollSpeedIncrease={() =>
-          setScrollSpeed((current) => Math.min(10, current + 1))
-        }
-        onFontDecrease={() =>
-          setFontSize((current) => Math.max(16, current - 2))
-        }
-        onFontIncrease={() =>
-          setFontSize((current) => Math.min(40, current + 2))
-        }
+        onScrollSpeedDecrease={() => {
+          const next = Math.max(1, scrollSpeed - 1);
+          setScrollSpeed(next);
+          saveScrollSpeed(next);
+        }}
+        onScrollSpeedIncrease={() => {
+          const next = Math.min(10, scrollSpeed + 1);
+          setScrollSpeed(next);
+          saveScrollSpeed(next);
+        }}
+        onFontDecrease={() => setFontSize(Math.max(16, fontSize - 2))}
+        onFontIncrease={() => setFontSize(Math.min(40, fontSize + 2))}
         onToggleUltraCompact={() => setUltraCompact((current) => !current)}
         onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
         onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
