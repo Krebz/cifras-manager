@@ -5,6 +5,7 @@ import { navigate, readRoute } from "./app/router";
 import { routePathFor, type AppRoute, type NavigationPage } from "./app/routes";
 import HomePage from "./features/home/HomePage";
 import InfoPage from "./features/info/InfoPage";
+import ManagementPage from "./features/management/ManagementPage";
 import SongListPage from "./features/song/SongListPage";
 import SongPage from "./features/song/SongPage";
 import SetlistListPage from "./features/setlist/SetlistListPage";
@@ -51,8 +52,10 @@ function App() {
           <SetlistDetailPage key={route.setlistId} setlistId={route.setlistId} isDark={isDark} />
         )}
 
-        {(route.page === "management" || route.page === "contact") && (
-          <InfoPage kind={route.page} isDark={isDark} />
+        {route.page === "management" && <ManagementPage isDark={isDark} />}
+
+        {route.page === "contact" && (
+          <InfoPage kind="contact" isDark={isDark} />
         )}
 
         {route.page === "song" && (

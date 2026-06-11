@@ -40,7 +40,11 @@ export default function MainNavigation({
   return (
     <div style={{ position: "relative" }}>
       <header style={styles.navigation}>
-        <div style={styles.brand}>
+        <button
+          type="button"
+          onClick={() => handleNavigate("home")}
+          style={{ ...styles.brand, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+        >
           <span style={styles.brandMark}>
             <img
               src="/katando-cifra-logo.jpg"
@@ -49,7 +53,7 @@ export default function MainNavigation({
             />
           </span>
           Katando Cifra
-        </div>
+        </button>
 
         {isMobile ? (
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>

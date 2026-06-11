@@ -1,16 +1,59 @@
 ﻿import type { Song } from "../types/music";
-import { songs } from "../data/songs";
+import { songs as seedSongs } from "../data/songs";
+
+const STORAGE_KEY = "cifras_songs";
+
+function load(): Song[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as Song[];
+  } catch {
+    // ignore
+  }
+  persist(seedSongs);
+  return seedSongs;
+}
+
+function persist(list: Song[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    // ignore
+  }
+}
 
 export function getAllSongs(): Song[] {
-  return songs;
+  return load();
 }
 
 export function getSongById(id: string): Song | undefined {
-  return songs.find((song) => song.id === id);
+  return load().find((song) => song.id === id);
 }
 
 export function getSongAccessCounts(): Record<string, number> {
-  return Object.fromEntries(songs.map((song) => [song.id, song.accessCount]));
+  return Object.fromEntries(load().map((song) => [song.id, song.accessCount]));
+}
+
+export function createSong(data: Omit<Song, "id" | "accessCount">): Song {
+  const list = load();
+  const newSong: Song = { ...data, id: crypto.randomUUID(), accessCount: 0 };
+  persist([...list, newSong]);
+  return newSong;
+}
+
+export function updateSong(id: string, data: Partial<Omit<Song, "id">>): Song {
+  const list = load();
+  const idx = list.findIndex((s) => s.id === id);
+  if (idx === -1) throw new Error(`Song not found: ${id}`);
+  const updated = { ...list[idx], ...data };
+  const next = [...list];
+  next[idx] = updated;
+  persist(next);
+  return updated;
+}
+
+export function deleteSong(id: string): void {
+  persist(load().filter((s) => s.id !== id));
 }
 
 const normalize = (value: string) =>
