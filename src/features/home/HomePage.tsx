@@ -79,7 +79,7 @@ export default function HomePage({ isDark }: Props) {
         <form style={styles.searchForm} onSubmit={submitSearch}>
           <input
             aria-label="Buscar músicas"
-            placeholder="Buscar por título, artista ou categoria"
+            placeholder="Buscar por título, artista, tom ou letra..."
             value={query}
             style={styles.input}
             onChange={(event) => setQuery(event.target.value)}

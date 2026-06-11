@@ -19,6 +19,10 @@ const normalize = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
+// Strip [ChordName] markers from song content, keeping only lyric text
+const extractLyrics = (content: string) =>
+  content.replace(/\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim();
+
 export function getSongCategories(songsList: Song[]): string[] {
   return [...new Set(songsList.map((song) => song.category))].sort();
 }
@@ -35,8 +39,9 @@ export function searchSongs(songsList: Song[], query: string): Song[] {
   }
 
   return songsList.filter((song) => {
+    const lyrics = extractLyrics(song.content);
     const searchable = normalize(
-      `${song.title} ${song.artist} ${song.category}`,
+      `${song.title} ${song.artist} ${song.category} ${song.key} ${lyrics}`,
     );
 
     return searchable.includes(search);
