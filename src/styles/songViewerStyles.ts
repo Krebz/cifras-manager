@@ -11,8 +11,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   sectionScroll: {
-    overflowX: "auto" as const,
-    WebkitOverflowScrolling: "touch" as const,
+    overflowX: "hidden" as const,
   },
 
   section: {
@@ -92,6 +91,15 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   chorusSection: {
     backgroundColor: isDark ? "#2d1b4e" : "#f3e8ff",
     borderLeft: isDark ? "4px solid #9f7aea" : "4px solid #8b5cf6",
+    padding: ultraCompact ? "7px" : "10px",
+    borderRadius: "8px",
+    marginTop: ultraCompact ? "4px" : "8px",
+    marginBottom: ultraCompact ? "4px" : "8px",
+  },
+
+  bridgeSection: {
+    backgroundColor: isDark ? "#1a2e2b" : "#f0fdf9",
+    borderLeft: isDark ? "4px solid #4fd1c5" : "4px solid #0d9488",
     padding: ultraCompact ? "7px" : "10px",
     borderRadius: "8px",
     marginTop: ultraCompact ? "4px" : "8px",

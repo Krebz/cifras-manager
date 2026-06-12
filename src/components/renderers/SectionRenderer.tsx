@@ -17,12 +17,14 @@ export default function SectionRenderer({
   styles,
 }: Props) {
   const isChorus = section.type === "chorus";
+  const isBridge = section.type === "bridge";
 
   return (
     <div
       style={{
         ...styles.section,
         ...(isChorus ? styles.chorusSection : {}),
+        ...(isBridge ? styles.bridgeSection : {}),
       }}
     >
       <div style={styles.sectionTitle}>{getSectionLabel(section.type)}</div>
