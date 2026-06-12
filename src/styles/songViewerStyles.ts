@@ -21,7 +21,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     borderBottom: isDark
       ? "1px solid rgba(255,255,255,0.06)"
       : "1px solid rgba(148,163,184,0.18)",
-    backgroundColor: isDark
+    background: isDark
       ? "rgba(255,255,255,0.03)"
       : "rgba(255, 255, 255, 0.58)",
     borderRadius: "8px",
@@ -61,7 +61,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     gap: "6px",
     padding: ultraCompact ? "4px 8px" : "5px 10px",
     borderRadius: "999px",
-    backgroundColor: isDark ? "rgba(59,130,246,0.12)" : "rgba(37,99,235,0.10)",
+    background: isDark ? "rgba(59,130,246,0.12)" : "rgba(37,99,235,0.10)",
     color: isDark ? "#90cdf4" : "#2563eb",
     fontSize: "12px",
     fontWeight: "bold",
@@ -78,7 +78,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     gap: "6px",
     padding: ultraCompact ? "4px 8px" : "5px 10px",
     borderRadius: "999px",
-    backgroundColor: isDark ? "rgba(34,197,94,0.12)" : "rgba(22,163,74,0.10)",
+    background: isDark ? "rgba(34,197,94,0.12)" : "rgba(22,163,74,0.10)",
     color: isDark ? "#86efac" : "#15803d",
     fontSize: "12px",
     fontWeight: "bold",
@@ -89,7 +89,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   chorusSection: {
-    backgroundColor: isDark ? "#2d1b4e" : "#f3e8ff",
+    background: isDark ? "#2d1b4e" : "#f3e8ff",
     borderLeft: isDark ? "4px solid #9f7aea" : "4px solid #8b5cf6",
     padding: ultraCompact ? "7px" : "10px",
     borderRadius: "8px",
@@ -98,7 +98,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   bridgeSection: {
-    backgroundColor: isDark ? "#1a2e2b" : "#f0fdf9",
+    background: isDark ? "#1a2e2b" : "#f0fdf9",
     borderLeft: isDark ? "4px solid #4fd1c5" : "4px solid #0d9488",
     padding: ultraCompact ? "7px" : "10px",
     borderRadius: "8px",
@@ -112,7 +112,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     padding: ultraCompact ? "3px 8px" : "4px 10px",
     marginBottom: ultraCompact ? "5px" : "8px",
     borderRadius: "999px",
-    backgroundColor: isDark ? "rgba(168,85,247,0.14)" : "rgba(139,92,246,0.10)",
+    background: isDark ? "rgba(168,85,247,0.14)" : "rgba(139,92,246,0.10)",
     border: isDark
       ? "1px solid rgba(168,85,247,0.22)"
       : "1px solid rgba(139,92,246,0.18)",
@@ -130,7 +130,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   chord: {
     padding: "2px 6px",
     borderRadius: "6px",
-    backgroundColor: isDark ? "rgba(144,205,244,0.08)" : "rgba(37,99,235,0.08)",
+    background: isDark ? "rgba(144,205,244,0.08)" : "rgba(37,99,235,0.08)",
     border: isDark
       ? "1px solid rgba(144,205,244,0.12)"
       : "1px solid rgba(37,99,235,0.12)",
