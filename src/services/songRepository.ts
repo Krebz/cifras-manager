@@ -6,7 +6,17 @@ const STORAGE_KEY = "cifras_songs";
 function load(): Song[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Song[];
+    if (raw) {
+      const stored = JSON.parse(raw) as Song[];
+      const storedIds = new Set(stored.map((s) => s.id));
+      const newFromSeed = seedSongs.filter((s) => !storedIds.has(s.id));
+      if (newFromSeed.length > 0) {
+        const merged = [...stored, ...newFromSeed];
+        persist(merged);
+        return merged;
+      }
+      return stored;
+    }
   } catch {
     // ignore
   }
