@@ -5,7 +5,7 @@ export function parseLine(line: string): ParsedLine {
   const tokens: Token[] = [];
   const normalized = line.trim().toLowerCase();
 
-  const directives = ["[verse]", "[chorus]", "[bridge]", "[intro]", "[outro]"];
+  const directives = ["[verse]", "[chorus]", "[bridge]", "[intro]", "[outro]", "[note]"];
   const regex = /\[(.*?)\]/g;
 
   if (directives.includes(normalized)) {
