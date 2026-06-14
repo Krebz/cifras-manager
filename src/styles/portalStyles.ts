@@ -1,4 +1,4 @@
-export const portalStyles = (isDark: boolean, sticky = false) => ({
+export const portalStyles = (isDark: boolean) => ({
   navigation: {
     display: "flex",
     flexWrap: "wrap" as const,
@@ -15,11 +15,6 @@ export const portalStyles = (isDark: boolean, sticky = false) => ({
       ? "0 8px 24px rgba(0,0,0,0.28)"
       : "0 8px 24px rgba(15,23,42,0.10)",
     backdropFilter: "blur(18px)",
-    ...(sticky ? {
-      position: "sticky" as const,
-      top: "10px",
-      zIndex: 100,
-    } : {}),
   },
   brand: {
     display: "flex",

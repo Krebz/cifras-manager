@@ -58,14 +58,15 @@ function App() {
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
       <Stack p="xs" gap="xs" style={{ ...styles.content, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
         {!isPresentation && (
-          <MainNavigation
-            activePage={navigationPage}
-            isDark={isDark}
-            onNavigate={(page) => navigate(routePathFor(page))}
-            onToggleTheme={toggleColorScheme}
-            onInstall={installPrompt ? handleInstall : undefined}
-            sticky={isNavSticky}
-          />
+          <div style={isNavSticky ? { position: "sticky", top: "10px", zIndex: 100 } : undefined}>
+            <MainNavigation
+              activePage={navigationPage}
+              isDark={isDark}
+              onNavigate={(page) => navigate(routePathFor(page))}
+              onToggleTheme={toggleColorScheme}
+              onInstall={installPrompt ? handleInstall : undefined}
+            />
+          </div>
         )}
 
         {route.page === "home" && <HomePage isDark={isDark} />}
