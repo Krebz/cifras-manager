@@ -54,6 +54,9 @@ export default function ManagementPage({ isDark }: Props) {
       lines.push(`    key: ${JSON.stringify(song.key)},`);
       lines.push(`    category: ${JSON.stringify(song.category)},`);
       lines.push(`    accessCount: ${song.accessCount},`);
+      if (song.referenceUrl) {
+        lines.push(`    referenceUrl: ${JSON.stringify(song.referenceUrl)},`);
+      }
       lines.push(`    content: \`${content}\`,`);
       lines.push(`  },`);
     }
