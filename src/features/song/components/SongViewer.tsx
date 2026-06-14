@@ -1,6 +1,7 @@
 import { useMantineColorScheme } from "@mantine/core";
 import SectionRenderer from "../../../components/renderers/SectionRenderer";
 import { songViewerStyles } from "../../../styles/songViewerStyles";
+import { keyPrefersFlat } from "../../../services/transposeChord";
 import type { SongDocument } from "../../../types/music";
 
 type Props = {
@@ -23,6 +24,7 @@ export default function SongViewer({
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = songViewerStyles(isDark);
+  const preferFlat = keyPrefersFlat(songDocument.key);
 
   return (
     <div
@@ -65,6 +67,7 @@ export default function SongViewer({
           transpose={transpose}
           fontSize={fontSize}
           styles={styles}
+          preferFlat={preferFlat}
         />
       ))}
     </div>

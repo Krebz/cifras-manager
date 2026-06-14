@@ -1,25 +1,35 @@
 import type { ChordData } from "../types/music";
 
-const notes = [
-  "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
-];
+const sharpNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const flatNotes  = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 
-// Enarmônicos: converte bemóis para o sustenido equivalente antes de transpositar
 const FLAT_TO_SHARP: Record<string, string> = {
   Db: "C#", Eb: "D#", Gb: "F#", Ab: "G#", Bb: "A#", Cb: "B", Fb: "E",
 };
 
-function transposeNote(note: string, steps: number): string {
-  const normalized = FLAT_TO_SHARP[note] ?? note;
-  const idx = notes.indexOf(normalized);
-  if (idx === -1) return note; // nota desconhecida: mantém
-  return notes[(idx + steps + notes.length) % notes.length];
+// Tonalidades que usam bemóis na armadura de clave
+const FLAT_KEYS = new Set([
+  "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb",
+  "Dm", "Gm", "Cm", "Fm", "Bbm", "Ebm", "Abm",
+]);
+
+export function keyPrefersFlat(key: string): boolean {
+  const root = key.trim().replace(/\s*(m|min|menor)$/i, "m").replace(/\s+.*/,"");
+  return FLAT_KEYS.has(root);
 }
 
-export function transposeChord(chord: ChordData, steps: number): ChordData {
+function transposeNote(note: string, steps: number, preferFlat: boolean): string {
+  const normalized = FLAT_TO_SHARP[note] ?? note;
+  const idx = sharpNotes.indexOf(normalized);
+  if (idx === -1) return note;
+  const result = (idx + steps + sharpNotes.length * 2) % sharpNotes.length;
+  return (preferFlat ? flatNotes : sharpNotes)[result];
+}
+
+export function transposeChord(chord: ChordData, steps: number, preferFlat = false): ChordData {
   return {
     ...chord,
-    root: transposeNote(chord.root, steps),
-    bass: chord.bass ? transposeNote(chord.bass, steps) : chord.bass,
+    root: transposeNote(chord.root, steps, preferFlat),
+    bass: chord.bass ? transposeNote(chord.bass, steps, preferFlat) : chord.bass,
   };
 }

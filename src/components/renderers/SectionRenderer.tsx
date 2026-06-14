@@ -8,6 +8,7 @@ type Props = {
   transpose: number;
   fontSize: number;
   styles: ReturnType<typeof songViewerStyles>;
+  preferFlat?: boolean;
 };
 
 export default function SectionRenderer({
@@ -15,6 +16,7 @@ export default function SectionRenderer({
   transpose,
   fontSize,
   styles,
+  preferFlat = false,
 }: Props) {
   const isChorus = section.type === "chorus";
   const isBridge = section.type === "bridge";
@@ -54,6 +56,7 @@ export default function SectionRenderer({
                 line={line}
                 transpose={transpose}
                 fontSize={isNote ? noteFontSize : fontSize}
+                preferFlat={preferFlat}
               />
             </div>
           );

@@ -5,9 +5,10 @@ type Props = {
   line: ParsedLine;
   transpose: number;
   fontSize: number;
+  preferFlat?: boolean;
 };
 
-function buildChunks(line: ParsedLine, transpose: number): MusicalChunk[] {
+function buildChunks(line: ParsedLine, transpose: number, preferFlat: boolean): MusicalChunk[] {
   const chunks: MusicalChunk[] = [];
   let pendingChord: MusicalChunk["chord"];
 
@@ -15,7 +16,7 @@ function buildChunks(line: ParsedLine, transpose: number): MusicalChunk[] {
     if (token.type === "directive") continue;
     if (token.type === "chord") {
       if (pendingChord !== undefined) chunks.push({ chord: pendingChord, lyric: "" });
-      pendingChord = transposeChord(token.value, transpose);
+      pendingChord = transposeChord(token.value, transpose, preferFlat);
     } else if (token.type === "text") {
       chunks.push({ chord: pendingChord, lyric: token.value });
       pendingChord = undefined;
@@ -76,7 +77,7 @@ function formatChord(chord: MusicalChunk["chord"]): string {
   return `${chord.root}${chord.suffix}${chord.bass ? `/${chord.bass}` : ""}`;
 }
 
-export default function LineRenderer({ line, transpose, fontSize }: Props) {
+export default function LineRenderer({ line, transpose, fontSize, preferFlat = false }: Props) {
   const hasChords = line.tokens.some((t) => t.type === "chord");
 
   if (!hasChords) {
@@ -92,7 +93,7 @@ export default function LineRenderer({ line, transpose, fontSize }: Props) {
     );
   }
 
-  const chunks = buildChunks(line, transpose);
+  const chunks = buildChunks(line, transpose, preferFlat);
   const isInstrumental = chunks.every((c) => !c.lyric.trim());
   const groups = groupByWordBoundary(expandToWordPieces(chunks));
 
