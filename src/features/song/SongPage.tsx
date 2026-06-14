@@ -32,6 +32,9 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const countedSong = useRef<string | undefined>(undefined);
   const swipeDir = useRef<"next" | "prev" | null>(null);
+  const fontSizeRef = useRef(fontSize);
+  useEffect(() => { fontSizeRef.current = fontSize; }, [fontSize]);
+  const pinch = useRef({ active: false, initialDist: 0, baseSize: 0 });
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
     useAutoScroll(savedScrollSpeed);
   const selectedSong = getSongById(songId) ?? getAllSongs()[0];
@@ -86,6 +89,35 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
       document.removeEventListener("touchend", onTouchEnd);
     };
   }, [setlistId, prevSongId, nextSongId]);
+
+  // Pinch-to-font-size
+  useEffect(() => {
+    function dist(t: TouchList) {
+      return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    }
+    function onStart(e: TouchEvent) {
+      if (e.touches.length !== 2) return;
+      pinch.current = { active: true, initialDist: dist(e.touches), baseSize: fontSizeRef.current };
+    }
+    function onMove(e: TouchEvent) {
+      const p = pinch.current;
+      if (!p.active || e.touches.length !== 2) return;
+      const scale = dist(e.touches) / p.initialDist;
+      const next = Math.round(p.baseSize * scale);
+      setFontSize(Math.min(40, Math.max(10, next)));
+    }
+    function onEnd(e: TouchEvent) {
+      if (e.touches.length === 0) pinch.current.active = false;
+    }
+    document.addEventListener("touchstart", onStart, { passive: true });
+    document.addEventListener("touchmove", onMove, { passive: true });
+    document.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      document.removeEventListener("touchstart", onStart);
+      document.removeEventListener("touchmove", onMove);
+      document.removeEventListener("touchend", onEnd);
+    };
+  }, [setFontSize]);
 
   // Access count
   useEffect(() => {
