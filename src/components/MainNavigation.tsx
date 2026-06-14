@@ -10,6 +10,7 @@ type Props = {
   onNavigate: (page: NavigationPage) => void;
   onToggleTheme: () => void;
   onInstall?: () => void;
+  sticky?: boolean;
 };
 
 const links: Array<{ id: NavigationPage; label: string }> = [
@@ -26,8 +27,9 @@ export default function MainNavigation({
   onNavigate,
   onToggleTheme,
   onInstall,
+  sticky,
 }: Props) {
-  const styles = portalStyles(isDark);
+  const styles = portalStyles(isDark, sticky);
   const isMobile = useMediaQuery("(max-width: 640px)");
   const [menuOpen, { toggle: toggleMenu, close: closeMenu }] = useDisclosure(false);
 

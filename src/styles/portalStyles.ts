@@ -1,4 +1,4 @@
-export const portalStyles = (isDark: boolean) => ({
+export const portalStyles = (isDark: boolean, sticky = false) => ({
   navigation: {
     display: "flex",
     flexWrap: "wrap" as const,
@@ -7,14 +7,19 @@ export const portalStyles = (isDark: boolean) => ({
     gap: "12px",
     padding: "10px 14px",
     borderRadius: "14px",
-    backgroundColor: isDark ? "rgba(15,23,42,0.78)" : "rgba(255,255,255,0.78)",
+    backgroundColor: isDark ? "rgba(15,23,42,0.88)" : "rgba(255,255,255,0.88)",
     border: isDark
       ? "1px solid rgba(148,163,184,0.25)"
       : "1px solid rgba(148,163,184,0.32)",
     boxShadow: isDark
-      ? "0 8px 24px rgba(0,0,0,0.18)"
-      : "0 8px 24px rgba(15,23,42,0.08)",
-    backdropFilter: "blur(14px)",
+      ? "0 8px 24px rgba(0,0,0,0.28)"
+      : "0 8px 24px rgba(15,23,42,0.10)",
+    backdropFilter: "blur(18px)",
+    ...(sticky ? {
+      position: "sticky" as const,
+      top: "10px",
+      zIndex: 100,
+    } : {}),
   },
   brand: {
     display: "flex",

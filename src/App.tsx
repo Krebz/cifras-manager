@@ -52,6 +52,7 @@ function App() {
     route.page;
 
   const isPresentation = route.page === "song" && !!route.setlistId;
+  const isNavSticky = route.page !== "song" && route.page !== "setlist";
 
   return (
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
@@ -63,6 +64,7 @@ function App() {
             onNavigate={(page) => navigate(routePathFor(page))}
             onToggleTheme={toggleColorScheme}
             onInstall={installPrompt ? handleInstall : undefined}
+            sticky={isNavSticky}
           />
         )}
 
