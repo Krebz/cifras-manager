@@ -6,8 +6,9 @@ export const songs: Song[] = [
     title: "Compadesse-te",
     artist: "Músicas Católicas",
     key: "D",
-    category: "Perdão",
+    category: "Ato Penitencial",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/Do1u-L6H3xQ?si=R81tAt6XyeDBQonq",
     content: `Senh[D9]or tem pieda[E/D]de   /   Senh[C#m]or tem pieda[D9]–a–[A/C#]de  de n[Bm]ós          
 Compade[C7M]ce-te   /   Senh[Em]or ..[G]. Tem pied[A]ade
 [chorus]
@@ -24,6 +25,7 @@ Compade[C7M]ce-te   /   Senh[Em]or..[G]. Tem pieda[A]de`,
     key: "D",
     category: "Glória",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/LKczrJp8cXg?si=ZqHGu7Rgkn4diOwo",
     content: `Gl[D9]ória a Deus nas alt[C9]uras
 E p[G]az na Terra
 Aos homens por Ele am[D9]ados
@@ -123,16 +125,17 @@ Pela [Bm]nossa humanid[E]ade... / interced[A]ei!`,
     key: "A",
     category: "Louvor",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/QVDD1p9fi_w?si=l2wJzRTG9UpvxKp8",
     content: `[A]  Manifest[E]ou o poder do seu [B]braço
 [A]  Desconcer[E]tou os corações as[B]soberbados
 [A]  Derrubou do [E]trono os poder[B]osos
 [A]  Exalto[E]u os hum[B]ildes
-[chorus]
+[bridge]
 M[G#m]inha alma glorif[D#m]ica o Senh[B]or
 [A]  Meu espírito e[E]xulta de aleg[B]ria
 [G#m]Minha alma glori[D#m]fica o Senh[B]or
 [A]  Meu espírito e[E]xulta de aleg[B]ria
-[bridge]
+[chorus]
 [A]  Em D[E]eus, meu Salvad[B]or / Meu espírito ex[A]ulta
   Em D[E]eus, meu Salvad[B]or / Meu espírito ex[A]ulta
   Em D[E]eus, meu Salvad[B]or
@@ -151,6 +154,7 @@ M[G#m]inha alma glorif[D#m]ica o Senh[B]or
     key: "Em",
     category: "Santo",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/UpvZ5jCEHCo?si=7HTwq2UQrBsZDbr9",
     content: `[chorus]
 [Em]Santo, S[D]anto, S[C]anto é o Senh[B7]or! (bis)
 [verse]
@@ -172,6 +176,7 @@ Hos[C]ana nas alt[B7]uras!
     key: "Em",
     category: "Santo",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/IHr74TMk27w?si=UO46C5ewOQjJ16TK",
     content: `[Em]Santo, S[D/F#]anto, Sa[C9]nto Senh[Em]or
 Deus do Un[D/F#]iverso, te[C9]rra e céus
 Estão [D]cheios da v[D#°]ossa Glóri[G]a
@@ -228,6 +233,7 @@ E p[C#m]az na terra aos h[B9]omens por Ele am[A9]ados. (2x)
     key: "D",
     category: "Mariana",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/W__XtnTtEBA?si=IsbuCix3zL7C0LV2",
     content: `Ô ||: Aug[D]usta Rainha do c[A]éu soberana dos [G]anjos
 Rece[D]beste de Deus o pod[A]er e a miss[G]ão
 De pis[Bm7]ar a cabeça do [A/C#]mau e por [D/F#]isso rogamos a v[G]ós
@@ -256,6 +262,7 @@ Ao teu [Bm7]comando os anjos [A/C#]batalhar[D]ão e ven[G]cerão`,
     key: "E",
     category: "Mariana",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/QnOu5W0Hnho?si=H9bZ6iPGqeLOXC6U",
     content: `Gr[E]aças Te damos N[F#m]ossa Senhora, V[G#m]irgem Imacul[A]ada
 Ava[E]nça como aurora, Est[F#m]rela da manhã, [G#m]Mãe da espe[A]rança
 [bridge]
@@ -281,6 +288,7 @@ A M[F#m]ãe amorosa que a[B7(4/9)]os pés da Cruz C[E]risto nos deu! :||`,
     key: "A",
     category: "Meditação",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/UepViQAlkwM?si=Jchz-o_PlOidaElc",
     content: `[A]Entrei no Teu jard[F#m]im
 Pra estar contigo, [E9/C#]Pai
 Sentar naquele b[Bm7]anco
@@ -312,6 +320,7 @@ Embal[E/G#]ado em Teus beijos [D9]Papai
     key: "B",
     category: "Adoração",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/CpcBGoBaeUM?si=2qMdfZVkGnxgFdX5",
     content: `[intro]
 [G#m7]  [E9]  [B]  [D#m] [2x]
 [verse]
@@ -331,6 +340,7 @@ Y[E9]eshua, Tu [B2]és tão l[D#m]indo`,
     key: "G",
     category: "Louvor",
     accessCount: 0,
+    referenceUrl: "https://youtu.be/kyiEboFeDd4?si=Z1J-7EQj_3_dzgaR",
     content: `[intro]
 [G]  [D/F#]  [Em]  [C]
 [verse]
@@ -355,5 +365,485 @@ Eu nem quer[C]o viver
 [G]Eis-me aqui Senh[D/F#]or
 Dá-me um coração semelhante ao T[Em]eu
 Enche-me de Ti até transb[C]ordar`,
+  },
+  {
+    id: "95a9157a-06fd-4643-828e-74cd4c8471c5",
+    title: "Pão e Vinho",
+    artist: "Ministério Amor e Adoração",
+    key: "A",
+    category: "Ofertório",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/m_piMLNVbVE?si=qx9x3lw9geywOmjG",
+    content: `Pão e v[A9]inho Te apresent[E/G#]amos nesse alt[F#m7]ar
+Como sin[C#m7]al que Tu rec[D9]olhes nossa of[C#m7]erta
+Tudo o que s[Bm7]omos deix[Bm7/A]amos aqu[E]i
+
+Pão e v[A9]inho Te apresent[E/G#]amos nesse alt[F#m7]ar
+Como sin[C#m7]al que Tu rec[D9]olhes nossa of[C#m7]erta
+Tudo o que s[Bm7]omos deixamos aqu[E]i
+[chorus]
+[A/C#]     É um mil[D9]agre que se d[A/C#]á
+                        
+O pão e o v[D9]inho em c[F°]orpo e s[F#m7]angue
+Vão se tr[Bm]ansformar[E]
+
+[A/C#]     Não há lim[D9]ites para o am[A/C#]or
+Vem transform[D9]ar também minha v[F#m7]ida
+Oh Senh[Bm7]or, é T[E]eu esse milagre de am[A4]or[A9]
+
+[verse]
+
+Pão e v[D9]inho Te apresent[A]amos nesse alt[Bm7]ar
+Como sin[F#m7]al que Tu rec[G9]olhes nossa of[F#m7]erta
+Tudo o que s[Em7]omos deixamos aqu[A]i
+
+Pão e v[D9]inho Te apresent[A]amos nesse alt[Bm7]ar
+Como sin[F#m7]al que Tu rec[G9]olhes nossa of[F#m7]erta
+Tudo o que s[Em7]omos deixamos aqu[A]i
+
+[chorus]
+
+[D/F#]     É um mil[G9]agre que se d[F#m7]á
+O pão e o v[G9]inho em corpo e s[Bm7]angue
+Vão se tr[Em7]ansformar[A]
+
+[D/F#]     Não há lim[G9]ites para o am[F#m7]or
+Vem transform[G9]ar também minha v[Bm7]ida
+Oh Senh[Em7]or, é T[A]eu esse milagre de am[D9]or[Bm7][Em7]
+
+[outro]
+
+É T[A]eu esse milagre de am[D9]or[Bm7][Em7]
+É T[A]eu esse milagre de am[D9]or`,
+  },
+  {
+    id: "823efe9f-f79d-439c-ab45-a5d168a64512",
+    title: "Tú nós atraíste",
+    artist: "Comunidade Católica Shalom",
+    key: "D",
+    category: "Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/sB7SGXEy0Uw?si=w_6D4ihpNMAQmiFA",
+    content: `[chorus]
+Cada v[D]ez que com[Em]emos deste p[F#m]ão
+O Teu c[G]orpo nos ren[Bm]ova nesta c[Em7]omunh[A4]ão[A]
+Cada v[D]ez que beb[Em]emos deste v[F#m]inho
+O Teu s[G]angue nos transf[Bm]orma nesta c[Em]omunh[A]ão de am[D]or
+[verse]
+   Quem c[F#m7]ome deste p[Bm]ão viver[G]á par[A]a semp[D]re
+Só [F#m]Tu tens pa[Bm]lavras d[A]e v[G]ida, vida et[D]erna
+P[A]ara onde [Bm]ir l[G]onge de T[D]i
+[F#m]Tu nos atr[Bm7]aíste o[A]h Senh[G]or, [Em7]eis nos aq[A4]ui[A]
+[verse]
+   [F#m7]Deus entre n[Bm]ós, holoc[G]austo de[A] amo[D]r
+Et[F#m]erna e n[Bm]ova ali[A]anç[G]a em teu s[D]angue
+Ele[A]vado na c[Bm]ruz cord[G]eiro de D[D]eus
+T[F#m]u nos atra[Bm7]íste o[A]h Senh[G]or, n[Em7]ós somos t[A4]eus[A]
+[verse]
+ [F#m7]Vimos-te Senh[Bm]or tua gl[G]ória ref[A]ugi[D]r
+Em t[F#]eu lado ab[Bm]erto en[A]contr[G]amos, plena p[D]az
+Em t[A]eu corpo s[Bm]anto s[G]omos recri[D]ados
+[F#m]Tu nos atr[Bm7]aíste o[A]h Senh[G]or, [Em7]vivo est[A4]ás[A]
+[verse]
+A a ig[F#m7]reja tua esp[Bm]osa te esp[G]era co[A]m ard[D]or
+[F#m]Alimento [Bm]de etern[A]ida[G]de, o teu c[D]orpo
+N[A]esta comunh[Bm]ão banqu[G]ete do c[D]éu
+[F#m]Tu nos atr[Bm]aíste [A]oh Senh[G]or, [Em]eterno b[A]em[B]`,
+  },
+  {
+    id: "cde94b93-7f31-4950-99ca-ff2bba5f6567",
+    title: "Santo",
+    artist: "Frei Gilson",
+    key: "E",
+    category: "Santo",
+    accessCount: 0,
+    content: `[chorus]
+Sant[E]o, Santo, Sant[B]o
+Senhor D[A]eus do uni[F#m]verso
+Senhor D[A]eus do univ[B]erso
+[verse]
+O céu e a t[E]erra proclamam vossa gl[B]ória
+Hos[A]a....[F#m].na nas alt[B]uras
+Bendito o que v[E]em em nome do Senh[B]or
+Hos[A]a....[F#m].na nas alt[B]uras
+[chorus]
+Sant[E]o, Santo, Sant[B]o
+Senhor D[A]eus do uni[F#m]verso
+Senhor D[A]eus do univ[B]erso
+Sant[E]o`,
+  },
+  {
+    id: "5146e0a1-3f65-4a02-a76d-b29f1c879f47",
+    title: "Kyrie",
+    artist: "Capella",
+    key: "A",
+    category: "Ato Penitencial",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/p3__LsTHMzQ?si=EqzGCyL-EKx97sIJ",
+    content: `Senho[A]r, que v[Bm]iestes ao [C#m]mundo [D]para nos sal[A]var
+Tem pie[Bm]dade de nó[E]s
+[chorus]
+K[F#m]yri__[C#m7]e,   K[D7M]yri__[A9]e, K[Bm7]yrie El[A9]ei_s[E]on
+K[F#m]yri__[C#m7]e,   K[D7M]yri__[A9]e, K[Bm7]yrie El[E]ei_s[A9]on  [E7]
+[verse]
+Ó C[A]risto, [Bm]que continu[C#m]ais  [D]a nos visit[A]ar
+Tem pie[Bm]dade de [E]nós
+[chorus]    
+Chr[F#m]is__t[C#m7]e, Chr[D7M]is__t[A9]e, Chr[Bm7]iste El[A9]ei_s[E]on
+Chr[F#m]is__t[C#m7]e, Chr[D7M]is__t[A9]e, Chr[Bm7]iste El[E]ei_s[A9]on  [E7]
+[verse]
+Sen[A]hor, que vi[Bm]reis um [C#m]dia p[D]ara nos julg[A]ar
+Tem pie[Bm]dade de n[E]ós
+[chorus]
+K[F#m]yri__[C#m7]e,   K[D7M]yri__[A9]e, K[Bm7]yrie El[A9]ei_s[E]on
+K[F#m]yri__[C#m7]e,   K[D7M]yri__[A9]e, K[Bm7]yrie El[E]ei_s[D7M]on  [A9]`,
+  },
+  {
+    id: "135230a8-d90f-4e9d-ba63-b914c8130c65",
+    title: "Kyrie Eleison",
+    artist: "JMJ Rio 2023",
+    key: "Bm",
+    category: "Ato Penitencial",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/-s3Szq3e49c?si=yxI3MDmdqUkf-kib",
+    content: `Senh[Bm7]or, que vie[A9]stes salva[G]r
+Os coraç[Bm7]ões arrepend[A/C#]i - do[F#4]s  [F#]
+[chorus]
+Kyri[D]e El[G/D]e  ei  s[A/C#]on,   El[F#7]e  ei s[Bm]on, El[E]é  ei  s[A9]on (2x)
+[verse]
+Ó C[Bm7]risto que vi[A9]estes cha[G]mar
+Os pecad[Bm7]ores humil[A/C#]ha - d[F#4]os[F#]
+[chorus]
+Christ[D]e El[G/D]e  ei  [A/C#]son,  El[F#7]e  ei  [Bm]son, El[E]e  ei  s[A9]on (2x)
+[verse]
+Senh[Bm7]or que intercede[A9]is por n[G]ós
+Junto a Deus [Bm7]pai que nos per[A/C#]do  -  [F#4]a    [F#]
+[chorus]
+Kyri[D]e El[G/D]e  ei  s[A/C#]on,   El[F#7]e  ei s[Bm]on, El[E]é  ei  s[A9]on (2x)`,
+  },
+  {
+    id: "e77d397e-6107-463b-992f-6c480c428aa4",
+    title: "Aleluia! Com alegria, aclamemos",
+    artist: "Coral Palestina",
+    key: "A",
+    category: "Aclamação Evangelho",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/8nk81x6tL2A?si=aHum8VBX4Gow69JI",
+    content: `[chorus]
+[A]Aleluia! [D]Aleluia, [A]Alelui[E7]a!
+[A]Com alegria [D]aclamemos
+[A]A Pal[E7]avra do Senho[A]r![A][D]
+[verse]
+Fala Senhor que teu cervo te escut[E]a
+Tua Palavra fortalece nossa lut[A]a
+[note]
+* Adapitar verso para a antífona do dia.`,
+  },
+  {
+    id: "e819a76b-7627-4190-bdf7-9560d7d426ed",
+    title: "Aleluia, a minh'alma abrirei",
+    artist: "Músicas Católicas",
+    key: "C",
+    category: "Aclamação Evangelho",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/iOJazAXasB4?si=gfYEwcurG1fBlIrS",
+    content: `[C]Alel[Em]uia, [F]alel[C]uia
+[F]A minh'[Dm]alma [G]abrir[G7]ei
+[C]Alel[Em]uia, a[F]lelu[C]ia
+[F]Cristo [G7]é meu Rei.[C].ei![A7]
+[verse]
+[D]Alel[F#m]uia, [G]alel[D]uia
+[G]A minh'a[Em]lma [A]abrire[A7]i
+[D]Alel[F#m]uia, [G]alel[D]uia
+[G]Cristo [A7]é meu Rei.[D].ei!`,
+  },
+  {
+    id: "edfe7fe3-bc83-478e-aeec-7bc42feda8eb",
+    title: "Tua Palavra - Aleluia",
+    artist: "Comunidade Católica Shalom",
+    key: "D",
+    category: "Aclamação Evangelho",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/RHfbDP5opQE?si=S-r47bL_SRZgv_QS",
+    content: `[chorus]
+[D]Ale...l[A]ui...a,   [Bm]A....le...l[F#m]ui...a,   [G]Ale...l[Em]ui...[A7/4]a!   [A7] (2X)
+
+[verse]
+Tua pal[G]avra é como f[D/F#]ogo
+Que faz ard[Em]er o coraç[D/F#]ão
+Traz a ver[C9]dade  e il[G/B]umina a nossa [A4]vid[A]a  (2x)
+[chorus]
+[chorus]
+[D]Ale...l[A]ui...a,   [Bm]A....le...l[F#m]ui...a,   [G]Ale...l[Em]ui...[A7/4]a!   [A7] (2X)
+[OUTRO]
+[E7]  [E]Ale...l[B]ui...a,   [C#m]A....le...l[G#m]ui...a,   [A]Ale...l[F#m]ui...[B7/4]a!   [B7] (2x)`,
+  },
+  {
+    id: "64c69d3a-7ce6-42ac-a872-3e38ea7c3317",
+    title: "Cordeiro",
+    artist: "Ministério Amor e Adoração",
+    key: "G",
+    category: "Cordeiro",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/Gn25Nl7WIFU?si=RoZJCB_qm8ZHxoLm",
+    content: `Cord[A9]eiro de D[D9/F#]eus
+Que tir[E4]ais o pecado do [A9]mundo
+Tende pied[Bm7]ade,  [C#m7]   tende pie[D9]dade, pie[E4]dad[E]e de n[A]ós
+[verse]
+Cord[A9]eiro de D[D9/F#]eus
+Que tir[E4]ais o pecado do [A9]mundo
+Tende pied[Bm7]ade,  [C#m7]   tende pie[D9]dade, pie[E4]dad[E]e de n[A]ós[E/G#]
+[outro]
+Cord[F#m7]eiro de Deus  que tir[C#m7]ais o pecado do m[D]undo
+D[E4]ai  -  n[E]os a p[D]az[A]
+[note]
+* CD O Banquete do cordeiro - CAnção Nova`,
+  },
+  {
+    id: "472a7517-5b85-4d1b-bf1e-3f1a7bce86ff",
+    title: "Cordeiro de Deus",
+    artist: "Ministério Amor e Adoração",
+    key: "G",
+    category: "Cordeiro",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/janev45m3K4?si=HuMy7_Zm5QxaDMwk",
+    content: `Cordeiro de D[G]eus que tira[Bm7]is o pecado do m[C9]undo
+Tende pie[Am7]dade, pied[D]ade de n[G]ós  [C/G]
+[verse]
+Cordeiro de D[G]eus que tira[Bm7]is o pecado do m[C9]undo
+Tende pie[Am7]dade, pied[D]ade de n[G]ós  [C/G]
+[outro]
+Cordeiro de D[G]eus que tir[Bm7]ais o pecado do m[C9]undo
+Dai-nos a p[Am7]az, a v[D]os[D7]sa p[C]az [G]`,
+  },
+  {
+    id: "7ba6841d-a09a-419a-9d78-869c79d22b17",
+    title: "Cordeiro de Deus",
+    artist: "Capella",
+    key: "Dm",
+    category: "Cordeiro",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/bhIvPGbSUgA?si=dWnrHXTyHkrpPY2R",
+    content: `[intro]
+[Dm]  [|]   [C]   [|]  [Bb9] [|] [%] [|]   [2x]
+[verse]
+Cor[Dm]deiro de Deus que ti[Am]rais o pecado do m[Bb9]undo
+Tende pie[C9]dade
+[verse]
+Cor[Dm]deiro de Deus que ti[Am]rais o pecado do m[Bb9]undo
+T[Dm]ende pied[C9]ade de n[F]ós
+[chorus]
+Cordeiro de D[Gm]eus   /   pie[Am]dade[Bb9]...
+daí nos a p[F]az   [Gm]  /    daí nos a [Am7]paz[Bb9]
+Daí nos a p[F]az.
+cordeiro de D[Gm]eus, a vossa p[Bb9]az[F][Bbm]`,
+  },
+  {
+    id: "24cf5f3f-cd70-4915-a80c-d5263260cfec",
+    title: "Em Teu Altar",
+    artist: "Ministério Adoração e Vida",
+    key: "E",
+    category: "Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/IThSoWnD2fg?si=DRIQ0NSSxOA0bCdX",
+    content: `D[E9]iante de Tua pres[G#m]ença me en[E/G#]contro, Senh[A]or, Deus infi[C#m]ni ... t[B]o
+[E]O Teu olhar me acomp[G#m]anha e [E/G#]sabes quem s[A]ou
+[E]Ao enxergar Tua gran[G#m]deza e min[E/G#]ha pequen[A]ez, eu reconh[C#m]e ... ç[B]o
+[E]Que minha história é n[G#m]ada sem o Teu am[A9]or.
+[bridge]
+Por isso v[G#m]enho Te bus[C#m]car
+Porque eu pre[F#m]ciso, meu Deus, em Teus br[B4]aços est[B]ar
+[G#m]Morar em Teu cora[C#m]ção e entre[F#m7]gar-me a Ti, inteiram[C#m]ente[B]
+[chorus]
+Me a[G#m]bandonare[A]i em [B/D#]Ti, Senh[E]or
+[G#m]Em Ti repousare[A]i
+A T[B/D#]ua ter[A/C#]nura me ac[E]olhe
+Um re[G#m]fúgio seguro encon[A]trei
+O [G#m]meu coraç[A]ão venho a [B/D#]Ti rend[E]er
+T[G#m]oma meu ser, meu quer[A]er
+Rec[B/D#]ebe, Senh[A/C#]or, minha v[E]ida
+Como p[G#m]rova viva de am[A]or
+Em Teu alt[C#m]ar, S[B]enh[E/G#]or [A] [B/D#] [E] [B] [C#m] [A] [D] [A/C#] [A9]
+[outro]
+Me abandonar[E/G#]ei no Teu am[A]or
+Em Teu alt[C#m]ar, S[B]enh[F#m7]or
+Me abandonar[E/G#]ei no Teu am[A]or
+Em Teu alt[C#m]ar S[B]enh[E]or [A] [B/D#] [E] [B] [C#m] [A9]`,
+  },
+  {
+    id: "b162a9da-93d9-40f1-ae69-beeb95b9d958",
+    title: "Corpo Santo",
+    artist: "Fátima Sousa",
+    key: "F",
+    category: "Comunão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/pPjAcnuZTdA?si=p5MlRQ0oZOWaCBLj",
+    content: `[F]Quando v[C/E]ou ao Teu en[Dm]contro
+[Bb]Receb[Gm]er Teu corpo s[C]anto
+[F]Sinto fo[C/E]rte Tua pres[Dm]ença em mim
+[Bb]Teu a[Gm]mor a me toc[C]ar.
+[bridge]
+[F]Podes to[C/E]car em mim, Se[Dm]nhor
+Podes [Dm/C]curar a minha [Bb]dor
+Podes vi[Gm]ver em mim, Se[C]nhor. (2x)
+[chorus]
+Teu Corpo S[F]anto,[C/E] a me toc[Dm]ar
+Com o Teu po[Dm/C]der a me cu[Bb]rar
+Toda minha v[Gm]ida transfor[C]mar. (2x)
+[verse]
+[F]Algo inv[C/E]ade o meu co[Dm]ração
+[Bb]Teu Corpo e S[Gm]angue me cur[C]ando
+[F]Sinto, j[C/E]á não sou ig[Dm]ual
+[Bb]Todo o meu [Gm]ser se renov[C]ando.`,
+  },
+  {
+    id: "ff020c2a-3069-4a8d-aefc-06e0e00bbc2f",
+    title: "Em Tua Presença",
+    artist: "Padre Fábio de Melo",
+    key: "G",
+    category: "Pós-Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/fk-d2tBE2-g?si=ZKXjzL9qUD47rW45",
+    content: `É T[G]eu este momento de ad[Am]oração
+Não [Bm]tenho nem palavras para me e[Am]xpressar
+No [G]brilho dessa luz que vem do [Am]teu olhar
+En[C]contro meu abr[D]igo, meu l[G]ugar
+[verse]
+E qu[G]ando estamos juntos entre n[Am]ós estás
+Pa[Bm]ssando em nosso meio a nos ab[Am]ençoar
+E [G]tocas com ternura com a [Am]tua mão
+A [C]cada um que a[D]bre o cor[G]ação [C/D]
+[chorus]
+Minhas [G]mãos[D] se e[Em]levam, minha [Am]voz te [D]louva
+O meu [Bm]ser se a[E]legr[E7]a quando estou[Am] 
+Em Tua p[D]resença Sen[G]hor. (2x)`,
+  },
+  {
+    id: "446c8f19-b604-49b7-acc9-be05533ae33e",
+    title: "Estou Aqui",
+    artist: "Anjos de Resgate",
+    key: "G",
+    category: "Pós-Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/uR32nEfW8Dg?si=bQY3V35SXWnl7z7r",
+    content: `Estou aqu[E]i
+Pra ser am[B]ado e te amar
+Te olhar nos o[A9]lhos e deix[F#m7]ar-me apa[B7(11)]ixonar [B7]
+
+Diante de t[E]i
+Pra me rend[B]er ao teu amor
+E confess[A9]ar minh[E/G#]as fraqu[F#m7]ezas,  sou pecad[B7(11)]or!  [B7]
+[bridge]
+Tamb[F#m7]ém estou aqui
+Pra ped[C#m7(9)]ir perdão
+Pelas a[F#m7]lmas que a[E/G#]inda n[A9]ão  buscam teu c[B7(11)]oração [B]
+[chorus]
+Te am[E]ar    (te am[B/D#]ar)     por quem não te a[C#m]ma [C#m/B]
+Te ador[A]ar  [F#m7/E] por quem não te ad[D]ora..[B].
+Esper[E]ar   [B/D#]    por quem não [A9]espera em t[E/G#]i
+Pelos q[F#m7]ue não creem e[B]u, estou aq[E]ui`,
+  },
+  {
+    id: "90cbee43-1003-46ca-88b2-cf994b939d9a",
+    title: "Ao Teu Encontro",
+    artist: "Eliana Ribeiro",
+    key: "A",
+    category: "Pós-Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/Zem9pE1uqDk?si=rQwLSGBHbAt5disw",
+    content: `[A9]O meu cora[A9/F#]ção tem s[E]ede de am[A9]ar
+[A9]Vim ao teu en[A9/F#]contro ansi[E]osa em Te ado[A9]rar[A4][A7]
+[chorus]
+Meu D[D7M]eus, eu cr[C#7]eio e ad[F#m]oro, esp[F#m7/E]ero e Te a[D7M]mo [C#m]    
+Por aq[Bm]ueles q[E7]ue não Te am[A9]am[A4] [A7]
+O C[D7M]éu se f[C#7]az presente aqu[F#m]i e o[F#m7/E]lhas para m[D7M]im  [C#m] 
+Por que me [Bm]amas s[E7]em igu[A9]al`,
+  },
+  {
+    id: "f569f6f7-0262-478d-8fee-9b759a529df3",
+    title: "Chuva de Graças",
+    artist: "Eliana Ribeiro",
+    key: "C",
+    category: "Louvor",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/EQj1GzLkicU?si=jAd0UyipPd91dRnj",
+    content: `[C]Há uma chuva de gr[G]aça aqui
+[Am]Está chovendo sobr[F]e todos nós
+[C]E quem mais se entreg[G]ar
+Mais se molhar[F]á
+[verse]
+[C]Há uma semente pr[G]a germinar
+[Am]E muitos frutos a s[F]e produzir
+[C]Na terra do coraç[G]ão
+errama tua gr[F]aça
+[chorus]
+Chuva de gr[C]aça pedimos a t[G]i
+Chuva de gr[Am]aça derrama em n[F]ós
+Chuva de gr[C]aça neste lug[G]ar
+Derr[F]ama!
+[outro]
+[C]Ô, ô, ô, [G]ô, ... [Am]ô, ô, ô, [F]ô...
+[C]Ô, ô, ô, [G]ô, ... ô, [Am]ô, ô, ô.  [F]`,
+  },
+  {
+    id: "78745e13-0985-41c2-9d7e-1ef75bb2aa29",
+    title: "Derrama o Teu Amor aqui",
+    artist: "Celina Borges",
+    key: "G",
+    category: "Louvor",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/FTBha5mUfg4?si=0zCOM_cuTzsuN8Bn",
+    content: `[G] Senhor, eu quero ob[D]edecer [Em]    a Tua v[C]oz
+[G] Derrama o Teu Esp[D]írito ..uh..u[Em]h  sobre todos n[C]ós
+[G] Senhor, eu quero m[D]ergulhar,[Em]   me compromet[C]er
+[G] Entrar na intimid[D]a----[Em]de do Teu coraç[C]ão
+Derrama em n[D]ós Tua unç[G]ão
+[chorus]
+Derrama o teu amor aqu[D]i
+Derrama o teu amor aq[Em]ui
+Faz chover sobre n[C]ós Água Viva
+[G]  Derrama o teu amor aqu[D]i
+Derrama o teu amor aq[Em]ui
+Faz chover sobre n[C]ós Água Viva[G]
+[bridge]
+[Em]   Uma Igreja reno[D]vada
+[Em]   Povo santo reun[D]ido
+[Em]   Famílias restau[D]radas
+[Em]   Pelo poder do Teu Esp[C]írito
+( Derrama o Teu amor aqu[G]i )`,
+  },
+  {
+    id: "93a1c4c7-7a3c-40c2-b2b9-47248af6bdca",
+    title: "Diante do Rei",
+    artist: "Vida Reluz",
+    key: "A",
+    category: "Adoração",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/ooQKeQhqVoM?si=nARKru4hiUB5gZ7Y",
+    content: `V[A9]em, Senhor J[E/G#]esus!
+O coraç[F#m7]ão já bate forte ao te v[C#m7]er
+A Tua gr[D7M]aça hoje eu qu[Bm7]ero receb[C#m7]er
+Sem a b[Bm7]enção do Senhor não s[E4]ei viv[e7]er
+[verse]
+V[A9]em Senhor Jes[E/G#]us!
+Olhar o p[F#m7]ovo ao Teu redor me faz lembr[C#m7]ar
+A multid[D7M]ão lá no cami[Bm7]nho a te esper[C#m7]ar
+Vem ó S[Bm7]anto de Israel
+Pass[E4]ar também ne[E]ste lug[E7]ar
+[chorus]
+É o r[D7M]ei! A nossa fr[E/D]ente está!
+É fel[C#m7]iz quem o ador[F#m7]ar
+               
+É Jes[D7M]us, o nosso me[E/D]stre e rei!
+Bem aqu[C#m7]i, tão perto se d[F#m7]eixa encontrar
+        
+Diante d[D7M]o rei dos reis
+T[A/C#]odo jo[Bm7]elho se d[E4]obrar[A9]á
+[outro]
+Diante d[D7M]o rei dos reis
+T[A/C#]odo jo[Bm7]elho se d[E7/4]obrar[F#]á...
+
+Diante d[Bm7]o rei dos reis
+Todo jo[D/E]elho se dobrar[A9]á`,
   },
 ];

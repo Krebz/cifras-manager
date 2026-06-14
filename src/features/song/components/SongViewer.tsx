@@ -54,7 +54,7 @@ export default function SongViewer({
                 paddingBottom: 1,
               }}
             >
-              Ver fonte original ↗
+              Acesso a musica guia ↗
             </a>
           </div>
         )}
