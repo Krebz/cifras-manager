@@ -106,6 +106,19 @@ export const songViewerStyles = (isDark: boolean) => ({
     marginBottom: "8px",
   },
 
+  noteSection: {
+    background: "transparent",
+    border: "none",
+    borderTop: isDark
+      ? "1px solid rgba(148,163,184,0.18)"
+      : "1px solid rgba(148,163,184,0.28)",
+    borderRadius: 0,
+    padding: "8px 4px 4px",
+    marginTop: "4px",
+    color: isDark ? "#64748b" : "#94a3b8",
+    fontStyle: "italic",
+  },
+
   sectionTitle: {
     display: "inline-flex",
     alignItems: "center",

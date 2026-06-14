@@ -26,7 +26,7 @@ export type ParsedLine = {
   tokens: Token[];
 };
 
-export type SectionType = "verse" | "chorus" | "bridge" | "intro" | "outro";
+export type SectionType = "verse" | "chorus" | "bridge" | "intro" | "outro" | "note";
 
 export type SongSection = {
   type: SectionType;

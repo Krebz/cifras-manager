@@ -18,6 +18,9 @@ export default function SectionRenderer({
 }: Props) {
   const isChorus = section.type === "chorus";
   const isBridge = section.type === "bridge";
+  const isNote  = section.type === "note";
+
+  const noteFontSize = Math.round(fontSize * 0.82);
 
   return (
     <div
@@ -25,9 +28,12 @@ export default function SectionRenderer({
         ...styles.section,
         ...(isChorus ? styles.chorusSection : {}),
         ...(isBridge ? styles.bridgeSection : {}),
+        ...(isNote   ? styles.noteSection   : {}),
       }}
     >
-      <div style={styles.sectionTitle}>{getSectionLabel(section.type)}</div>
+      {!isNote && (
+        <div style={styles.sectionTitle}>{getSectionLabel(section.type)}</div>
+      )}
 
       <div style={styles.sectionScroll}>
         {section.lines.map((line, index) => {
@@ -36,7 +42,7 @@ export default function SectionRenderer({
           return (
             <div
               key={index}
-              style={{
+              style={isNote ? undefined : {
                 backgroundColor: isEven
                   ? "rgba(255,255,255,0.02)"
                   : "transparent",
@@ -47,7 +53,7 @@ export default function SectionRenderer({
               <LineRenderer
                 line={line}
                 transpose={transpose}
-                fontSize={fontSize}
+                fontSize={isNote ? noteFontSize : fontSize}
               />
             </div>
           );

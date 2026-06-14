@@ -7,6 +7,7 @@ export function getSectionLabel(type: SectionType) {
     bridge: "Ponte",
     intro: "Introdução",
     outro: "Final",
+    note: "Nota",
   };
 
   return labels[type] || type;
