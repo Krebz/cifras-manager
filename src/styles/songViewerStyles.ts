@@ -1,6 +1,6 @@
-export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
+export const songViewerStyles = (isDark: boolean) => ({
   container: {
-    padding: ultraCompact ? "4px 6px" : "8px 10px",
+    padding: "8px 10px",
     maxWidth: "1200px",
     margin: "0 auto",
     fontFamily: "monospace",
@@ -15,9 +15,9 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   section: {
-    marginBottom: ultraCompact ? "6px" : "10px",
-    padding: ultraCompact ? "6px 8px" : "8px 10px",
-    paddingBottom: ultraCompact ? "7px" : "10px",
+    marginBottom: "10px",
+    padding: "8px 10px",
+    paddingBottom: "10px",
     borderBottom: isDark
       ? "1px solid rgba(255,255,255,0.06)"
       : "1px solid rgba(148,163,184,0.18)",
@@ -28,19 +28,19 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   header: {
-    marginBottom: ultraCompact ? "6px" : "10px",
+    marginBottom: "10px",
   },
 
   metaRow: {
     display: "flex",
     flexWrap: "wrap" as const,
-    gap: ultraCompact ? "4px" : "6px",
-    marginTop: ultraCompact ? "2px" : "4px",
+    gap: "6px",
+    marginTop: "4px",
   },
 
   title: {
-    fontSize: ultraCompact ? "clamp(20px, 3vw, 24px)" : "clamp(22px, 3.2vw, 28px)",
-    marginBottom: ultraCompact ? "2px" : "4px",
+    fontSize: "clamp(22px, 3.2vw, 28px)",
+    marginBottom: "4px",
     fontWeight: "bold",
     lineHeight: 1.0,
   },
@@ -49,7 +49,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     fontSize: "14px",
     color: isDark ? "#94a3b8" : "#475569",
     marginTop: "-4px",
-    marginBottom: ultraCompact ? "2px" : "6px",
+    marginBottom: "6px",
     letterSpacing: "0.6px",
     fontWeight: 500,
     opacity: 0.9,
@@ -59,7 +59,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: ultraCompact ? "4px 8px" : "5px 10px",
+    padding: "5px 10px",
     borderRadius: "999px",
     background: isDark ? "rgba(59,130,246,0.12)" : "rgba(37,99,235,0.10)",
     color: isDark ? "#90cdf4" : "#2563eb",
@@ -76,7 +76,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: ultraCompact ? "4px 8px" : "5px 10px",
+    padding: "5px 10px",
     borderRadius: "999px",
     background: isDark ? "rgba(34,197,94,0.12)" : "rgba(22,163,74,0.10)",
     color: isDark ? "#86efac" : "#15803d",
@@ -91,26 +91,26 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   chorusSection: {
     background: isDark ? "#2d1b4e" : "#f3e8ff",
     borderLeft: isDark ? "4px solid #9f7aea" : "4px solid #8b5cf6",
-    padding: ultraCompact ? "7px" : "10px",
+    padding: "10px",
     borderRadius: "8px",
-    marginTop: ultraCompact ? "4px" : "8px",
-    marginBottom: ultraCompact ? "4px" : "8px",
+    marginTop: "8px",
+    marginBottom: "8px",
   },
 
   bridgeSection: {
     background: isDark ? "#1a2e2b" : "#f0fdf9",
     borderLeft: isDark ? "4px solid #4fd1c5" : "4px solid #0d9488",
-    padding: ultraCompact ? "7px" : "10px",
+    padding: "10px",
     borderRadius: "8px",
-    marginTop: ultraCompact ? "4px" : "8px",
-    marginBottom: ultraCompact ? "4px" : "8px",
+    marginTop: "8px",
+    marginBottom: "8px",
   },
 
   sectionTitle: {
     display: "inline-flex",
     alignItems: "center",
-    padding: ultraCompact ? "3px 8px" : "4px 10px",
-    marginBottom: ultraCompact ? "5px" : "8px",
+    padding: "4px 10px",
+    marginBottom: "8px",
     borderRadius: "999px",
     background: isDark ? "rgba(168,85,247,0.14)" : "rgba(139,92,246,0.10)",
     border: isDark
@@ -124,7 +124,7 @@ export const songViewerStyles = (isDark: boolean, ultraCompact = false) => ({
   },
 
   line: {
-    marginBottom: ultraCompact ? "2px" : "4px",
+    marginBottom: "4px",
   },
 
   chord: {

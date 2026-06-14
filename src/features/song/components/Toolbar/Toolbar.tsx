@@ -1,6 +1,15 @@
-import { ActionIcon, Text, Tooltip } from "@mantine/core";
-import { IconArrowLeft, IconChevronLeft, IconChevronRight, IconMaximize, IconMinimize } from "@tabler/icons-react";
-import type { CSSProperties } from "react";
+import { ActionIcon, Group, Popover, Stack, Text, Tooltip } from "@mantine/core";
+import {
+  IconArrowLeft,
+  IconCheck,
+  IconChevronLeft,
+  IconChevronRight,
+  IconKeyboard,
+  IconMaximize,
+  IconMinimize,
+  IconShare,
+} from "@tabler/icons-react";
+import { forwardRef, useState, type CSSProperties } from "react";
 import FontControl from "./FontControl";
 import ScrollControl from "./ScrollControl";
 import TransposeControl from "./TransposeControl";
@@ -19,12 +28,12 @@ type Props = {
   scrollSpeed: number;
   fontSize: number;
   isDark: boolean;
-  ultraCompact: boolean;
   toolbarStyles: ToolbarStyles;
   setlistId?: string;
   setlistName?: string;
   prevSongId?: string;
   nextSongId?: string;
+  isFullscreen?: boolean;
   onTransposeDecrease: () => void;
   onTransposeIncrease: () => void;
   onTransposeReset: () => void;
@@ -33,25 +42,25 @@ type Props = {
   onScrollSpeedIncrease: () => void;
   onFontDecrease: () => void;
   onFontIncrease: () => void;
-  onToggleUltraCompact: () => void;
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
   onNavigateSetlist?: () => void;
   onNavigateBack?: () => void;
+  onToggleFullscreen?: () => void;
 };
 
-export default function Toolbar({
+const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   transpose,
   currentKey,
   isScrolling,
   scrollSpeed,
   fontSize,
   isDark,
-  ultraCompact,
   toolbarStyles,
   setlistName,
   prevSongId,
   nextSongId,
+  isFullscreen,
   onTransposeDecrease,
   onTransposeIncrease,
   onTransposeReset,
@@ -60,18 +69,39 @@ export default function Toolbar({
   onScrollSpeedIncrease,
   onFontDecrease,
   onFontIncrease,
-  onToggleUltraCompact,
   onNavigatePrev,
   onNavigateNext,
   onNavigateSetlist,
   onNavigateBack,
-}: Props) {
+  onToggleFullscreen,
+}: Props, ref) {
   const group = toolbarStyles.toolbarGroup;
   const button = toolbarStyles.toolbarButton;
   const iconButton = toolbarStyles.toolbarIconButton;
+  const [copied, setCopied] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
+  function handleShare() {
+    navigator.clipboard?.writeText(window.location.href).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  const kbdStyle: CSSProperties = {
+    padding: "2px 7px",
+    borderRadius: 4,
+    border: "1px solid rgba(148,163,184,0.3)",
+    background: isDark ? "rgba(30,41,59,0.8)" : "rgba(241,245,249,0.9)",
+    fontFamily: "monospace",
+    fontSize: 11,
+    fontWeight: 700,
+    minWidth: 28,
+    textAlign: "center",
+    display: "inline-block",
+  };
 
   return (
-    <div style={toolbarStyles.toolbar}>
+    <div ref={ref} style={toolbarStyles.toolbar}>
       {/* Navegação de repertório (quando aberto via setlist) */}
       {onNavigateSetlist && (
         <div style={{ ...group, gap: 4 }}>
@@ -80,7 +110,7 @@ export default function Toolbar({
               <IconArrowLeft size={15} />
             </ActionIcon>
           </Tooltip>
-          {setlistName && !ultraCompact && (
+          {setlistName && (
             <Text size="xs" style={{ color: isDark ? "#94a3b8" : "#64748b", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {setlistName}
             </Text>
@@ -140,20 +170,62 @@ export default function Toolbar({
         onIncrease={onFontIncrease}
       />
 
-      <div style={group}>
-        <Tooltip label={ultraCompact ? "Sair do modo performance" : "Modo performance (oculta distrações)"}>
-          <ActionIcon
-            size="sm"
-            radius="md"
-            variant={ultraCompact ? "filled" : "light"}
-            color={ultraCompact ? "grape" : "gray"}
-            style={ultraCompact ? undefined : iconButton}
-            onClick={onToggleUltraCompact}
-          >
-            {ultraCompact ? <IconMinimize size={14} /> : <IconMaximize size={14} />}
+      {/* Utilidades: compartilhar, tela cheia, atalhos */}
+      <div style={{ ...group, gap: 4 }}>
+        <Tooltip label={copied ? "Copiado!" : "Compartilhar link"}>
+          <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={handleShare}>
+            {copied ? <IconCheck size={15} /> : <IconShare size={15} />}
           </ActionIcon>
         </Tooltip>
+
+        {onToggleFullscreen && (
+          <Tooltip label={isFullscreen ? "Sair de tela cheia" : "Tela cheia"}>
+            <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={onToggleFullscreen}>
+              {isFullscreen ? <IconMinimize size={15} /> : <IconMaximize size={15} />}
+            </ActionIcon>
+          </Tooltip>
+        )}
+
+        <Popover
+          opened={shortcutsOpen}
+          onChange={setShortcutsOpen}
+          position="bottom-end"
+          withArrow
+          shadow="md"
+          width={230}
+        >
+          <Popover.Target>
+            <ActionIcon
+              size="sm"
+              variant="subtle"
+              style={iconButton}
+              title="Atalhos de teclado"
+              onClick={() => setShortcutsOpen((o) => !o)}
+            >
+              <IconKeyboard size={15} />
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Stack gap={8}>
+              <Text size="xs" fw={700} style={{ letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.6 }}>
+                Atalhos
+              </Text>
+              {([
+                ["Espaço", "Iniciar / Parar rolagem"],
+                ["←", "Diminuir velocidade"],
+                ["→", "Aumentar velocidade"],
+              ] as const).map(([key, desc]) => (
+                <Group key={key} gap={8} align="center">
+                  <kbd style={kbdStyle}>{key}</kbd>
+                  <Text size="xs">{desc}</Text>
+                </Group>
+              ))}
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
       </div>
     </div>
   );
-}
+});
+
+export default Toolbar;

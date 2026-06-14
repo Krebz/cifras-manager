@@ -43,6 +43,7 @@ export type Song = {
   category: SongCategory;
   content: string;
   accessCount: number;
+  referenceUrl?: string;
 };
 
 export type SongDocument = {

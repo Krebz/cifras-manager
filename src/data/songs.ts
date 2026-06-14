@@ -274,4 +274,86 @@ Il[E]uminando o nosso cam[B7(4/9)]inho até ao Céu cheg[E]ar
 ||: É Ma[A]ria[B], é Mar[G#m]ia .. [C#m]a
 A M[F#m]ãe amorosa que a[B7(4/9)]os pés da Cruz C[E]risto nos deu! :||`,
   },
+  {
+    id: "41593e0c-0e61-48fc-865c-4aaba1c44a7e",
+    title: "Abba Pai",
+    artist: "Colo de Deus",
+    key: "A",
+    category: "Meditação",
+    accessCount: 0,
+    content: `[A]Entrei no Teu jard[F#m]im
+Pra estar contigo, [E9/C#]Pai
+Sentar naquele b[Bm7]anco
+Onde me enco[E]ntro[A]u
+[verse]
+Voltei ao Teu jar[F#m7]dim
+Pra ouvir a Tua v[E9/C#]oz
+A me dizer, me p[Bm7]rometer
+Que não me [A/C#]abandonar[D9]á
+Não me deixa[F#m7]rá, me abraçar[Bm7]á   [F#m7]  [E/G#]
+[chorus]
+[D9]  No jardim secr[F#m7]eto
+Lugar prefer[D9]ido
+Sacrário escond[F#m7]ido
+Vou fi[E/G#]car aqui
+[D9]  Senti o Teu perfu[F#m7]me
+Me escondi no Teu coraç[D9]ão
+Aqui eu sou cria[F#m7]nça
+[bridge]
+Embal[E/G#]ado em Teus braços [D9]Papai
+(Abba P[F#m7]ai)
+Embal[E/G#]ado em Teus beijos [D9]Papai
+(Abba P[F#m7]ai)  [E/G#]`,
+  },
+  {
+    id: "75d1acdf-6256-4d1a-ace3-9ce017c864b5",
+    title: "Yeshua",
+    artist: "Colo de Deus",
+    key: "B",
+    category: "Adoração",
+    accessCount: 0,
+    content: `[intro]
+[G#m7]  [E9]  [B]  [D#m] [2x]
+[verse]
+Te ch[G#m7]amam de Deus e de Senhor
+Te ch[E9]amam de rei, de salvador
+E [B]eu me atrevo a Te chamar de meu am[D#m]or
+[chorus]
+Y[G#m7]eshua, Y[E9]eshua
+Tu [B2]és tão l[D#m]indo
+Que eu nem sei me [G#m7]expressar
+Y[E9]eshua, Tu [B2]és tão l[D#m]indo`,
+  },
+  {
+    id: "75f59f62-9e64-4f90-afc7-dd11135b5136",
+    title: "Eis-me aqui",
+    artist: "Colo de Deus",
+    key: "G",
+    category: "Louvor",
+    accessCount: 0,
+    content: `[intro]
+[G]  [D/F#]  [Em]  [C]
+[verse]
+Senh[G]or,
+Hoje eu me r[D/F#]endo
+Eu reconheço que n[Em]ada eu posso fazer .. sem T[C]i.
+Então seja tudo em m[G]im
+
+Dependente eu quero s[D/F#]er
+Do teu esp[Em]írito  [C]
+[bridge]
+Pra que quando eu fal[Em]ar que seja Você
+No meu caminh[D/F#]ar que seja Você
+E quando eu cant[G/B]ar que seja Você
+Que seja Voc[C]ê
+-
+E no meu olh[Em]ar que seja o Teu olhar
+No toque das m[D/F#]inhas mãos que sejam as Tuas 
+[Bm]   Se não for pra viver assim
+Eu nem quer[C]o viver    
+[chorus]
+[G]Eis-me aqui Senh[D/F#]or
+Dá-me um coração semelhante ao T[Em]eu
+Enche-me de Ti até transb[C]ordar`,
+  },
 ];

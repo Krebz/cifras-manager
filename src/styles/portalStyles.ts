@@ -52,6 +52,8 @@ export const portalStyles = (isDark: boolean) => ({
     borderRadius: "999px",
     padding: "8px 13px",
     background: "transparent",
+    WebkitAppearance: "none" as const,
+    appearance: "none" as const,
     color: isDark ? "#cbd5e1" : "#475569",
     font: "inherit",
     fontSize: "14px",

@@ -1,9 +1,22 @@
+import { useEffect, useState } from "react";
 import { navigate } from "../../app/router";
 import { routes } from "../../app/routes";
 import SongCard from "../../components/catalog/SongCard";
 import { useSongCatalog } from "../../hooks/useSongCatalog";
 import { portalStyles } from "../../styles/portalStyles";
 import { useSongAccessCounts } from "./songAccessStore";
+
+const HISTORY_KEY = "cifras_search_history";
+const MAX_HISTORY = 5;
+
+function getHistory(): string[] {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) ?? "[]"); } catch { return []; }
+}
+
+function addToHistory(q: string) {
+  const existing = getHistory().filter((x) => x.toLowerCase() !== q.toLowerCase());
+  localStorage.setItem(HISTORY_KEY, JSON.stringify([q, ...existing].slice(0, MAX_HISTORY)));
+}
 
 type Props = {
   initialQuery: string;
@@ -24,6 +37,26 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
     setArtist,
   } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
+  const [history, setHistory] = useState<string[]>(getHistory);
+
+  useEffect(() => {
+    if (query.length < 2) return;
+    const t = setTimeout(() => {
+      addToHistory(query);
+      setHistory(getHistory());
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  const chipStyle: React.CSSProperties = {
+    padding: "3px 11px",
+    borderRadius: 999,
+    border: isDark ? "1px solid rgba(148,163,184,0.25)" : "1px solid #e2e8f0",
+    background: isDark ? "rgba(30,41,59,0.6)" : "#f1f5f9",
+    color: isDark ? "#94a3b8" : "#475569",
+    fontSize: 12,
+    cursor: "pointer",
+  };
 
   return (
     <main style={styles.surface}>
@@ -92,6 +125,24 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
           ))}
         </select>
       </div>
+
+      {!query && history.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, marginTop: 4, marginBottom: 4 }}>
+          <span style={{ fontSize: 12, color: isDark ? "#64748b" : "#94a3b8" }}>Recentes:</span>
+          {history.map((h) => (
+            <button key={h} type="button" style={chipStyle} onClick={() => setQuery(h)}>
+              {h}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => { localStorage.removeItem(HISTORY_KEY); setHistory([]); }}
+            style={{ background: "none", border: "none", color: isDark ? "#475569" : "#94a3b8", fontSize: 11, cursor: "pointer" }}
+          >
+            limpar
+          </button>
+        </div>
+      )}
 
       <div style={styles.sectionHeader}>
         <h2 style={styles.sectionTitle}>

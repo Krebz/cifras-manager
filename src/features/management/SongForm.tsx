@@ -40,6 +40,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
   const [key, setKey] = useState(initial?.key ?? "G");
   const [category, setCategory] = useState(initial?.category ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
+  const [referenceUrl, setReferenceUrl] = useState(initial?.referenceUrl ?? "");
 
   const [importing, setImporting] = useState(false);
   const [importText, setImportText] = useState("");
@@ -51,7 +52,14 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
 
   function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
-    onSave({ title: title.trim(), artist: artist.trim(), key, category: category.trim(), content });
+    onSave({
+      title: title.trim(),
+      artist: artist.trim(),
+      key,
+      category: category.trim(),
+      content,
+      referenceUrl: referenceUrl.trim() || undefined,
+    });
   }
 
   function handleConvert() {
@@ -109,6 +117,14 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
               required
             />
           </Group>
+
+          <TextInput
+            label="Link de referência (opcional)"
+            value={referenceUrl}
+            onChange={(e) => setReferenceUrl(e.target.value)}
+            placeholder="https://cifraclub.com.br/..."
+            type="url"
+          />
 
           {/* Painel de importação */}
           {importing ? (
@@ -204,6 +220,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
                 category={category}
                 transpose={0}
                 fontSize={14}
+                referenceUrl={referenceUrl.trim() || undefined}
               />
             ) : (
               <p style={{ color: labelColor, fontSize: 14, padding: 8 }}>

@@ -23,10 +23,12 @@ function Ranking({
   title,
   items,
   isDark,
+  onSelect,
 }: {
   title: string;
   items: RankingItem[];
   isDark: boolean;
+  onSelect: (label: string) => void;
 }) {
   const styles = portalStyles(isDark);
 
@@ -36,7 +38,24 @@ function Ranking({
       {items.map((item, index) => (
         <div key={item.label} style={styles.rankingRow}>
           <span style={styles.rank}>{index + 1}</span>
-          <span>{item.label}</span>
+          <button
+            type="button"
+            onClick={() => onSelect(item.label)}
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              font: "inherit",
+              color: isDark ? "#e2e8f0" : "#1e293b",
+              cursor: "pointer",
+              textAlign: "left" as const,
+              textDecoration: "underline",
+              textDecorationColor: isDark ? "rgba(148,163,184,0.4)" : "rgba(100,116,139,0.4)",
+              textUnderlineOffset: "3px",
+            }}
+          >
+            {item.label}
+          </button>
           <span style={styles.count}>{item.count}</span>
         </div>
       ))}
@@ -119,8 +138,14 @@ export default function HomePage({ isDark }: Props) {
           title="Top 10 por categoria"
           items={categories}
           isDark={isDark}
+          onSelect={(label) => navigate(songsPathFor(label))}
         />
-        <Ranking title="Top 10 por artista" items={artists} isDark={isDark} />
+        <Ranking
+          title="Top 10 por artista"
+          items={artists}
+          isDark={isDark}
+          onSelect={(label) => navigate(songsPathFor(label))}
+        />
       </div>
     </main>
   );

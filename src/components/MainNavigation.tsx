@@ -1,4 +1,4 @@
-import { IconMoon, IconSun, IconMenu2, IconX } from "@tabler/icons-react";
+import { IconDownload, IconMoon, IconSun, IconMenu2, IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useMediaQuery } from "@mantine/hooks";
 import type { NavigationPage } from "../app/routes";
@@ -9,6 +9,7 @@ type Props = {
   isDark: boolean;
   onNavigate: (page: NavigationPage) => void;
   onToggleTheme: () => void;
+  onInstall?: () => void;
 };
 
 const links: Array<{ id: NavigationPage; label: string }> = [
@@ -24,6 +25,7 @@ export default function MainNavigation({
   isDark,
   onNavigate,
   onToggleTheme,
+  onInstall,
 }: Props) {
   const styles = portalStyles(isDark);
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -36,6 +38,14 @@ export default function MainNavigation({
 
   const menuBg = isDark ? "rgba(15,23,42,0.97)" : "rgba(255,255,255,0.98)";
   const menuBorder = isDark ? "1px solid rgba(148,163,184,0.25)" : "1px solid rgba(148,163,184,0.32)";
+  const installStyle: React.CSSProperties = {
+    ...styles.navigationButton,
+    color: isDark ? "#60a5fa" : "#2563eb",
+    background: isDark ? "rgba(37,99,235,0.12)" : "rgba(37,99,235,0.08)",
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -52,7 +62,7 @@ export default function MainNavigation({
               style={styles.brandLogo}
             />
           </span>
-          Katando Cifra
+          Katando Cifras
         </button>
 
         {isMobile ? (
@@ -90,6 +100,13 @@ export default function MainNavigation({
                 {link.label}
               </button>
             ))}
+
+            {onInstall && (
+              <button type="button" style={installStyle} onClick={onInstall}>
+                <IconDownload size={14} />
+                Instalar
+              </button>
+            )}
 
             <button
               type="button"
@@ -142,6 +159,23 @@ export default function MainNavigation({
               {link.label}
             </button>
           ))}
+
+          {onInstall && (
+            <button
+              type="button"
+              style={{
+                ...installStyle,
+                width: "100%",
+                textAlign: "left",
+                borderRadius: "10px",
+                padding: "12px 16px",
+              }}
+              onClick={() => { onInstall(); closeMenu(); }}
+            >
+              <IconDownload size={14} />
+              Instalar App
+            </button>
+          )}
         </nav>
       )}
     </div>

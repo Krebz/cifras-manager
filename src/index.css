@@ -31,6 +31,16 @@ body {
   box-sizing: border-box;
 }
 
+button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
 @keyframes songSlideFromRight {
   from { opacity: 0; transform: translateX(40px); }
   to   { opacity: 1; transform: translateX(0); }

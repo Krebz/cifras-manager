@@ -9,7 +9,7 @@ type Props = {
   category: string;
   transpose: number;
   fontSize: number;
-  ultraCompact?: boolean;
+  referenceUrl?: string;
 };
 
 export default function SongViewer({
@@ -18,11 +18,11 @@ export default function SongViewer({
   category,
   transpose,
   fontSize,
-  ultraCompact = false,
+  referenceUrl,
 }: Props) {
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = songViewerStyles(isDark, ultraCompact);
+  const styles = songViewerStyles(isDark);
 
   return (
     <div
@@ -38,6 +38,24 @@ export default function SongViewer({
           <div style={styles.songKey}>Tom: {songDocument.key}</div>
           <div style={styles.songCategory}>Categoria: {category}</div>
         </div>
+        {referenceUrl && (
+          <div style={{ marginTop: 6 }}>
+            <a
+              href={referenceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: isDark ? "#60a5fa" : "#2563eb",
+                fontSize: 12,
+                textDecoration: "none",
+                borderBottom: `1px solid ${isDark ? "rgba(96,165,250,0.4)" : "rgba(37,99,235,0.4)"}`,
+                paddingBottom: 1,
+              }}
+            >
+              Ver fonte original ↗
+            </a>
+          </div>
+        )}
       </div>
 
       {songDocument.sections.map((section, index) => (

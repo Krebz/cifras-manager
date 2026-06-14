@@ -1,4 +1,5 @@
-import { Button, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Text, Tooltip } from "@mantine/core";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 
 type Props = {
@@ -27,9 +28,9 @@ export default function TransposeControl({
   return (
     <div style={groupStyle}>
       <Tooltip label="Diminuir tom">
-        <Button size="xs" radius="md" variant="light" style={buttonStyle} onClick={onDecrease}>
-          Tom -
-        </Button>
+        <ActionIcon size="sm" radius="md" variant="light" style={buttonStyle} onClick={onDecrease}>
+          <IconMinus size={13} />
+        </ActionIcon>
       </Tooltip>
 
       <Tooltip label={isTransposed ? "Voltar ao tom original" : "Tom original"} disabled={!isTransposed}>
@@ -52,13 +53,7 @@ export default function TransposeControl({
         >
           {currentKey}
           {isTransposed && (
-            <span
-              style={{
-                fontSize: "12px",
-                marginLeft: "4px",
-                opacity: 0.8,
-              }}
-            >
+            <span style={{ fontSize: "11px", marginLeft: "3px", opacity: 0.8 }}>
               ({transpose > 0 ? "+" : ""}{transpose})
             </span>
           )}
@@ -66,9 +61,9 @@ export default function TransposeControl({
       </Tooltip>
 
       <Tooltip label="Aumentar tom">
-        <Button size="xs" radius="md" variant="light" style={buttonStyle} onClick={onIncrease}>
-          Tom +
-        </Button>
+        <ActionIcon size="sm" radius="md" variant="light" style={buttonStyle} onClick={onIncrease}>
+          <IconPlus size={13} />
+        </ActionIcon>
       </Tooltip>
     </div>
   );

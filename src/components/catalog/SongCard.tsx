@@ -18,7 +18,12 @@ export default function SongCard({
 
   return (
     <article style={styles.songCard}>
-      <h3 style={styles.songName}>{song.title}</h3>
+      <h3
+        style={{ ...styles.songName, cursor: "pointer" }}
+        onClick={() => onOpen(song.id)}
+      >
+        {song.title}
+      </h3>
       <p style={styles.mutedText}>{song.artist}</p>
       <div style={styles.metadata}>
         <span style={styles.badge}>{song.category}</span>

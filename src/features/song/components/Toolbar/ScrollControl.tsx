@@ -1,4 +1,5 @@
-import { Button, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Text, Tooltip } from "@mantine/core";
+import { IconChevronLeft, IconChevronRight, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 
 type Props = {
@@ -22,10 +23,6 @@ export default function ScrollControl({
   onDecreaseSpeed,
   onIncreaseSpeed,
 }: Props) {
-  const scrollLabel =
-    scrollSpeed >= 7 ? "Rápido" : scrollSpeed >= 4 ? "Médio" : "Lento";
-  const scrollStatus = isScrolling ? "Ativo" : "Pausado";
-
   const speedColor =
     scrollSpeed >= 7
       ? "#f87171"
@@ -38,48 +35,35 @@ export default function ScrollControl({
   return (
     <div style={groupStyle}>
       <Tooltip label={isScrolling ? "Parar rolagem automática" : "Iniciar rolagem automática"}>
-        <Button
-          size="xs"
+        <ActionIcon
+          size="sm"
           radius="md"
           color={isScrolling ? "red" : "blue"}
+          variant={isScrolling ? "filled" : "light"}
           style={{
             ...(!isScrolling ? buttonStyle : {}),
-            fontWeight: "bold",
-            boxShadow: isScrolling ? "0 0 12px rgba(255,0,0,0.6)" : "none",
+            boxShadow: isScrolling ? "0 0 10px rgba(255,0,0,0.5)" : "none",
           }}
           onClick={onToggle}
         >
-          {isScrolling ? "Parar" : "Scroll"}
-        </Button>
+          {isScrolling ? <IconPlayerStop size={13} /> : <IconPlayerPlay size={13} />}
+        </ActionIcon>
       </Tooltip>
-
-      <Text
-        fw="bold"
-        style={{
-          color: isScrolling ? "#4ade80" : "#94a3b8",
-          opacity: isScrolling ? 1 : 0.7,
-          transition: "all 0.3s ease",
-          whiteSpace: "nowrap",
-        }}
-        size="sm"
-      >
-        ● {scrollStatus}
-      </Text>
 
       <Tooltip label="Diminuir velocidade (seta esquerda)">
-        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onDecreaseSpeed}>
-          ←
-        </Button>
+        <ActionIcon size="sm" radius="xl" variant="light" style={buttonStyle} onClick={onDecreaseSpeed}>
+          <IconChevronLeft size={13} />
+        </ActionIcon>
       </Tooltip>
 
-      <Text fw="bold" size="sm" style={{ color: speedColor, whiteSpace: "nowrap" }}>
-        ⚡ {scrollSpeed} • {scrollLabel}
+      <Text fw="bold" size="sm" style={{ color: speedColor, minWidth: "14px", textAlign: "center" }}>
+        {scrollSpeed}
       </Text>
 
       <Tooltip label="Aumentar velocidade (seta direita)">
-        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onIncreaseSpeed}>
-          →
-        </Button>
+        <ActionIcon size="sm" radius="xl" variant="light" style={buttonStyle} onClick={onIncreaseSpeed}>
+          <IconChevronRight size={13} />
+        </ActionIcon>
       </Tooltip>
     </div>
   );

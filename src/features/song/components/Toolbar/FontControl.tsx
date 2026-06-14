@@ -1,4 +1,5 @@
-import { Button, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Text, Tooltip } from "@mantine/core";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import type { CSSProperties } from "react";
 
 type Props = {
@@ -21,9 +22,9 @@ export default function FontControl({
   return (
     <div style={groupStyle}>
       <Tooltip label="Diminuir fonte">
-        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onDecrease}>
-          A-
-        </Button>
+        <ActionIcon size="sm" radius="xl" variant="light" style={buttonStyle} onClick={onDecrease}>
+          <IconMinus size={13} />
+        </ActionIcon>
       </Tooltip>
 
       <Text
@@ -39,9 +40,9 @@ export default function FontControl({
       </Text>
 
       <Tooltip label="Aumentar fonte">
-        <Button size="xs" radius="xl" variant="light" style={buttonStyle} onClick={onIncrease}>
-          A+
-        </Button>
+        <ActionIcon size="sm" radius="xl" variant="light" style={buttonStyle} onClick={onIncrease}>
+          <IconPlus size={13} />
+        </ActionIcon>
       </Tooltip>
     </div>
   );
