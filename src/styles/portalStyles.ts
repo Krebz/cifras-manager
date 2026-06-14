@@ -7,13 +7,13 @@ export const portalStyles = (isDark: boolean) => ({
     gap: "12px",
     padding: "10px 14px",
     borderRadius: "14px",
-    backgroundColor: isDark ? "rgba(15,23,42,0.88)" : "rgba(255,255,255,0.88)",
+    backgroundColor: isDark ? "rgba(15,23,42,0.94)" : "rgba(255,255,255,0.94)",
     border: isDark
       ? "1px solid rgba(148,163,184,0.25)"
       : "1px solid rgba(148,163,184,0.32)",
     boxShadow: isDark
-      ? "0 8px 24px rgba(0,0,0,0.28)"
-      : "0 8px 24px rgba(15,23,42,0.10)",
+      ? "0 1px 2px rgba(0,0,0,0.4), 0 4px 20px rgba(0,0,0,0.45)"
+      : "0 1px 2px rgba(15,23,42,0.06), 0 4px 20px rgba(15,23,42,0.10)",
     backdropFilter: "blur(18px)",
   },
   brand: {
