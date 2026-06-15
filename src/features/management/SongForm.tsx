@@ -35,9 +35,9 @@ type Props = {
   onCancel: () => void;
 };
 
-const existingCategories = [...new Set(
-  getAllSongs().map((s) => s.category).filter(Boolean)
-)].sort();
+const allSongs = getAllSongs();
+const existingCategories = [...new Set(allSongs.map((s) => s.category).filter(Boolean))].sort();
+const existingArtists    = [...new Set(allSongs.map((s) => s.artist).filter(Boolean))].sort();
 
 export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -99,10 +99,12 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
             required
             autoFocus
           />
-          <TextInput
+          <Autocomplete
             label="Artista / Intérprete"
             value={artist}
-            onChange={(e) => setArtist(e.target.value)}
+            onChange={setArtist}
+            data={existingArtists}
+            placeholder="Selecione ou digite novo..."
             required
           />
           <Group grow gap="sm">
