@@ -6,9 +6,10 @@ import {
   Group,
   Stack,
   Text,
+  TextInput,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconDownload, IconEdit, IconMusic, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft, IconDownload, IconEdit, IconMusic, IconPlus, IconSearch, IconTrash, IconX } from "@tabler/icons-react";
 import {
   createSong,
   deleteSong,
@@ -25,6 +26,7 @@ export default function ManagementPage({ isDark }: Props) {
   const [songs, setSongs] = useState<Song[]>(() => getAllSongs());
   const [view, setView] = useState<View>({ kind: "list" });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
@@ -116,6 +118,11 @@ export default function ManagementPage({ isDark }: Props) {
   }
 
   // --- Vista: lista ---
+  const filtered = songs.filter((s) => {
+    const q = query.trim().toLowerCase();
+    return !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
+  });
+
   return (
     <Stack gap="md">
       <Group justify="space-between" align="center">
@@ -143,6 +150,18 @@ export default function ManagementPage({ isDark }: Props) {
         </Group>
       </Group>
 
+      <TextInput
+        placeholder="Buscar por título ou artista..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        leftSection={<IconSearch size={15} />}
+        rightSection={query ? (
+          <ActionIcon variant="subtle" size="sm" onClick={() => setQuery("")}>
+            <IconX size={13} />
+          </ActionIcon>
+        ) : null}
+      />
+
       {songs.length === 0 && (
         <Stack align="center" gap="xs" py="xl">
           <IconMusic size={40} color={textMuted} />
@@ -153,8 +172,14 @@ export default function ManagementPage({ isDark }: Props) {
         </Stack>
       )}
 
+      {songs.length > 0 && filtered.length === 0 && (
+        <Text c="dimmed" size="sm" ta="center" py="md">
+          Nenhuma música encontrada para "{query}".
+        </Text>
+      )}
+
       <Stack gap="xs">
-        {songs.map((song) => (
+        {filtered.map((song) => (
           <div
             key={song.id}
             style={{

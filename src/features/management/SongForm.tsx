@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { Button, Group, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
+import { Autocomplete, Button, Group, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import { parseSong } from "../../utils/parseSong";
 import { convertNaturalToChordPro } from "../../utils/importChords";
+import { getAllSongs } from "../../services/songRepository";
 import SongViewer from "../song/components/SongViewer";
 import type { Song } from "../../types/music";
 
@@ -33,6 +34,10 @@ type Props = {
   onSave: (data: FormData) => void;
   onCancel: () => void;
 };
+
+const existingCategories = [...new Set(
+  getAllSongs().map((s) => s.category).filter(Boolean)
+)].sort();
 
 export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -109,11 +114,12 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
               required
               allowDeselect={false}
             />
-            <TextInput
+            <Autocomplete
               label="Categoria"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Ex: Entrada, Comunhão..."
+              onChange={setCategory}
+              data={existingCategories}
+              placeholder="Selecione ou digite nova..."
               required
             />
           </Group>
