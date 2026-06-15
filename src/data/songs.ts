@@ -597,7 +597,7 @@ Tende pied[Bm7]ade,  [C#m7]   tende pie[D9]dade, pie[E4]dad[E]e de n[A]ós[E/G#]
 Cord[F#m7]eiro de Deus  que tir[C#m7]ais o pecado do m[D]undo
 D[E4]ai  -  n[E]os a p[D]az[A]
 [note]
-* CD O Banquete do cordeiro - CAnção Nova`,
+* CD O Banquete do cordeiro - Canção Nova`,
   },
   {
     id: "472a7517-5b85-4d1b-bf1e-3f1a7bce86ff",
@@ -675,7 +675,7 @@ Em Teu alt[C#m]ar S[B]enh[E]or [A] [B/D#] [E] [B] [C#m] [A9]`,
     title: "Corpo Santo",
     artist: "Fátima Sousa",
     key: "F",
-    category: "Comunão",
+    category: "Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/pPjAcnuZTdA?si=p5MlRQ0oZOWaCBLj",
     content: `[F]Quando v[C/E]ou ao Teu en[Dm]contro
@@ -845,5 +845,192 @@ T[A/C#]odo jo[Bm7]elho se d[E7/4]obrar[F#]á...
 
 Diante d[Bm7]o rei dos reis
 Todo jo[D/E]elho se dobrar[A9]á`,
+  },
+  {
+    id: "e104f94a-ff78-4795-8f5d-dccf4275bbb3",
+    title: "Doa a tua vida",
+    artist: "Músicas Católicas",
+    key: "G",
+    category: "Ofertório",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/SlL09F2Fyag?si=S8CI9PLGWsIwZtG5",
+    content: `Uma n[Bm]oite de suor
+Sobre o b[D9]arco em alto mar
+O céu com[A]eça a clare[F#m]ar
+A tua r[G]ede está vaz[Bm]ia
+
+Mas a v[D]oz que te chama
+Te mostrar[A]á um outro [F#m]mar
+E sobre m[G]uitos coraç[D]ões
+A tua r[Em]ede lançar[Bm]á    [F#]
+[chorus]
+D[Bm]oa [A/C#] a tua    v[D]ida como
+Mar[A]ia aos p[F#]és da cr[G]uz
+  [Bm]E   [A]se___[Bm]rás
+
+S[D]ervo de cada h[A]omem
+S[F#]ervo por am[G]or
+S[D]acerdote d[Em]a humanid[D]ade  [F#]
+[verse]
+Caminh[Bm]avas no silêncio[A]
+Esper[D]ando além da dor
+Que a sem[A]ente que tu lanç[F#]avas
+Num bom terr[G]eno germin[Bm]asse
+       
+Mas o c[D]oração exulta
+Porque o c[A]ampo já está dour[F#m]ado
+O grão mad[G]uro pelo s[D/A]ol
+No cel[Em]eiro pode entr[Bm]ar`,
+  },
+  {
+    id: "bb956769-dfb4-4cff-8318-520fe507004a",
+    title: "A mesa Santa",
+    artist: "Músicas Católicas",
+    key: "A",
+    category: "Ofertório",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/0ISSgH_ZRZQ?si=x6wUCPmWS0u8mcfP",
+    content: `[Intro] 
+[D]  [E]  [F#m]  [C#m]  [D]  [E7]  [A]
+[verse]
+A mesa s[F#m]anta que prepar[C#m]amos
+Mãos que se el[D]evam a T[E]i, ó Senh[A]or.
+O pão e o [F#m]vinho, frutos da [C#m]Terra
+Duro trab[D]alho, car[G#]inho e am[C#]or.
+[chorus]
+ [D]Ô,  [E]ô,  [F#m]ô, recebe, Se[C#m]nhor
+ [D]Ô,  [E]ô,  re[E7]cebe, Senh[A]or
+[verse]
+Flores, es[F#m]pinhos, dor e aleg[C#m]ria
+Pais, mães e f[D]ilhos di[E]ante do alt[A]ar
+A nossa o[F#m]ferta em nova [C#m]festa
+A nossa d[D]or vem, Senh[G#]or, transfor[C#]mar
+[verse]
+A vida [F#m]nova, nova fa[C#m]mília
+Que celebr[D]amos aqu[E]i tem lug[A]ar
+Tua bon[F#m]dade vem com far[C#m]tura
+É só sab[D]er reun[G#]ir, partilh[C#]ar`,
+  },
+  {
+    id: "03034baf-eb4d-47ed-982d-b14256aad9b0",
+    title: "Divino Coração",
+    artist: "Comunidade Católica Shalom",
+    key: "Bb",
+    category: "Comunhão",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/6CKSVAW-O9c?si=U4kvZUXXKladpr6P",
+    content: `[intro]
+[Eb]   [Bb/D]  [F] [|] [Gm7]  [Eb]  [F4]   [F]
+[verse]
+[Bb]Divino Cora[Dm7]ção, f[Eb]onte inesgotável da p[F]az
+No S[Eb]angue e na [Bb]água [F/A]nós somos la[Gm7]vados
+[Eb]Somos recriados em [F4]Ti[F]
+[Bb]Divino Cora[Dm7]ção, b[Eb]raseiro ardente de am[F]or
+C[Eb]hama que q[Bb]ueima, [F/A]cura e puri[Gm7]fica
+[Eb]Somos transformados em [F4]Ti[F]
+[chorus]
+Comun[Bb]gamos Teu Corpo e S[F/A]angue
+Conf[Gm7]iamos no Teu a[Dm7]mor
+Escon[Eb]didos em Tuas c[F]haga[Gm7]s
+Para s[Ab]empre queremos vi[F]ver
+Ado[Bb]ramos Teu Corpo e S[F/A]angue
+Conf[Gm7]iamos no Teu a[Dm7]mor
+Sacri[Eb]fício, Aliança Et[F]er[Gm7]na 
+Do alt[Ab]ar da cruz, 
+Vida n[Cm7]ova j[F]orrar[Eb]á  [Bb/D]      [F] [|] [Gm7]     [Eb]    [F4]     [F]
+[verse]
+[Bb]Divino Cora[Dm7]ção, [Eb]humanidade de D[F]eus
+O [Eb]céu se faz t[Bb]erra, [F/A]toca nossa [Gm7]vida
+[Eb]Somos alcançados por [F4]Ti[F]
+[Bb]Divino Cora[Dm7]ção, [Eb]doce abaixar-se de D[F]eus
+R[Eb]eveste o [Bb]homem de [F/A]Sua real[Gm7]eza
+[Eb]Somos elevados por [F4]Ti[F]`,
+  },
+  {
+    id: "11e85d91-2e55-4f87-bc11-b2a5ad7fa44a",
+    title: "Estar em Tuas Mãos",
+    artist: "Comunidade Católica Shalom",
+    key: "F#m",
+    category: "Ofertório",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/fUrwFG9tUnc?si=KcUNNEJKimXkhtY2",
+    content: `[intro]
+[F#m] [D] [A] [E] [-] [F#m] [D] [A] [E]
+[verse]
+[F#m]    Mão na terra e o c[D9]oração al[A9]ém desde C[C#4]éu
+[F#m]    E a semente que b[D9]rota é um [A9]germe de eternid[E]ade
+Vai bro[F#m]tando, cres[D/F#]cendo, espe[A/E]rando,[E]  é a [F#m]vida que [D/F#]vem despon[A/E]tar[E]
+E este tr[D]igo ma[A/C#]duro,a col[Bm]heita o [Bm/A]recolhe[E/G#]rá[E][F#m]
+[chorus]
+Estar em tuas m[A]ãos, ó [B/A]pai  [D/A]    e a vida ofert[A]ar[E/G#]
+No [F#m]pão e no v[E]inho    a [D]Ti,  [A/C#]       [Bm]    o [Bm/A]céu se abrir[E]á
+Estar em tuas m[A]ãos, sen[B/A]hor  [D/A]    e a vida entreg[A]ar[E/G#]
+A [F#m]minha oblaç[E]ão  em [D]Ti [A/C#]      [Bm]    [Bm/A] se perder[E]á.
+---
+Frutificar[F#m]ááááááaaá[D]á, Fr[A]utificar[E]ááá
+F[F#m]ru----[E/G#]ti-[A]fi-c[F#m]a-----r[D]ááááááaaáá, fr[A]utificar[E]ááá
+[verse]
+[F#m]    Da videira a f[D9]lor não esta[A9]rá, passa[C#4]rá
+[F#m]    E o fruto da [D9]terra surgi[A9]rá, brotar[E]á
+Pela [F#m]força do [D/F#]vento, da c[A/E]huva  [E]  e do [F#m]sol que traz [D/F#]vida e ca[A/E]lor[E]
+Cada d[D]ia, Cresc[A/C#]endo e aprend[Bm]endo a [Bm/A]recomeç[E/G#]ar[E][F#m]`,
+  },
+  {
+    id: "077d478a-40ea-45bf-9127-515cc3d550b3",
+    title: "Alma Missionária",
+    artist: "Ziza Fernandes",
+    key: "E",
+    category: "Louvor",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/2UBZLv7XnZQ?si=6hMv2vPuWz_HCX82",
+    content: `Senh[E]or,[B/D#]     toma minha vida n[C#m]ova
+[A]  Antes que a esp[E]era [C#m]   /   Desgaste anos em m[B]im
+Est[E]ou [B/D#]     disposto ao que qu[C#m]eiras
+[A]  Não importa o que s[E]eja   / [F#m]  Tu chamas-me [B]a servi[E]r[B7]
+[chorus]
+Leva-m[E]e aonde os h[B/D#]omens / Neces[C#m]sitem tua pa[A]lavra
+Necess[E]item.[A]  /  De força de viv[D]er  [B]
+Onde f[E]alte a esper[B/D#]ança   /   Onde [C#m]tudo seja t[A]riste
+Simplesm[E]ente  [A] por não sabe[B]r de [E]Ti[B7]
+[verse]
+Te d[E]ou [B/D#]     meu coração sinc[C#m]ero
+[A]  Para gritar sem m[E]edo    /[F#m]   Formoso é Teu am[B]or.
+Senho[E]r, [B/D#]     Tenho alma mission[C#m]ária
+[A] Conduza-me à Ter[E]ra   /  [F#m] Que tenha s[B]ede de T[E]i[B7]
+[verse]
+E, ass[E]im [B/D#]     eu partirei cant[C#m]ando
+[A]  Por terras anunci[E]ando    /[F#m]   Tua beleza, Senh[B]or
+Ter[E]ei [B/D#]     meus braços sem cans[C#m]aço
+[A]  Tua História em meus l[E]ábios  / [F#m]  E a força [B]na oraç[E]ão`,
+  },
+  {
+    id: "cf81a1da-ca0f-498a-b9a1-a2b73c718b63",
+    title: "Oceanos",
+    artist: "Frei Gilson",
+    key: "Bm",
+    category: "Adoração",
+    accessCount: 0,
+    referenceUrl: "https://youtu.be/7qS-cFp9oHE?si=njvUUge8ljFrvqPi",
+    content: `[Bm]   Tua voz me chama s[A/C#]obre as [D]águas
+Onde os meus p[A]és podem falh[G]ar
+[Bm]   E ali Te encontro [A/C#]no mist[D]ério
+Em meio ao m[A]ar, confiar[G]ei
+[chorus]
+[G]  Ao Teu n[D]ome clamare[A]i
+[G]  E além das [D]ondas olhar[A]ei
+Se o mar cresc[G]er somente em T[D]i descansar[A]ei
+Pois eu sou T[G]eu e [A]Tu  és m[Bm]eu[G] [A/C#] [A] [D]
+[verse]
+[Bm]   Tua graça cobre os m[A/C#]eus tem[D]ores
+Tua forte m[A]ão me guiar[G]á
+[Bm]   Se estou cercado p[A/C#]elo    [D]medo
+Tu és f[A]iel, nunca vais f[G]alhar
+[bridge]
+[Bm]   Guia-me para que em t[G]udo em Ti confie
+Sobre as [D]águas eu caminhe
+Por [A]onde quer que chames
+[Bm]   Leva-me mais fundo d[G]o que já estive
+E minha f[D]é será mais firme
+Senh[A]or, em Tua presença`,
   },
 ];
