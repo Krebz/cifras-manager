@@ -178,14 +178,6 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
           </ActionIcon>
         </Tooltip>
 
-        {onToggleFullscreen && (
-          <Tooltip label={isFullscreen ? "Sair de tela cheia" : "Tela cheia"}>
-            <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={onToggleFullscreen}>
-              {isFullscreen ? <IconMinimize size={15} /> : <IconMaximize size={15} />}
-            </ActionIcon>
-          </Tooltip>
-        )}
-
         <Popover
           opened={shortcutsOpen}
           onChange={setShortcutsOpen}
@@ -223,6 +215,14 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
             </Stack>
           </Popover.Dropdown>
         </Popover>
+
+        {onToggleFullscreen && (
+          <Tooltip label={isFullscreen ? "Sair de tela cheia" : "Tela cheia"}>
+            <ActionIcon size="sm" variant="subtle" style={iconButton} onClick={onToggleFullscreen}>
+              {isFullscreen ? <IconMinimize size={15} /> : <IconMaximize size={15} />}
+            </ActionIcon>
+          </Tooltip>
+        )}
       </div>
     </div>
   );

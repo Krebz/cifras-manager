@@ -33,6 +33,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const countedSong = useRef<string | undefined>(undefined);
   const swipeDir = useRef<"next" | "prev" | null>(null);
+  const restoreFullscreen = useRef(false);
   const fontSizeRef = useRef(fontSize);
   useEffect(() => { fontSizeRef.current = fontSize; }, [fontSize]);
   const pinch = useRef({ active: false, initialDist: 0, baseSize: 0 });
@@ -56,6 +57,10 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     setTranspose(0);
     setIsScrolling(false);
     swipeDir.current = null;
+    if (restoreFullscreen.current) {
+      restoreFullscreen.current = false;
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
   }, [setIsScrolling, songId]);
 
   // Swipe between songs in setlist mode
@@ -76,9 +81,11 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
       if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.75) return;
       if (dx < 0 && nextSongId && setlistId) {
         swipeDir.current = "next";
+        restoreFullscreen.current = !!document.fullscreenElement;
         navigate(songInSetlistRouteFor(nextSongId, setlistId));
       } else if (dx > 0 && prevSongId && setlistId) {
         swipeDir.current = "prev";
+        restoreFullscreen.current = !!document.fullscreenElement;
         navigate(songInSetlistRouteFor(prevSongId, setlistId));
       }
     }
