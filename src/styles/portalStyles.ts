@@ -183,7 +183,7 @@ export const portalStyles = (isDark: boolean) => ({
   panel: {
     padding: "17px",
     borderRadius: "14px",
-    backgroundColor: isDark ? "rgba(30,41,59,0.58)" : "rgba(248,250,252,0.9)",
+    backgroundColor: isDark ? "rgba(30,41,59,0.58)" : "rgba(226,232,240,0.5)",
     border: isDark
       ? "1px solid rgba(148,163,184,0.18)"
       : "1px solid rgba(148,163,184,0.20)",
@@ -214,10 +214,10 @@ export const portalStyles = (isDark: boolean) => ({
     gap: "9px",
     padding: "15px",
     borderRadius: "13px",
-    backgroundColor: isDark ? "rgba(30,41,59,0.60)" : "#ffffff",
+    backgroundColor: isDark ? "rgba(30,41,59,0.60)" : "rgba(226,232,240,0.5)",
     border: isDark
       ? "1px solid rgba(148,163,184,0.23)"
-      : "1px solid rgba(148,163,184,0.26)",
+      : "1px solid rgba(148,163,184,0.3)",
   },
   songName: {
     margin: 0,

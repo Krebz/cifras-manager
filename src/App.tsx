@@ -24,6 +24,7 @@ function App() {
   const isDark = colorScheme === "dark";
   const styles = appStyles(isDark);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const handleRouteChange = () => setRoute(readRoute());
@@ -38,6 +39,12 @@ function App() {
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  useEffect(() => {
+    const onFSChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFSChange);
+    return () => document.removeEventListener("fullscreenchange", onFSChange);
   }, []);
 
   function handleInstall() {
@@ -57,7 +64,7 @@ function App() {
   return (
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
       <Stack p="xs" gap="xs" style={{ ...styles.content, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
-        {!isPresentation && (
+        {!isPresentation && !isFullscreen && route.page !== "song" && (
           <div style={isNavSticky ? { position: "sticky", top: "10px", zIndex: 100 } : undefined}>
             <MainNavigation
               activePage={navigationPage}
@@ -93,6 +100,15 @@ function App() {
 
         {route.page === "song" && (
           <SongPage key={route.songId} songId={route.songId} setlistId={route.setlistId} isDark={isDark} />
+        )}
+
+        {!isPresentation && (
+          <footer style={{ textAlign: "center", padding: "8px 0 4px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", color: isDark ? "rgba(148,163,184,0.4)" : "rgba(100,116,139,0.4)", fontSize: "11px" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "16px", height: "16px", borderRadius: "5px", background: "linear-gradient(135deg, #2563eb, #7c3aed)", overflow: "hidden", flexShrink: 0 }}>
+              <img src="/katando-cifra-logo.jpg" alt="" aria-hidden="true" style={{ width: "13px", height: "13px", objectFit: "cover", filter: "invert(1) contrast(1.45)", mixBlendMode: "screen" as const }} />
+            </span>
+            © 2026 · Kleber Martins Alves · v1.0.0
+          </footer>
         )}
       </Stack>
     </div>

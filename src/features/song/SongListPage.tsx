@@ -145,8 +145,9 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
       )}
 
       <div style={styles.sectionHeader}>
-        <h2 style={styles.sectionTitle}>
-          {filteredSongs.length} música{filteredSongs.length === 1 ? "" : "s"}
+        <h2 style={{ ...styles.sectionTitle, display: "flex", alignItems: "center", gap: 4 }}>
+          <img src="/icons/clave-32.png" alt="Clave" style={{ width: 20, height: 20, flexShrink: 0 }} />
+          <span>{filteredSongs.length} música{filteredSongs.length === 1 ? "" : "s"}</span>
         </h2>
       </div>
 

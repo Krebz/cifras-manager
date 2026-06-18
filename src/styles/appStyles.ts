@@ -4,7 +4,7 @@ export const appStyles = (isDark: boolean, presentationMode = false) => ({
     background: isDark
       ? "linear-gradient(to bottom, #0f172a, #111827)"
       : "linear-gradient(to bottom, #f8fafc, #e2e8f0)",
-    padding: "14px 10px",
+    padding: "0 10px 14px",
   },
 
   content: {
@@ -20,7 +20,7 @@ export const appStyles = (isDark: boolean, presentationMode = false) => ({
     alignItems: "center",
     padding: "8px 14px",
     position: presentationMode ? "fixed" as const : "sticky" as const,
-    top: presentationMode ? 0 : "6px",
+    top: presentationMode ? 0 : "10px",
     ...(presentationMode ? { left: 0, right: 0, borderRadius: 0 } : {
       borderRadius: "10px",
     }),

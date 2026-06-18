@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { IconMinimize, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { transposeKey } from "../../services/transposeKey";
 import { appStyles } from "../../styles/appStyles";
@@ -167,44 +168,95 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     }
   }
 
+  const floatingBtnBase: React.CSSProperties = {
+    position: "fixed",
+    zIndex: 1001,
+    border: "none",
+    borderRadius: "50%",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backdropFilter: "blur(10px)",
+  };
+
   return (
     <>
-      <Toolbar
-        ref={presentationMode ? toolbarRef : undefined}
-        transpose={transpose}
-        currentKey={currentKey}
-        isScrolling={isScrolling}
-        scrollSpeed={scrollSpeed}
-        fontSize={fontSize}
-        isDark={isDark}
-        toolbarStyles={styles}
-        setlistId={setlistId}
-        setlistName={setlist?.name}
-        prevSongId={prevSongId}
-        nextSongId={nextSongId}
-        isFullscreen={isFullscreen}
-        onTransposeDecrease={() => setTranspose((current) => current - 1)}
-        onTransposeIncrease={() => setTranspose((current) => current + 1)}
-        onTransposeReset={() => setTranspose(0)}
-        onScrollToggle={() => setIsScrolling((current) => !current)}
-        onScrollSpeedDecrease={() => {
-          const next = Math.max(1, scrollSpeed - 1);
-          setScrollSpeed(next);
-          saveScrollSpeed(next);
-        }}
-        onScrollSpeedIncrease={() => {
-          const next = Math.min(10, scrollSpeed + 1);
-          setScrollSpeed(next);
-          saveScrollSpeed(next);
-        }}
-        onFontDecrease={() => setFontSize(Math.max(10, fontSize - 2))}
-        onFontIncrease={() => setFontSize(Math.min(40, fontSize + 2))}
-        onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
-        onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
-        onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
-        onNavigateBack={!setlistId ? () => window.history.back() : undefined}
-        onToggleFullscreen={toggleFullscreen}
-      />
+      {isFullscreen && (
+        <>
+          <button
+            aria-label="Sair de tela cheia"
+            onClick={toggleFullscreen}
+            style={{
+              ...floatingBtnBase,
+              top: "16px",
+              right: "16px",
+              width: "40px",
+              height: "40px",
+              background: isDark ? "rgba(30,41,59,0.75)" : "rgba(255,255,255,0.75)",
+              color: isDark ? "#e2e8f0" : "#1e293b",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.25)",
+            }}
+          >
+            <IconMinimize size={18} />
+          </button>
+          <button
+            aria-label={isScrolling ? "Parar rolagem" : "Iniciar rolagem"}
+            onClick={() => setIsScrolling((c) => !c)}
+            style={{
+              ...floatingBtnBase,
+              bottom: "28px",
+              right: "16px",
+              width: "52px",
+              height: "52px",
+              background: isScrolling ? "rgba(239,68,68,0.9)" : "rgba(37,99,235,0.9)",
+              color: "#ffffff",
+              boxShadow: isScrolling ? "0 0 18px rgba(239,68,68,0.5)" : "0 2px 14px rgba(0,0,0,0.3)",
+            }}
+          >
+            {isScrolling ? <IconPlayerStop size={22} /> : <IconPlayerPlay size={22} />}
+          </button>
+        </>
+      )}
+
+      {!isFullscreen && (
+        <Toolbar
+          ref={presentationMode ? toolbarRef : undefined}
+          transpose={transpose}
+          currentKey={currentKey}
+          isScrolling={isScrolling}
+          scrollSpeed={scrollSpeed}
+          fontSize={fontSize}
+          isDark={isDark}
+          toolbarStyles={styles}
+          setlistId={setlistId}
+          setlistName={setlist?.name}
+          prevSongId={prevSongId}
+          nextSongId={nextSongId}
+          isFullscreen={isFullscreen}
+          onTransposeDecrease={() => setTranspose((current) => current - 1)}
+          onTransposeIncrease={() => setTranspose((current) => current + 1)}
+          onTransposeReset={() => setTranspose(0)}
+          onScrollToggle={() => setIsScrolling((current) => !current)}
+          onScrollSpeedDecrease={() => {
+            const next = Math.max(1, scrollSpeed - 1);
+            setScrollSpeed(next);
+            saveScrollSpeed(next);
+          }}
+          onScrollSpeedIncrease={() => {
+            const next = Math.min(10, scrollSpeed + 1);
+            setScrollSpeed(next);
+            saveScrollSpeed(next);
+          }}
+          onFontDecrease={() => setFontSize(Math.max(10, fontSize - 2))}
+          onFontIncrease={() => setFontSize(Math.min(40, fontSize + 2))}
+          onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
+          onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
+          onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
+          onNavigateBack={!setlistId ? () => window.history.back() : undefined}
+          onToggleFullscreen={toggleFullscreen}
+        />
+      )}
       {presentationMode && <div style={{ height: toolbarHeight }} />}
       <div
         key={songId}

@@ -43,6 +43,14 @@ button:focus-visible {
   outline: none;
 }
 
+.hero-content { padding-right: 230px; }
+.hero-rosario { position: absolute; top: 0; right: 0; height: 100%; width: auto; }
+
+@media (max-width: 620px) {
+  .hero-content { padding-right: 0 !important; }
+  .hero-rosario { display: none; }
+}
+
 @keyframes songSlideFromRight {
   from { opacity: 0; transform: translateX(40px); }
   to   { opacity: 1; transform: translateX(0); }
