@@ -3,6 +3,7 @@ import { navigate } from "../../app/router";
 import { routes } from "../../app/routes";
 import SongCard from "../../components/catalog/SongCard";
 import { useSongCatalog } from "../../hooks/useSongCatalog";
+import { getSetlists } from "../../services/setlistRepository";
 import { portalStyles } from "../../styles/portalStyles";
 import { useSongAccessCounts } from "./songAccessStore";
 
@@ -38,6 +39,7 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
   } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
   const [history, setHistory] = useState<string[]>(getHistory);
+  const setlists = getSetlists();
 
   useEffect(() => {
     if (query.length < 2) return;
@@ -144,11 +146,40 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
         </div>
       )}
 
-      <div style={styles.sectionHeader}>
-        <h2 style={{ ...styles.sectionTitle, display: "flex", alignItems: "center", gap: 4 }}>
-          <img src="/icons/clave-32.png" alt="Clave" style={{ width: 20, height: 20, flexShrink: 0 }} />
-          <span>{filteredSongs.length} música{filteredSongs.length === 1 ? "" : "s"}</span>
-        </h2>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "4px 16px",
+          marginBottom: "13px",
+          padding: "8px 12px",
+          borderRadius: "10px",
+          background: isDark ? "rgba(30,41,59,0.45)" : "rgba(226,232,240,0.4)",
+          border: `1px solid ${isDark ? "rgba(148,163,184,0.15)" : "rgba(148,163,184,0.22)"}`,
+        }}
+      >
+        {(() => {
+          const statStyle: React.CSSProperties = { fontSize: 13, color: isDark ? "#94a3b8" : "#64748b", display: "flex", alignItems: "center", gap: 4, flexShrink: 0 };
+          const divStyle: React.CSSProperties = { color: isDark ? "rgba(148,163,184,0.3)" : "rgba(148,163,184,0.45)", userSelect: "none" };
+          return (
+            <>
+              <span style={statStyle}>
+                <img src="/icons/clave-32.png" alt="" style={{ width: 18, height: 18, flexShrink: 0 }} />
+                {filteredSongs.length} música{filteredSongs.length === 1 ? "" : "s"}
+              </span>
+              <span style={divStyle}>|</span>
+              <span style={statStyle}>
+                🎵 {artists.length} artista{artists.length === 1 ? "" : "s"}
+              </span>
+              <span style={divStyle}>|</span>
+              <span style={statStyle}>
+                📋 {setlists.length} repertório{setlists.length === 1 ? "" : "s"}
+              </span>
+            </>
+          );
+        })()}
       </div>
 
       {filteredSongs.length ? (

@@ -43,12 +43,33 @@ button:focus-visible {
   outline: none;
 }
 
-.hero-content { padding-right: 230px; }
-.hero-rosario { position: absolute; top: 0; right: 0; height: 100%; width: auto; }
+.hero-inner {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 24px;
+}
+.hero-rosario {
+  width: auto;
+  height: 290px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.hero-content {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  gap: 15px;
+}
 
 @media (max-width: 620px) {
-  .hero-content { padding-right: 0 !important; }
-  .hero-rosario { display: none; }
+  .hero-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-rosario {
+    height: 180px;
+  }
 }
 
 @keyframes songSlideFromRight {
