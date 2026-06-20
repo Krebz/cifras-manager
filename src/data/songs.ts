@@ -1,4 +1,4 @@
-import type { Song } from "../types/music";
+﻿import type { Song } from "../types/music";
 
 export const songs: Song[] = [
   {
@@ -6,7 +6,8 @@ export const songs: Song[] = [
     title: "Compadesse-te",
     artist: "Músicas Católicas",
     key: "D",
-    category: "Ato Penitencial",
+    category: "Clamor",
+    liturgy: "Ato Penitencial",
     accessCount: 0,
     referenceUrl: "https://youtu.be/Do1u-L6H3xQ?si=R81tAt6XyeDBQonq",
     content: `Senh[D9]or tem pieda[E/D]de   /   Senh[C#m]or tem pieda[D9]–a–[A/C#]de  de n[Bm]ós          
@@ -23,7 +24,8 @@ Compade[C7M]ce-te   /   Senh[Em]or..[G]. Tem pieda[A]de`,
     title: "Glória a Deus nas alturas",
     artist: "Eliana Ribeiro",
     key: "D",
-    category: "Glória",
+    category: "Louvor",
+    liturgy: "Glória",
     accessCount: 0,
     referenceUrl: "https://youtu.be/LKczrJp8cXg?si=ZqHGu7Rgkn4diOwo",
     content: `Gl[D9]ória a Deus nas alt[C9]uras
@@ -63,7 +65,8 @@ Na glória de Deus[G] Pai am[D9]ém! (4x)`,
     title: "Hino São João Evangelista - Oficial.",
     artist: "Manuel Assunção",
     key: "E",
-    category: "Entrada",
+    category: "Histórico",
+    liturgy: "Entrada",
     accessCount: 0,
     content: `[chorus]
 Jo[E]ão Evange[A]lista, Jo[B]ão,
@@ -124,6 +127,7 @@ Pela [Bm]nossa humanid[E]ade... / interced[A]ei!`,
     artist: "Músicas Católicas",
     key: "A",
     category: "Louvor",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/QVDD1p9fi_w?si=l2wJzRTG9UpvxKp8",
     content: `[A]  Manifest[E]ou o poder do seu [B]braço
@@ -152,7 +156,8 @@ M[G#m]inha alma glorif[D#m]ica o Senh[B]or
     title: "Santo",
     artist: "Joãozinho e Kater",
     key: "Em",
-    category: "Santo",
+    category: "Clamor",
+    liturgy: "Santo",
     accessCount: 0,
     referenceUrl: "https://youtu.be/UpvZ5jCEHCo?si=7HTwq2UQrBsZDbr9",
     content: `[chorus]
@@ -174,7 +179,8 @@ Hos[C]ana nas alt[B7]uras!
     title: "Santo",
     artist: "Irmã Elisa",
     key: "Em",
-    category: "Santo",
+    category: "Clamor",
+    liturgy: "Santo",
     accessCount: 0,
     referenceUrl: "https://youtu.be/IHr74TMk27w?si=UO46C5ewOQjJ16TK",
     content: `[Em]Santo, S[D/F#]anto, Sa[C9]nto Senh[Em]or
@@ -196,7 +202,8 @@ Ho ho [D/F#]ho ho hosa[C9]na, ho[D]sana [D#°]nas [D/F#]al ... [Em]turas`,
     title: "Glória a Deus nas alturas",
     artist: "Ministério Amor e Adoração",
     key: "E",
-    category: "Glória",
+    category: "Louvor",
+    liturgy: "Glória",
     accessCount: 0,
     content: `[chorus]
 Gl[E]ória a Deus nas alt[B9]uras
@@ -232,6 +239,7 @@ E p[C#m]az na terra aos h[B9]omens por Ele am[A9]ados. (2x)
     artist: "Aline Brasil",
     key: "D",
     category: "Mariana",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/W__XtnTtEBA?si=IsbuCix3zL7C0LV2",
     content: `Ô ||: Aug[D]usta Rainha do c[A]éu soberana dos [G]anjos
@@ -261,6 +269,7 @@ Ao teu [Bm7]comando os anjos [A/C#]batalhar[D]ão e ven[G]cerão`,
     artist: "Léo Mantovani",
     key: "E",
     category: "Mariana",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/QnOu5W0Hnho?si=H9bZ6iPGqeLOXC6U",
     content: `Gr[E]aças Te damos N[F#m]ossa Senhora, V[G#m]irgem Imacul[A]ada
@@ -383,16 +392,13 @@ Como sin[C#m7]al que Tu rec[D9]olhes nossa of[C#m7]erta
 Tudo o que s[Bm7]omos deixamos aqu[E]i
 [chorus]
 [A/C#]     É um mil[D9]agre que se d[A/C#]á
-                        
 O pão e o v[D9]inho em c[F°]orpo e s[F#m7]angue
 Vão se tr[Bm]ansformar[E]
 
 [A/C#]     Não há lim[D9]ites para o am[A/C#]or
 Vem transform[D9]ar também minha v[F#m7]ida
 Oh Senh[Bm7]or, é T[E]eu esse milagre de am[A4]or[A9]
-
 [verse]
-
 Pão e v[D9]inho Te apresent[A]amos nesse alt[Bm7]ar
 Como sin[F#m7]al que Tu rec[G9]olhes nossa of[F#m7]erta
 Tudo o que s[Em7]omos deixamos aqu[A]i
@@ -400,9 +406,7 @@ Tudo o que s[Em7]omos deixamos aqu[A]i
 Pão e v[D9]inho Te apresent[A]amos nesse alt[Bm7]ar
 Como sin[F#m7]al que Tu rec[G9]olhes nossa of[F#m7]erta
 Tudo o que s[Em7]omos deixamos aqu[A]i
-
 [chorus]
-
 [D/F#]     É um mil[G9]agre que se d[F#m7]á
 O pão e o v[G9]inho em corpo e s[Bm7]angue
 Vão se tr[Em7]ansformar[A]
@@ -410,9 +414,7 @@ Vão se tr[Em7]ansformar[A]
 [D/F#]     Não há lim[G9]ites para o am[F#m7]or
 Vem transform[G9]ar também minha v[Bm7]ida
 Oh Senh[Em7]or, é T[A]eu esse milagre de am[D9]or[Bm7][Em7]
-
 [outro]
-
 É T[A]eu esse milagre de am[D9]or[Bm7][Em7]
 É T[A]eu esse milagre de am[D9]or`,
   },
@@ -421,7 +423,8 @@ Oh Senh[Em7]or, é T[A]eu esse milagre de am[D9]or[Bm7][Em7]
     title: "Tú nós atraíste",
     artist: "Comunidade Católica Shalom",
     key: "D",
-    category: "Comunhão",
+    category: "Adoração Eucarítica",
+    liturgy: "Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/sB7SGXEy0Uw?si=w_6D4ihpNMAQmiFA",
     content: `[chorus]
@@ -455,7 +458,8 @@ N[A]esta comunh[Bm]ão banqu[G]ete do c[D]éu
     title: "Santo",
     artist: "Frei Gilson",
     key: "E",
-    category: "Santo",
+    category: "Clamor",
+    liturgy: "Santo",
     accessCount: 0,
     content: `[chorus]
 Sant[E]o, Santo, Sant[B]o
@@ -477,7 +481,8 @@ Sant[E]o`,
     title: "Kyrie",
     artist: "Capella",
     key: "A",
-    category: "Ato Penitencial",
+    category: "Clamor",
+    liturgy: "Ato Penitencial",
     accessCount: 0,
     referenceUrl: "https://youtu.be/p3__LsTHMzQ?si=EqzGCyL-EKx97sIJ",
     content: `Senho[A]r, que v[Bm]iestes ao [C#m]mundo [D]para nos sal[A]var
@@ -503,7 +508,8 @@ K[F#m]yri__[C#m7]e,   K[D7M]yri__[A9]e, K[Bm7]yrie El[E]ei_s[D7M]on  [A9]`,
     title: "Kyrie Eleison",
     artist: "JMJ Rio 2023",
     key: "Bm",
-    category: "Ato Penitencial",
+    category: "Clamor",
+    liturgy: "Ato Penitencial",
     accessCount: 0,
     referenceUrl: "https://youtu.be/-s3Szq3e49c?si=yxI3MDmdqUkf-kib",
     content: `Senh[Bm7]or, que vie[A9]stes salva[G]r
@@ -526,7 +532,8 @@ Kyri[D]e El[G/D]e  ei  s[A/C#]on,   El[F#7]e  ei s[Bm]on, El[E]é  ei  s[A9]on (
     title: "Aleluia! Com alegria, aclamemos",
     artist: "Coral Palestina",
     key: "A",
-    category: "Aclamação Evangelho",
+    category: "Aleluia",
+    liturgy: "Aclamação Evangelho",
     accessCount: 0,
     referenceUrl: "https://youtu.be/8nk81x6tL2A?si=aHum8VBX4Gow69JI",
     content: `[chorus]
@@ -544,7 +551,8 @@ Tua Palavra fortalece nossa lut[A]a
     title: "Aleluia, a minh'alma abrirei",
     artist: "Músicas Católicas",
     key: "C",
-    category: "Aclamação Evangelho",
+    category: "Aleluia",
+    liturgy: "Aclamação Evangelho",
     accessCount: 0,
     referenceUrl: "https://youtu.be/iOJazAXasB4?si=gfYEwcurG1fBlIrS",
     content: `[C]Alel[Em]uia, [F]alel[C]uia
@@ -562,7 +570,8 @@ Tua Palavra fortalece nossa lut[A]a
     title: "Tua Palavra - Aleluia",
     artist: "Comunidade Católica Shalom",
     key: "D",
-    category: "Aclamação Evangelho",
+    category: "Aleluia",
+    liturgy: "Aclamação Evangelho",
     accessCount: 0,
     referenceUrl: "https://youtu.be/RHfbDP5opQE?si=S-r47bL_SRZgv_QS",
     content: `[chorus]
@@ -583,7 +592,8 @@ Traz a ver[C9]dade  e il[G/B]umina a nossa [A4]vid[A]a  (2x)
     title: "Cordeiro",
     artist: "Ministério Amor e Adoração",
     key: "G",
-    category: "Cordeiro",
+    category: "Clamor",
+    liturgy: "Cordeiro",
     accessCount: 0,
     referenceUrl: "https://youtu.be/Gn25Nl7WIFU?si=RoZJCB_qm8ZHxoLm",
     content: `Cord[A9]eiro de D[D9/F#]eus
@@ -604,7 +614,8 @@ D[E4]ai  -  n[E]os a p[D]az[A]
     title: "Cordeiro de Deus",
     artist: "Ministério Amor e Adoração",
     key: "G",
-    category: "Cordeiro",
+    category: "Clamor",
+    liturgy: "Cordeiro",
     accessCount: 0,
     referenceUrl: "https://youtu.be/janev45m3K4?si=HuMy7_Zm5QxaDMwk",
     content: `Cordeiro de D[G]eus que tira[Bm7]is o pecado do m[C9]undo
@@ -621,7 +632,8 @@ Dai-nos a p[Am7]az, a v[D]os[D7]sa p[C]az [G]`,
     title: "Cordeiro de Deus",
     artist: "Capella",
     key: "Dm",
-    category: "Cordeiro",
+    category: "Clamor",
+    liturgy: "Cordeiro",
     accessCount: 0,
     referenceUrl: "https://youtu.be/bhIvPGbSUgA?si=dWnrHXTyHkrpPY2R",
     content: `[intro]
@@ -643,7 +655,8 @@ cordeiro de D[Gm]eus, a vossa p[Bb9]az[F][Bbm]`,
     title: "Em Teu Altar",
     artist: "Ministério Adoração e Vida",
     key: "E",
-    category: "Comunhão",
+    category: "Adoração",
+    liturgy: "Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/IThSoWnD2fg?si=DRIQ0NSSxOA0bCdX",
     content: `D[E9]iante de Tua pres[G#m]ença me en[E/G#]contro, Senh[A]or, Deus infi[C#m]ni ... t[B]o
@@ -675,7 +688,8 @@ Em Teu alt[C#m]ar S[B]enh[E]or [A] [B/D#] [E] [B] [C#m] [A9]`,
     title: "Corpo Santo",
     artist: "Fátima Sousa",
     key: "F",
-    category: "Comunhão",
+    category: "Adoração",
+    liturgy: "Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/pPjAcnuZTdA?si=p5MlRQ0oZOWaCBLj",
     content: `[F]Quando v[C/E]ou ao Teu en[Dm]contro
@@ -701,7 +715,8 @@ Toda minha v[Gm]ida transfor[C]mar. (2x)
     title: "Em Tua Presença",
     artist: "Padre Fábio de Melo",
     key: "G",
-    category: "Pós-Comunhão",
+    category: "Adoração",
+    liturgy: "Pós-Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/fk-d2tBE2-g?si=ZKXjzL9qUD47rW45",
     content: `É T[G]eu este momento de ad[Am]oração
@@ -723,7 +738,8 @@ Em Tua p[D]resença Sen[G]hor. (2x)`,
     title: "Estou Aqui",
     artist: "Anjos de Resgate",
     key: "G",
-    category: "Pós-Comunhão",
+    category: "Adoração",
+    liturgy: "Pós-Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/uR32nEfW8Dg?si=bQY3V35SXWnl7z7r",
     content: `Estou aqu[E]i
@@ -748,7 +764,8 @@ Pelos q[F#m7]ue não creem e[B]u, estou aq[E]ui`,
     title: "Ao Teu Encontro",
     artist: "Eliana Ribeiro",
     key: "A",
-    category: "Pós-Comunhão",
+    category: "Adoração",
+    liturgy: "Pós-Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/Zem9pE1uqDk?si=rQwLSGBHbAt5disw",
     content: `[A9]O meu cora[A9/F#]ção tem s[E]ede de am[A9]ar
@@ -765,6 +782,7 @@ Por que me [Bm]amas s[E7]em igu[A9]al`,
     artist: "Eliana Ribeiro",
     key: "C",
     category: "Louvor",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/EQj1GzLkicU?si=jAd0UyipPd91dRnj",
     content: `[C]Há uma chuva de gr[G]aça aqui
@@ -791,6 +809,7 @@ Derr[F]ama!
     artist: "Celina Borges",
     key: "G",
     category: "Louvor",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/FTBha5mUfg4?si=0zCOM_cuTzsuN8Bn",
     content: `[G] Senhor, eu quero ob[D]edecer [Em]    a Tua v[C]oz
@@ -818,6 +837,7 @@ Faz chover sobre n[C]ós Água Viva[G]
     artist: "Vida Reluz",
     key: "A",
     category: "Adoração",
+    liturgy: "Pós-Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/ooQKeQhqVoM?si=nARKru4hiUB5gZ7Y",
     content: `V[A9]em, Senhor J[E/G#]esus!
@@ -851,7 +871,8 @@ Todo jo[D/E]elho se dobrar[A9]á`,
     title: "Doa a tua vida",
     artist: "Músicas Católicas",
     key: "G",
-    category: "Ofertório",
+    category: "Meditação",
+    liturgy: "Ofertório",
     accessCount: 0,
     referenceUrl: "https://youtu.be/SlL09F2Fyag?si=S8CI9PLGWsIwZtG5",
     content: `Uma n[Bm]oite de suor
@@ -887,7 +908,8 @@ No cel[Em]eiro pode entr[Bm]ar`,
     title: "A mesa Santa",
     artist: "Músicas Católicas",
     key: "A",
-    category: "Ofertório",
+    category: "Louvor",
+    liturgy: "Ofertório",
     accessCount: 0,
     referenceUrl: "https://youtu.be/0ISSgH_ZRZQ?si=x6wUCPmWS0u8mcfP",
     content: `[Intro] 
@@ -916,7 +938,8 @@ Tua bon[F#m]dade vem com far[C#m]tura
     title: "Divino Coração",
     artist: "Comunidade Católica Shalom",
     key: "Bb",
-    category: "Comunhão",
+    category: "Adoração",
+    liturgy: "Comunhão",
     accessCount: 0,
     referenceUrl: "https://youtu.be/6CKSVAW-O9c?si=U4kvZUXXKladpr6P",
     content: `[intro]
@@ -981,6 +1004,7 @@ Cada d[D]ia, Cresc[A/C#]endo e aprend[Bm]endo a [Bm/A]recomeç[E/G#]ar[E][F#m]`,
     artist: "Ziza Fernandes",
     key: "E",
     category: "Louvor",
+    liturgy: "Canto Final",
     accessCount: 0,
     referenceUrl: "https://youtu.be/2UBZLv7XnZQ?si=6hMv2vPuWz_HCX82",
     content: `Senh[E]or,[B/D#]     toma minha vida n[C#m]ova

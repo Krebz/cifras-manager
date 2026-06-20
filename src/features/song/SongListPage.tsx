@@ -9,6 +9,7 @@ import { useSongAccessCounts } from "./songAccessStore";
 
 const HISTORY_KEY = "cifras_search_history";
 const MAX_HISTORY = 5;
+const PAGE_SIZE = 12;
 
 function getHistory(): string[] {
   try { return JSON.parse(localStorage.getItem(HISTORY_KEY) ?? "[]"); } catch { return []; }
@@ -29,16 +30,20 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
   const {
     filteredSongs,
     categories,
+    liturgies,
     artists,
     query,
     category,
+    liturgy,
     artist,
     setQuery,
     setCategory,
+    setLiturgy,
     setArtist,
   } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
   const [history, setHistory] = useState<string[]>(getHistory);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const setlists = getSetlists();
 
   useEffect(() => {
@@ -49,6 +54,10 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
     }, 2000);
     return () => clearTimeout(t);
   }, [query]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [query, category, liturgy, artist]);
 
   const chipStyle: React.CSSProperties = {
     padding: "3px 11px",
@@ -113,6 +122,21 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
             </option>
           ))}
         </select>
+        {liturgies.length > 0 && (
+          <select
+            aria-label="Filtrar por uso litúrgico"
+            value={liturgy}
+            style={styles.select}
+            onChange={(event) => setLiturgy(event.target.value)}
+          >
+            <option value="">Todos os momentos</option>
+            {liturgies.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        )}
         <select
           aria-label="Filtrar por artista"
           value={artist}
@@ -183,17 +207,30 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
       </div>
 
       {filteredSongs.length ? (
-        <div style={styles.cardGrid}>
-          {filteredSongs.map((song) => (
-            <SongCard
-              key={song.id}
-              song={song}
-              accessCount={accessCounts[song.id]}
-              isDark={isDark}
-              onOpen={(songId) => navigate(routes.song(songId))}
-            />
-          ))}
-        </div>
+        <>
+          <div style={styles.cardGrid}>
+            {filteredSongs.slice(0, visibleCount).map((song) => (
+              <SongCard
+                key={song.id}
+                song={song}
+                accessCount={accessCounts[song.id]}
+                isDark={isDark}
+                onOpen={(songId) => navigate(routes.song(songId))}
+              />
+            ))}
+          </div>
+          {visibleCount < filteredSongs.length && (
+            <div style={{ textAlign: "center", marginTop: "16px" }}>
+              <button
+                type="button"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                style={styles.secondaryAction}
+              >
+                Carregar mais · {filteredSongs.length - visibleCount} restantes
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div style={styles.empty}>
           Nenhuma música foi encontrada com os filtros selecionados.

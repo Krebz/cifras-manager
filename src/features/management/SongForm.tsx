@@ -38,12 +38,14 @@ type Props = {
 const allSongs = getAllSongs();
 const existingCategories = [...new Set(allSongs.map((s) => s.category).filter(Boolean))].sort();
 const existingArtists    = [...new Set(allSongs.map((s) => s.artist).filter(Boolean))].sort();
+const existingLiturgies  = [...new Set(allSongs.map((s) => s.liturgy).filter(Boolean) as string[])].sort();
 
 export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [artist, setArtist] = useState(initial?.artist ?? "");
   const [key, setKey] = useState(initial?.key ?? "G");
   const [category, setCategory] = useState(initial?.category ?? "");
+  const [liturgy, setLiturgy] = useState(initial?.liturgy ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
   const [referenceUrl, setReferenceUrl] = useState(initial?.referenceUrl ?? "");
 
@@ -62,6 +64,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
       artist: artist.trim(),
       key,
       category: category.trim(),
+      liturgy: liturgy.trim() || undefined,
       content,
       referenceUrl: referenceUrl.trim() || undefined,
     });
@@ -117,14 +120,21 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
               allowDeselect={false}
             />
             <Autocomplete
-              label="Categoria"
+              label="Categoria musical"
               value={category}
               onChange={setCategory}
               data={existingCategories}
-              placeholder="Selecione ou digite nova..."
-              required
+              placeholder="Louvor, Adoração..."
             />
           </Group>
+
+          <Autocomplete
+            label="Uso litúrgico (opcional)"
+            value={liturgy}
+            onChange={setLiturgy}
+            data={existingLiturgies}
+            placeholder="Entrada, Ofertório, Comunhão..."
+          />
 
           <TextInput
             label="Link de referência (opcional)"
@@ -226,6 +236,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
                 songDocument={previewDoc}
                 artist={artist}
                 category={category}
+                liturgy={liturgy.trim() || undefined}
                 transpose={0}
                 fontSize={14}
                 referenceUrl={referenceUrl.trim() || undefined}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, useMantineColorScheme } from "@mantine/core";
+import { Button, Group, Modal, Stack, Text, useMantineColorScheme } from "@mantine/core";
 import MainNavigation from "./components/MainNavigation";
 import { navigate, readRoute } from "./app/router";
 import { routePathFor, type AppRoute, type NavigationPage } from "./app/routes";
@@ -12,6 +12,9 @@ import SongPage from "./features/song/SongPage";
 import SetlistListPage from "./features/setlist/SetlistListPage";
 import SetlistDetailPage from "./features/setlist/SetlistDetailPage";
 import { appStyles } from "./styles/appStyles";
+import { createSetlist, updateSetlist } from "./services/setlistRepository";
+import { decodeSetlist, extractImportParam } from "./services/setlistShare";
+import { routes } from "./app/routes";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -25,6 +28,7 @@ function App() {
   const styles = appStyles(isDark);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [importPayload, setImportPayload] = useState<{ name: string; date?: string; songIds: string[] } | null>(null);
 
   useEffect(() => {
     const handleRouteChange = () => setRoute(readRoute());
@@ -47,6 +51,14 @@ function App() {
     return () => document.removeEventListener("fullscreenchange", onFSChange);
   }, []);
 
+  useEffect(() => {
+    const encoded = extractImportParam();
+    if (!encoded) return;
+    const payload = decodeSetlist(encoded);
+    if (payload) setImportPayload(payload);
+    window.location.hash = `#${routes.setlists}`;
+  }, []);
+
   function handleInstall() {
     if (!installPrompt) return;
     installPrompt.prompt();
@@ -60,6 +72,14 @@ function App() {
 
   const isPresentation = route.page === "song" && !!route.setlistId;
   const isNavSticky = route.page !== "song" && route.page !== "setlist";
+
+  function handleImportConfirm() {
+    if (!importPayload) return;
+    const setlist = createSetlist(importPayload.name, importPayload.date);
+    updateSetlist({ ...setlist, songIds: importPayload.songIds });
+    setImportPayload(null);
+    navigate(routes.setlists);
+  }
 
   return (
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
@@ -111,6 +131,30 @@ function App() {
           </footer>
         )}
       </Stack>
+
+      <Modal
+        opened={!!importPayload}
+        onClose={() => setImportPayload(null)}
+        title="Repertório recebido"
+        size="sm"
+        centered
+      >
+        <Stack gap="sm">
+          <Text size="sm">
+            Você recebeu o repertório <strong>{importPayload?.name}</strong>
+            {importPayload?.date && (
+              <> — {new Date(importPayload.date + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</>
+            )}.
+          </Text>
+          <Text size="xs" c="dimmed">
+            {importPayload?.songIds.length} música{importPayload?.songIds.length !== 1 ? "s" : ""}. Deseja salvar nos seus repertórios?
+          </Text>
+          <Group justify="flex-end" mt="xs">
+            <Button variant="subtle" onClick={() => setImportPayload(null)}>Cancelar</Button>
+            <Button onClick={handleImportConfirm}>Salvar repertório</Button>
+          </Group>
+        </Stack>
+      </Modal>
     </div>
   );
 }

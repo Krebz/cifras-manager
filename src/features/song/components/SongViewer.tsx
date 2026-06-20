@@ -8,6 +8,7 @@ type Props = {
   songDocument: SongDocument;
   artist: string;
   category: string;
+  liturgy?: string;
   transpose: number;
   fontSize: number;
   referenceUrl?: string;
@@ -17,6 +18,7 @@ export default function SongViewer({
   songDocument,
   artist,
   category,
+  liturgy,
   transpose,
   fontSize,
   referenceUrl,
@@ -38,7 +40,8 @@ export default function SongViewer({
         <div style={styles.artist}>{artist}</div>
         <div style={styles.metaRow}>
           <div style={styles.songKey}>Tom: {songDocument.key}</div>
-          <div style={styles.songCategory}>Categoria: {category}</div>
+          {category && <div style={styles.songCategory}>Categoria: {category}</div>}
+          {liturgy && <div style={styles.songCategory}>Liturgia: {liturgy}</div>}
         </div>
         {referenceUrl && (
           <div style={{ marginTop: 6 }}>

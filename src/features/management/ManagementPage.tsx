@@ -19,6 +19,8 @@ import {
 import type { Song } from "../../types/music";
 import SongForm from "./SongForm";
 
+const PAGE_SIZE = 20;
+
 type Props = { isDark: boolean };
 type View = { kind: "list" } | { kind: "form"; song?: Song };
 
@@ -27,6 +29,7 @@ export default function ManagementPage({ isDark }: Props) {
   const [view, setView] = useState<View>({ kind: "list" });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
@@ -55,6 +58,9 @@ export default function ManagementPage({ isDark }: Props) {
       lines.push(`    artist: ${JSON.stringify(song.artist)},`);
       lines.push(`    key: ${JSON.stringify(song.key)},`);
       lines.push(`    category: ${JSON.stringify(song.category)},`);
+      if (song.liturgy) {
+        lines.push(`    liturgy: ${JSON.stringify(song.liturgy)},`);
+      }
       lines.push(`    accessCount: ${song.accessCount},`);
       if (song.referenceUrl) {
         lines.push(`    referenceUrl: ${JSON.stringify(song.referenceUrl)},`);
@@ -122,6 +128,7 @@ export default function ManagementPage({ isDark }: Props) {
     const q = query.trim().toLowerCase();
     return !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
   });
+  const visibleSongs = filtered.slice(0, visibleCount);
 
   return (
     <Stack gap="md">
@@ -153,7 +160,7 @@ export default function ManagementPage({ isDark }: Props) {
       <TextInput
         placeholder="Buscar por título ou artista..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => { setQuery(e.target.value); setVisibleCount(PAGE_SIZE); }}
         leftSection={<IconSearch size={15} />}
         rightSection={query ? (
           <ActionIcon variant="subtle" size="sm" onClick={() => setQuery("")}>
@@ -179,7 +186,7 @@ export default function ManagementPage({ isDark }: Props) {
       )}
 
       <Stack gap="xs">
-        {filtered.map((song) => (
+        {visibleSongs.map((song) => (
           <div
             key={song.id}
             style={{
@@ -200,7 +207,8 @@ export default function ManagementPage({ isDark }: Props) {
               <Group gap="xs">
                 <Text size="xs" c="dimmed">{song.artist}</Text>
                 <Badge size="xs" variant="light">{song.key}</Badge>
-                <Badge size="xs" variant="light" color="green">{song.category}</Badge>
+                {song.category && <Badge size="xs" variant="light" color="green">{song.category}</Badge>}
+                {song.liturgy && <Badge size="xs" variant="light" color="violet">{song.liturgy}</Badge>}
               </Group>
             </Stack>
 
@@ -235,6 +243,17 @@ export default function ManagementPage({ isDark }: Props) {
           </div>
         ))}
       </Stack>
+
+      {visibleCount < filtered.length && (
+        <Group justify="center" mt="sm">
+          <Button
+            variant="subtle"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+          >
+            Carregar mais · {filtered.length - visibleCount} restantes
+          </Button>
+        </Group>
+      )}
     </Stack>
   );
 }

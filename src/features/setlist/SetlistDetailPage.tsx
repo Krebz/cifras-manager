@@ -14,10 +14,12 @@ import {
   IconArrowDown,
   IconArrowLeft,
   IconArrowUp,
+  IconCheck,
   IconMusic,
   IconPlayerPlay,
   IconPlus,
   IconSearch,
+  IconShare,
   IconTrash,
 } from "@tabler/icons-react";
 import {
@@ -33,6 +35,7 @@ import { navigate, songInSetlistRouteFor } from "../../app/router";
 import { routes } from "../../app/routes";
 import type { Setlist } from "../../types/setlist";
 import type { Song } from "../../types/music";
+import { buildShareUrl } from "../../services/setlistShare";
 
 type Props = {
   setlistId: string;
@@ -44,6 +47,7 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   const [addOpen, setAddOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [removeTarget, setRemoveTarget] = useState<Song | null>(null);
+  const [shared, setShared] = useState(false);
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
@@ -84,6 +88,13 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   function handleMoveDown(songId: string) {
     moveSongDown(setlistId, songId);
     reload();
+  }
+
+  function handleShare() {
+    if (!setlist) return;
+    navigator.clipboard?.writeText(buildShareUrl(setlist)).catch(() => {});
+    setShared(true);
+    setTimeout(() => setShared(false), 2500);
   }
 
   function handleStart() {
@@ -139,6 +150,14 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
           onClick={() => setAddOpen(true)}
         >
           Adicionar músicas
+        </Button>
+        <Button
+          variant="subtle"
+          leftSection={shared ? <IconCheck size={16} /> : <IconShare size={16} />}
+          disabled={orderedSongs.length === 0}
+          onClick={handleShare}
+        >
+          {shared ? "Link copiado!" : "Compartilhar"}
         </Button>
       </Group>
 

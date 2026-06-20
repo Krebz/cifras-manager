@@ -26,7 +26,8 @@ export default function SongCard({
       </h3>
       <p style={styles.mutedText}>{song.artist}</p>
       <div style={styles.metadata}>
-        <span style={styles.badge}>{song.category}</span>
+        {song.category && <span style={styles.badge}>{song.category}</span>}
+        {song.liturgy && <span style={styles.badge}>{song.liturgy}</span>}
         <span style={styles.badge}>Tom {song.key}</span>
         <span style={styles.badge}>{accessCount} acessos</span>
       </div>

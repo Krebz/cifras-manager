@@ -280,6 +280,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           songDocument={songDocument}
           artist={selectedSong.artist}
           category={selectedSong.category}
+          liturgy={selectedSong.liturgy}
           transpose={transpose}
           fontSize={fontSize}
           referenceUrl={selectedSong.referenceUrl}

@@ -77,7 +77,11 @@ const extractLyrics = (content: string) =>
   content.replace(/\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim();
 
 export function getSongCategories(songsList: Song[]): string[] {
-  return [...new Set(songsList.map((song) => song.category))].sort();
+  return [...new Set(songsList.map((song) => song.category).filter(Boolean))].sort();
+}
+
+export function getSongLiturgies(songsList: Song[]): string[] {
+  return [...new Set(songsList.map((song) => song.liturgy).filter(Boolean) as string[])].sort();
 }
 
 export function getSongArtists(songsList: Song[]): string[] {
@@ -94,7 +98,7 @@ export function searchSongs(songsList: Song[], query: string): Song[] {
   return songsList.filter((song) => {
     const lyrics = extractLyrics(song.content);
     const searchable = normalize(
-      `${song.title} ${song.artist} ${song.category} ${song.key} ${lyrics}`,
+      `${song.title} ${song.artist} ${song.category} ${song.liturgy ?? ""} ${song.key} ${lyrics}`,
     );
 
     return searchable.includes(search);
@@ -105,11 +109,13 @@ export function filterSongs(
   songsList: Song[],
   category: string,
   artist: string,
+  liturgy: string = "",
 ): Song[] {
   return songsList.filter(
     (song) =>
       (!category || song.category === category) &&
-      (!artist || song.artist === artist),
+      (!artist || song.artist === artist) &&
+      (!liturgy || song.liturgy === liturgy),
   );
 }
 
@@ -119,9 +125,10 @@ export function getCatalogSongs(
   query: string,
   category: string,
   artist: string,
+  liturgy: string = "",
 ): Song[] {
   const searchedSongs = searchSongs(songsList, query);
-  const filteredSongs = filterSongs(searchedSongs, category, artist);
+  const filteredSongs = filterSongs(searchedSongs, category, artist, liturgy);
 
   return [...filteredSongs].sort(
     (left, right) =>
