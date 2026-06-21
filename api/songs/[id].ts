@@ -5,32 +5,36 @@ import { getDb } from "../lib/mongodb.js";
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { id } = req.query;
 
-  if (typeof id !== "string" || !ObjectId.isValid(id)) {
+  if (typeof id !== "string" || !id) {
     return res.status(400).json({ error: "ID inválido" });
   }
 
   const db = await getDb();
   const collection = db.collection("songs");
-  const objectId = new ObjectId(id);
+
+  // Suporte a ObjectId (novas cifras) e UUID legado (cifras migradas)
+  const filter = ObjectId.isValid(id)
+    ? { _id: new ObjectId(id) }
+    : { legacyId: id };
 
   if (req.method === "GET") {
-    const song = await collection.findOne({ _id: objectId });
+    const song = await collection.findOne(filter);
     if (!song) return res.status(404).json({ error: "Cifra não encontrada" });
     return res.status(200).json(song);
   }
 
   if (req.method === "PUT") {
-    const { _id, ...data } = req.body;
+    const { _id, legacyId, ...data } = req.body;
     await collection.updateOne(
-      { _id: objectId },
+      filter,
       { $set: { ...data, updatedAt: new Date() } }
     );
-    const updated = await collection.findOne({ _id: objectId });
+    const updated = await collection.findOne(filter);
     return res.status(200).json(updated);
   }
 
   if (req.method === "DELETE") {
-    await collection.deleteOne({ _id: objectId });
+    await collection.deleteOne(filter);
     return res.status(204).end();
   }
 

@@ -80,25 +80,41 @@ export function getSongAccessCounts(): Record<string, number> {
   return Object.fromEntries(load().map((song) => [song.id, song.accessCount]));
 }
 
-export function createSong(data: Omit<Song, "id" | "accessCount">): Song {
-  const list = load();
-  const newSong: Song = { ...data, id: crypto.randomUUID(), accessCount: 0 };
-  persist([...list, newSong]);
-  return newSong;
+export async function createSong(data: Omit<Song, "id" | "accessCount">): Promise<Song> {
+  const response = await fetch("/api/songs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Falha ao criar cifra");
+  const raw = await response.json();
+  const song = mapApiSong(raw);
+  persist([...load(), song]);
+  return song;
 }
 
-export function updateSong(id: string, data: Partial<Omit<Song, "id">>): Song {
+export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): Promise<Song> {
+  const response = await fetch(`/api/songs/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Falha ao atualizar cifra");
+  const raw = await response.json();
+  const updated = mapApiSong(raw);
   const list = load();
   const idx = list.findIndex((s) => s.id === id);
-  if (idx === -1) throw new Error(`Song not found: ${id}`);
-  const updated = { ...list[idx], ...data };
-  const next = [...list];
-  next[idx] = updated;
-  persist(next);
+  if (idx !== -1) {
+    const next = [...list];
+    next[idx] = updated;
+    persist(next);
+  }
   return updated;
 }
 
-export function deleteSong(id: string): void {
+export async function deleteSong(id: string): Promise<void> {
+  const response = await fetch(`/api/songs/${id}`, { method: "DELETE" });
+  if (!response.ok) throw new Error("Falha ao excluir cifra");
   persist(load().filter((s) => s.id !== id));
 }
 
