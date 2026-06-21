@@ -96,17 +96,17 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleAddToSetlist(setlistId: string) {
-    addSongToSetlist(setlistId, songId);
+  async function handleAddToSetlist(setlistId: string) {
+    await addSongToSetlist(setlistId, songId);
     setAddedTo(setlistId);
     setTimeout(() => { setAddedTo(null); setPlaylistOpen(false); }, 1200);
   }
 
-  function handleCreateAndAdd() {
+  async function handleCreateAndAdd() {
     const name = newName.trim();
     if (!name) return;
-    const sl = createSetlist(name);
-    addSongToSetlist(sl.id, songId);
+    const sl = await createSetlist(name);
+    await addSongToSetlist(sl.id, songId);
     setNewName("");
     setCreatingNew(false);
     setAddedTo(sl.id);

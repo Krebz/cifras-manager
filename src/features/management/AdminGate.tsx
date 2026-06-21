@@ -1,9 +1,7 @@
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
 import { Button, PasswordInput, Stack, Text } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
-
-const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS as string | undefined;
-const SESSION_KEY = "cifras_admin_auth";
+import { getAdminToken, setAdminToken } from "../../services/authStore";
 
 type Props = {
   isDark: boolean;
@@ -11,22 +9,33 @@ type Props = {
 };
 
 export default function AdminGate({ isDark, children }: Props) {
-  const [authed, setAuthed] = useState(
-    () => !ADMIN_PASS || sessionStorage.getItem(SESSION_KEY) === "ok",
-  );
+  const [authed, setAuthed] = useState(() => !!getAdminToken());
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (authed) return <>{children}</>;
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (input === ADMIN_PASS) {
-      sessionStorage.setItem(SESSION_KEY, "ok");
-      setAuthed(true);
-    } else {
+  async function handleSubmit() {
+    if (!input) return;
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/auth/verify", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${input}` },
+      });
+      if (res.ok) {
+        setAdminToken(input);
+        setAuthed(true);
+      } else {
+        setError(true);
+        setInput("");
+      }
+    } catch {
       setError(true);
-      setInput("");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -34,15 +43,9 @@ export default function AdminGate({ isDark, children }: Props) {
   const border = isDark ? "1px solid rgba(148,163,184,0.22)" : "1px solid rgba(148,163,184,0.30)";
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "40px 16px",
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: "center", padding: "40px 16px" }}>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => { e.preventDefault(); void handleSubmit(); }}
         style={{
           width: "100%",
           maxWidth: 360,
@@ -51,9 +54,7 @@ export default function AdminGate({ isDark, children }: Props) {
           borderRadius: 16,
           padding: "32px 28px",
           backdropFilter: "blur(14px)",
-          boxShadow: isDark
-            ? "0 8px 32px rgba(0,0,0,0.3)"
-            : "0 8px 24px rgba(15,23,42,0.08)",
+          boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.3)" : "0 8px 24px rgba(15,23,42,0.08)",
         }}
       >
         <Stack gap="lg">
@@ -66,9 +67,7 @@ export default function AdminGate({ isDark, children }: Props) {
                 height: 48,
                 borderRadius: "50%",
                 background: isDark ? "rgba(59,130,246,0.15)" : "rgba(37,99,235,0.10)",
-                border: isDark
-                  ? "1px solid rgba(96,165,250,0.25)"
-                  : "1px solid rgba(37,99,235,0.18)",
+                border: isDark ? "1px solid rgba(96,165,250,0.25)" : "1px solid rgba(37,99,235,0.18)",
               }}
             >
               <IconLock size={22} color={isDark ? "#60a5fa" : "#2563eb"} />
@@ -89,7 +88,7 @@ export default function AdminGate({ isDark, children }: Props) {
             autoFocus
           />
 
-          <Button type="submit" fullWidth disabled={!input}>
+          <Button type="submit" fullWidth disabled={!input || loading} loading={loading}>
             Entrar
           </Button>
         </Stack>

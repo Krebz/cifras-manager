@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActionIcon,
   Badge,
@@ -13,6 +13,7 @@ import { IconArrowLeft, IconDownload, IconEdit, IconMusic, IconPlus, IconSearch,
 import {
   createSong,
   deleteSong,
+  fetchSongs,
   getAllSongs,
   updateSong,
 } from "../../services/songRepository";
@@ -31,13 +32,13 @@ export default function ManagementPage({ isDark }: Props) {
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  useEffect(() => {
+    fetchSongs().then(setSongs).catch(() => {});
+  }, []);
+
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
   const textMuted = isDark ? "#94a3b8" : "#64748b";
-
-  function refresh() {
-    setSongs(getAllSongs());
-  }
 
   function handleExport() {
     const lines: string[] = [
@@ -81,22 +82,23 @@ export default function ManagementPage({ isDark }: Props) {
     URL.revokeObjectURL(url);
   }
 
-  function handleSave(data: Omit<Song, "id" | "accessCount">) {
+  async function handleSave(data: Omit<Song, "id" | "accessCount">) {
     if (view.kind === "form") {
       if (view.song) {
-        updateSong(view.song.id, data);
+        const updated = await updateSong(view.song.id, data);
+        setSongs((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
       } else {
-        createSong(data);
+        const created = await createSong(data);
+        setSongs((prev) => [...prev, created]);
       }
     }
-    refresh();
     setView({ kind: "list" });
   }
 
-  function handleDelete(id: string) {
-    deleteSong(id);
+  async function handleDelete(id: string) {
+    await deleteSong(id);
+    setSongs((prev) => prev.filter((s) => s.id !== id));
     setDeleteConfirm(null);
-    refresh();
   }
 
   // --- Vista: formulário ---

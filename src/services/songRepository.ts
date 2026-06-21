@@ -1,5 +1,42 @@
 ﻿import type { Song } from "../types/music";
 import { songs as seedSongs } from "../data/songs";
+import { authHeaders } from "./authStore";
+
+type RawApiSong = {
+  _id: string;
+  legacyId?: string;
+  title: string;
+  artist: string;
+  key: string;
+  category: string;
+  liturgy?: string;
+  content: string;
+  accessCount: number;
+  referenceUrl?: string;
+};
+
+function mapApiSong(raw: RawApiSong): Song {
+  return {
+    id: raw.legacyId ?? raw._id,
+    title: raw.title,
+    artist: raw.artist,
+    key: raw.key,
+    category: raw.category,
+    liturgy: raw.liturgy,
+    content: raw.content,
+    accessCount: raw.accessCount ?? 0,
+    referenceUrl: raw.referenceUrl,
+  };
+}
+
+export async function fetchSongs(): Promise<Song[]> {
+  const response = await fetch("/api/songs");
+  if (!response.ok) throw new Error("API indisponível");
+  const raw: RawApiSong[] = await response.json();
+  const list = raw.map(mapApiSong);
+  persist(list);
+  return list;
+}
 
 const STORAGE_KEY = "cifras_songs";
 
@@ -44,25 +81,48 @@ export function getSongAccessCounts(): Record<string, number> {
   return Object.fromEntries(load().map((song) => [song.id, song.accessCount]));
 }
 
-export function createSong(data: Omit<Song, "id" | "accessCount">): Song {
-  const list = load();
-  const newSong: Song = { ...data, id: crypto.randomUUID(), accessCount: 0 };
-  persist([...list, newSong]);
-  return newSong;
+export async function createSong(data: Omit<Song, "id" | "accessCount">): Promise<Song> {
+  const response = await fetch("/api/songs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Falha ao criar cifra");
+  const raw = await response.json();
+  const song = mapApiSong(raw);
+  persist([...load(), song]);
+  return song;
 }
 
-export function updateSong(id: string, data: Partial<Omit<Song, "id">>): Song {
+export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): Promise<Song> {
+  // Campos opcionais undefined viram null para sobreviver ao JSON.stringify
+  // O handler da API usa $unset para removê-los do documento
+  const body = {
+    ...data,
+    liturgy: data.liturgy === undefined ? null : data.liturgy,
+    referenceUrl: data.referenceUrl === undefined ? null : data.referenceUrl,
+  };
+  const response = await fetch(`/api/songs/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error("Falha ao atualizar cifra");
+  const raw = await response.json();
+  const updated = mapApiSong(raw);
   const list = load();
   const idx = list.findIndex((s) => s.id === id);
-  if (idx === -1) throw new Error(`Song not found: ${id}`);
-  const updated = { ...list[idx], ...data };
-  const next = [...list];
-  next[idx] = updated;
-  persist(next);
+  if (idx !== -1) {
+    const next = [...list];
+    next[idx] = updated;
+    persist(next);
+  }
   return updated;
 }
 
-export function deleteSong(id: string): void {
+export async function deleteSong(id: string): Promise<void> {
+  const response = await fetch(`/api/songs/${id}`, { method: "DELETE", headers: authHeaders() });
+  if (!response.ok) throw new Error("Falha ao excluir cifra");
   persist(load().filter((s) => s.id !== id));
 }
 

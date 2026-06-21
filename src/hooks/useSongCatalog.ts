@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  fetchSongs,
   getAllSongs,
   getCatalogSongs,
   getSongArtists,
@@ -18,12 +19,18 @@ export function useSongCatalog({
   accessCounts,
   initialQuery,
 }: UseSongCatalogParams) {
-  const songs = getAllSongs();
+  const [songs, setSongs] = useState(() => getAllSongs());
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState("");
   const [artist, setArtist] = useState("");
   const [liturgy, setLiturgy] = useState("");
   const [sort, setSort] = useState<SortOrder>("acessos");
+
+  useEffect(() => {
+    fetchSongs()
+      .then(setSongs)
+      .catch(() => {}); // fallback: mantém dados do localStorage
+  }, []);
 
   useEffect(() => {
     setQuery(initialQuery);

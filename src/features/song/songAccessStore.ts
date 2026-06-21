@@ -43,6 +43,7 @@ export function registerSongAccess(songId: string) {
   };
   persistToStorage(accessCounts);
   notify();
+  fetch(`/api/songs/${songId}`, { method: "PATCH" }).catch(() => {});
 }
 
 export function useSongAccessCounts() {
