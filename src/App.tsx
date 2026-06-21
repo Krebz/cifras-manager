@@ -127,7 +127,7 @@ function App() {
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "16px", height: "16px", borderRadius: "5px", background: "linear-gradient(135deg, #2563eb, #7c3aed)", overflow: "hidden", flexShrink: 0 }}>
               <img src="/katando-cifra-logo.jpg" alt="" aria-hidden="true" style={{ width: "13px", height: "13px", objectFit: "cover", filter: "invert(1) contrast(1.45)", mixBlendMode: "screen" as const }} />
             </span>
-            © 2026 · Kleber Martins Alves · v1.1.0
+            © 2026 · Kleber Martins Alves · v2.0.0
           </footer>
         )}
       </Stack>

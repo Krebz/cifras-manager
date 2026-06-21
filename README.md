@@ -1,57 +1,58 @@
-# Cifras Manager
+# Katando Cifras
 
-Aplicação web para gerenciamento pessoal de cifras musicais, criada para uso durante execuções musicais em Missas Católicas.
+PWA litúrgico para consulta e gestão de cifras musicais, criado para uso durante celebrações da Igreja Católica.
 
 ---
 
 ## Funcionalidades
 
 ### Cifras
-- Renderização de cifras com acordes alinhados acima da letra
-- Parser de acordes no formato ChordPro (`[Am]`, `[G7]`, etc.)
+- Renderização com acordes alinhados acima da letra (formato ChordPro)
 - Transposição de tom em tempo real (semitom acima/abaixo)
-- Importação de cifras no formato texto (ConvertNatural → ChordPro)
 - Blocos de seção: Verso, Refrão, Ponte, Intro, Final — com identidade visual distinta
-- Edição e exclusão de cifras
+- CRUD completo (criar, editar, excluir) — área protegida por senha
 
 ### Leitura e apresentação
 - Auto-scroll com controle de velocidade
 - Ajuste de tamanho de fonte (A− / A+)
 - Modo tela cheia para apresentação
-- Responsividade total para celular e tablet — sem rolagem horizontal
-- Quebra de linha inteligente: acordes nunca cortam palavras ao meio
+- Responsivo para celular e tablet
 
 ### Repertórios
 - Criação e gerenciamento de repertórios (setlists)
-- Adição, remoção e reordenação de músicas no repertório
-- Navegação por swipe horizontal entre músicas do repertório
-- Persistência local via `localStorage` com seed em arquivo
+- Adição, remoção e reordenação de músicas
+- Navegação sequencial entre músicas do repertório
+- Compartilhamento de repertório via link
 
 ### Busca e organização
 - Busca por título, artista, categoria e trecho da letra
-- Filtro por categoria e artista
-- Ordenação por músicas mais acessadas
-- Categorização por tipo de momento litúrgico
+- Filtro por categoria musical e uso litúrgico
+- Ordenação por músicas mais acessadas (`accessCount`)
 
 ---
 
 ## Stack
 
-| Tecnologia | Uso |
+| Camada | Tecnologia |
 |---|---|
-| React + TypeScript | Interface e lógica |
-| Vite | Build e dev server |
-| Mantine UI | Componentes e tema |
-| pnpm | Gerenciador de pacotes |
+| Frontend | React 19 + TypeScript + Mantine UI |
+| Build | Vite + vite-plugin-pwa |
+| Backend | Vercel API Routes (serverless) |
+| Banco de dados | MongoDB Atlas M0 (GCP São Paulo) |
+| Pacotes | pnpm |
+| Deploy | Vercel (push em `main`) |
 
 ---
 
-## Como executar
+## Como executar localmente
 
 ```bash
 pnpm install
 pnpm dev
 ```
+
+> As API Routes requerem `MONGODB_URI` e `ADMIN_PASS` configurados em `.env.local`.  
+> Para testar sem backend local, use a URL de Preview do Vercel.
 
 Build para produção:
 
@@ -59,30 +60,56 @@ Build para produção:
 pnpm build
 ```
 
+Seed inicial do banco (rodar uma vez após configurar `.env.local`):
+
+```bash
+pnpm seed
+```
+
 ---
 
 ## Estrutura do projeto
 
 ```
+api/                    Vercel serverless functions
+  auth/verify.ts        Validação de senha
+  lib/                  mongodb.ts + auth.ts
+  songs/                GET (público) / POST, PUT, DELETE (admin)
+  setlists/             CRUD público
+
 src/
-  app/          # roteamento e navegação
-  components/   # componentes compartilhados (renderers, toolbar, etc.)
-  data/         # seed de músicas e repertórios
-  features/     # páginas por domínio (song, setlist, home)
-  services/     # repositórios (songs, setlists, transpose)
-  styles/       # estilos do visualizador de cifras
-  types/        # tipos TypeScript (Song, Setlist, ParsedLine, etc.)
-  utils/        # parsers e utilitários
+  app/                  Roteamento e navegação
+  components/           Componentes compartilhados
+  data/                 Seed estático (fallback offline)
+  features/             Pages por domínio (home, song, setlist, management)
+  hooks/
+  services/             Repositórios (songRepository, setlistRepository, authStore)
+  styles/
+  types/                Song, Setlist, ParsedLine…
+
+scripts/seed.ts         Popula o MongoDB com o catálogo inicial
+docs/                   Arquitetura, Roadmap, decisões técnicas
 ```
+
+---
+
+## Variáveis de ambiente
+
+| Variável | Onde | Descrição |
+|---|---|---|
+| `MONGODB_URI` | servidor | URI de conexão ao Atlas |
+| `ADMIN_PASS` | servidor | Senha das rotas de escrita |
+| `SEED_KEY` | servidor | Chave para autorizar o endpoint de seed |
 
 ---
 
 ## Deploy
 
-Deploy automático na [Vercel](https://vercel.com) a cada push na branch principal.
+Deploy automático no Vercel a cada push em `main`. Variáveis configuradas no painel do projeto (Production + Preview).
 
 ---
 
-## Status
+## Versão
 
-MVP completo — v1.0
+**v2.0.0** — backend MongoDB Atlas + autenticação por senha  
+Histórico completo em [docs/Roadmap.md](docs/Roadmap.md)
