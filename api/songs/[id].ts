@@ -25,10 +25,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "PUT") {
     const { _id, legacyId, ...data } = req.body;
-    await collection.updateOne(
-      filter,
-      { $set: { ...data, updatedAt: new Date() } }
-    );
+    const $set: Record<string, unknown> = { updatedAt: new Date() };
+    const $unset: Record<string, ""> = {};
+    for (const [k, v] of Object.entries(data)) {
+      if (v === null || v === "") {
+        $unset[k] = "";
+      } else {
+        $set[k] = v;
+      }
+    }
+    const updateOp: Record<string, unknown> = { $set };
+    if (Object.keys($unset).length > 0) updateOp.$unset = $unset;
+    await collection.updateOne(filter, updateOp);
     const updated = await collection.findOne(filter);
     return res.status(200).json(updated);
   }

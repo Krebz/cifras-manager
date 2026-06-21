@@ -94,10 +94,17 @@ export async function createSong(data: Omit<Song, "id" | "accessCount">): Promis
 }
 
 export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): Promise<Song> {
+  // Campos opcionais undefined viram null para sobreviver ao JSON.stringify
+  // O handler da API usa $unset para removê-los do documento
+  const body = {
+    ...data,
+    liturgy: data.liturgy === undefined ? null : data.liturgy,
+    referenceUrl: data.referenceUrl === undefined ? null : data.referenceUrl,
+  };
   const response = await fetch(`/api/songs/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
   });
   if (!response.ok) throw new Error("Falha ao atualizar cifra");
   const raw = await response.json();
