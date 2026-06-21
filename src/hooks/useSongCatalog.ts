@@ -7,6 +7,8 @@ import {
   getSongLiturgies,
 } from "../services/songRepository";
 
+export type SortOrder = "acessos" | "az" | "za";
+
 type UseSongCatalogParams = {
   accessCounts: Record<string, number>;
   initialQuery: string;
@@ -21,6 +23,7 @@ export function useSongCatalog({
   const [category, setCategory] = useState("");
   const [artist, setArtist] = useState("");
   const [liturgy, setLiturgy] = useState("");
+  const [sort, setSort] = useState<SortOrder>("acessos");
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -30,10 +33,12 @@ export function useSongCatalog({
   const liturgies = useMemo(() => getSongLiturgies(songs), [songs]);
   const artists = useMemo(() => getSongArtists(songs), [songs]);
 
-  const filteredSongs = useMemo(
-    () => getCatalogSongs(songs, accessCounts, query, category, artist, liturgy),
-    [accessCounts, artist, category, liturgy, query, songs],
-  );
+  const filteredSongs = useMemo(() => {
+    const base = getCatalogSongs(songs, accessCounts, query, category, artist, liturgy);
+    if (sort === "az") return [...base].sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    if (sort === "za") return [...base].sort((a, b) => b.title.localeCompare(a.title, "pt-BR"));
+    return base;
+  }, [accessCounts, artist, category, liturgy, query, sort, songs]);
 
   return {
     filteredSongs,
@@ -44,9 +49,11 @@ export function useSongCatalog({
     category,
     liturgy,
     artist,
+    sort,
     setQuery,
     setCategory,
     setLiturgy,
     setArtist,
+    setSort,
   };
 }

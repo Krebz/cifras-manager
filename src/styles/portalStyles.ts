@@ -51,21 +51,12 @@ export const portalStyles = (isDark: boolean) => ({
     border: "1px solid transparent",
     borderRadius: "999px",
     padding: "8px 13px",
-    background: "transparent",
     WebkitAppearance: "none" as const,
     appearance: "none" as const,
-    color: isDark ? "#cbd5e1" : "#475569",
     font: "inherit",
     fontSize: "14px",
     fontWeight: 600,
     cursor: "pointer",
-  },
-  navigationButtonActive: {
-    color: isDark ? "#f8fafc" : "#1d4ed8",
-    backgroundColor: isDark ? "rgba(59,130,246,0.18)" : "rgba(37,99,235,0.10)",
-    border: isDark
-      ? "1px solid rgba(96,165,250,0.28)"
-      : "1px solid rgba(37,99,235,0.16)",
   },
   themeButton: {
     display: "grid",
@@ -87,12 +78,6 @@ export const portalStyles = (isDark: boolean) => ({
     border: isDark
       ? "1px solid rgba(148,163,184,0.17)"
       : "1px solid rgba(148,163,184,0.24)",
-  },
-  hero: {
-    display: "grid",
-    gap: "15px",
-    maxWidth: "740px",
-    marginBottom: "28px",
   },
   eyebrow: {
     margin: 0,

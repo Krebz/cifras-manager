@@ -1,14 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { portalStyles } from "../../styles/portalStyles";
 
-type Props = {
-  kind: "contact";
-  isDark: boolean;
-};
-
 type Status = "idle" | "sending" | "success" | "error";
 
-export default function InfoPage({ isDark }: Props) {
+export default function InfoPage({ isDark }: { isDark: boolean }) {
   const styles = portalStyles(isDark);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

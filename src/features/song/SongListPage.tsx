@@ -36,10 +36,12 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
     category,
     liturgy,
     artist,
+    sort,
     setQuery,
     setCategory,
     setLiturgy,
     setArtist,
+    setSort,
   } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
   const [history, setHistory] = useState<string[]>(getHistory);
@@ -57,7 +59,7 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [query, category, liturgy, artist]);
+  }, [query, category, liturgy, artist, sort]);
 
   const chipStyle: React.CSSProperties = {
     padding: "3px 11px",
@@ -149,6 +151,16 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
               {value}
             </option>
           ))}
+        </select>
+        <select
+          aria-label="Ordenar por"
+          value={sort}
+          style={styles.select}
+          onChange={(event) => setSort(event.target.value as "acessos" | "az" | "za")}
+        >
+          <option value="acessos">Mais acessadas</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
         </select>
       </div>
 

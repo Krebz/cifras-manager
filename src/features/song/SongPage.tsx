@@ -229,6 +229,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
       {!isFullscreen && (
         <Toolbar
           ref={presentationMode ? toolbarRef : undefined}
+          songId={songId}
           transpose={transpose}
           currentKey={currentKey}
           isScrolling={isScrolling}

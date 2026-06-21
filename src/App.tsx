@@ -28,7 +28,10 @@ function App() {
   const styles = appStyles(isDark);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [importPayload, setImportPayload] = useState<{ name: string; date?: string; songIds: string[] } | null>(null);
+  const [importPayload, setImportPayload] = useState<{ name: string; date?: string; songIds: string[] } | null>(() => {
+    const encoded = extractImportParam();
+    return encoded ? decodeSetlist(encoded) : null;
+  });
 
   useEffect(() => {
     const handleRouteChange = () => setRoute(readRoute());
@@ -52,11 +55,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const encoded = extractImportParam();
-    if (!encoded) return;
-    const payload = decodeSetlist(encoded);
-    if (payload) setImportPayload(payload);
-    window.location.hash = `#${routes.setlists}`;
+    if (extractImportParam()) {
+      window.location.hash = `#${routes.setlists}`;
+    }
   }, []);
 
   function handleInstall() {
@@ -115,7 +116,7 @@ function App() {
         )}
 
         {route.page === "contact" && (
-          <InfoPage kind="contact" isDark={isDark} />
+          <InfoPage isDark={isDark} />
         )}
 
         {route.page === "song" && (
@@ -127,7 +128,7 @@ function App() {
             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "16px", height: "16px", borderRadius: "5px", background: "linear-gradient(135deg, #2563eb, #7c3aed)", overflow: "hidden", flexShrink: 0 }}>
               <img src="/katando-cifra-logo.jpg" alt="" aria-hidden="true" style={{ width: "13px", height: "13px", objectFit: "cover", filter: "invert(1) contrast(1.45)", mixBlendMode: "screen" as const }} />
             </span>
-            © 2026 · Kleber Martins Alves · v1.0.0
+            © 2026 · Kleber Martins Alves · v1.1.0
           </footer>
         )}
       </Stack>

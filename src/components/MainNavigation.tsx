@@ -91,10 +91,8 @@ export default function MainNavigation({
               <button
                 key={link.id}
                 type="button"
-                style={{
-                  ...styles.navigationButton,
-                  ...(activePage === link.id ? styles.navigationButtonActive : {}),
-                }}
+                className={`nav-btn${activePage === link.id ? " nav-btn--active" : ""}`}
+                style={styles.navigationButton}
                 onClick={() => handleNavigate(link.id)}
               >
                 {link.label}
@@ -146,9 +144,9 @@ export default function MainNavigation({
             <button
               key={link.id}
               type="button"
+              className={`nav-btn${activePage === link.id ? " nav-btn--active" : ""}`}
               style={{
                 ...styles.navigationButton,
-                ...(activePage === link.id ? styles.navigationButtonActive : {}),
                 width: "100%",
                 textAlign: "left",
                 borderRadius: "10px",
