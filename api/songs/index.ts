@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getDb } from "../lib/mongodb.js";
+import { requireAuth } from "../lib/auth.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const db = await getDb();
@@ -11,6 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "POST") {
+    if (!requireAuth(req, res)) return;
     const data = req.body;
     const result = await collection.insertOne({
       ...data,

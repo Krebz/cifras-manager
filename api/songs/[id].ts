@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { ObjectId } from "mongodb";
 import { getDb } from "../lib/mongodb.js";
+import { requireAuth } from "../lib/auth.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { id } = req.query;
@@ -24,6 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "PUT") {
+    if (!requireAuth(req, res)) return;
     const { _id, legacyId, ...data } = req.body;
     const $set: Record<string, unknown> = { updatedAt: new Date() };
     const $unset: Record<string, ""> = {};
@@ -47,6 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "DELETE") {
+    if (!requireAuth(req, res)) return;
     await collection.deleteOne(filter);
     return res.status(204).end();
   }
