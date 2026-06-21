@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActionIcon,
   Button,
@@ -13,6 +13,7 @@ import { IconCalendar, IconMusic, IconPlaylist, IconPlus, IconTrash } from "@tab
 import {
   createSetlist,
   deleteSetlist,
+  fetchSetlists,
   getSetlists,
 } from "../../services/setlistRepository";
 import { navigate } from "../../app/router";
@@ -24,6 +25,10 @@ type Props = { isDark: boolean };
 export default function SetlistListPage({ isDark }: Props) {
   const [setlists, setSetlists] = useState<Setlist[]>(getSetlists);
   const [createOpen, setCreateOpen] = useState(false);
+
+  useEffect(() => {
+    fetchSetlists().then(setSetlists).catch(() => {});
+  }, []);
   const [newName, setNewName] = useState("");
   const [newDate, setNewDate] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Setlist | null>(null);
@@ -32,18 +37,18 @@ export default function SetlistListPage({ isDark }: Props) {
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
   const textMuted = isDark ? "#94a3b8" : "#64748b";
 
-  function handleCreate() {
+  async function handleCreate() {
     if (!newName.trim()) return;
-    createSetlist(newName.trim(), newDate || undefined);
-    setSetlists(getSetlists());
+    const created = await createSetlist(newName.trim(), newDate || undefined);
+    setSetlists((prev) => [created, ...prev]);
     setNewName("");
     setNewDate("");
     setCreateOpen(false);
   }
 
-  function handleDelete(setlist: Setlist) {
-    deleteSetlist(setlist.id);
-    setSetlists(getSetlists());
+  async function handleDelete(setlist: Setlist) {
+    await deleteSetlist(setlist.id);
+    setSetlists((prev) => prev.filter((s) => s.id !== setlist.id));
     setDeleteTarget(null);
   }
 

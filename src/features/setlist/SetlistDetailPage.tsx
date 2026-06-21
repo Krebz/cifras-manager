@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActionIcon,
   Badge,
@@ -24,6 +24,7 @@ import {
 } from "@tabler/icons-react";
 import {
   addSongToSetlist,
+  fetchSetlists,
   getSetlistById,
   moveSongDown,
   moveSongUp,
@@ -45,6 +46,12 @@ type Props = {
 export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   const [setlist, setSetlist] = useState<Setlist | null>(() => getSetlistById(setlistId) ?? null);
   const [addOpen, setAddOpen] = useState(false);
+
+  useEffect(() => {
+    fetchSetlists()
+      .then(() => setSetlist(getSetlistById(setlistId) ?? null))
+      .catch(() => {});
+  }, [setlistId]);
   const [searchQuery, setSearchQuery] = useState("");
   const [removeTarget, setRemoveTarget] = useState<Song | null>(null);
   const [shared, setShared] = useState(false);
@@ -69,24 +76,24 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     setSetlist(getSetlistById(setlistId) ?? null);
   }
 
-  function handleAdd(songId: string) {
-    addSongToSetlist(setlistId, songId);
+  async function handleAdd(songId: string) {
+    await addSongToSetlist(setlistId, songId);
     reload();
   }
 
-  function handleRemove(song: Song) {
-    removeSongFromSetlist(setlistId, song.id);
+  async function handleRemove(song: Song) {
+    await removeSongFromSetlist(setlistId, song.id);
     reload();
     setRemoveTarget(null);
   }
 
-  function handleMoveUp(songId: string) {
-    moveSongUp(setlistId, songId);
+  async function handleMoveUp(songId: string) {
+    await moveSongUp(setlistId, songId);
     reload();
   }
 
-  function handleMoveDown(songId: string) {
-    moveSongDown(setlistId, songId);
+  async function handleMoveDown(songId: string) {
+    await moveSongDown(setlistId, songId);
     reload();
   }
 

@@ -12,7 +12,7 @@ import SongPage from "./features/song/SongPage";
 import SetlistListPage from "./features/setlist/SetlistListPage";
 import SetlistDetailPage from "./features/setlist/SetlistDetailPage";
 import { appStyles } from "./styles/appStyles";
-import { createSetlist, updateSetlist } from "./services/setlistRepository";
+import { createSetlist } from "./services/setlistRepository";
 import { decodeSetlist, extractImportParam } from "./services/setlistShare";
 import { routes } from "./app/routes";
 
@@ -74,10 +74,9 @@ function App() {
   const isPresentation = route.page === "song" && !!route.setlistId;
   const isNavSticky = route.page !== "song" && route.page !== "setlist";
 
-  function handleImportConfirm() {
+  async function handleImportConfirm() {
     if (!importPayload) return;
-    const setlist = createSetlist(importPayload.name, importPayload.date);
-    updateSetlist({ ...setlist, songIds: importPayload.songIds });
+    await createSetlist(importPayload.name, importPayload.date, importPayload.songIds);
     setImportPayload(null);
     navigate(routes.setlists);
   }

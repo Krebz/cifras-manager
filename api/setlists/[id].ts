@@ -10,40 +10,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const db = await getDb();
-  const collection = db.collection("songs");
+  const collection = db.collection("setlists");
 
-  // Suporte a ObjectId (novas cifras) e UUID legado (cifras migradas)
   const filter = ObjectId.isValid(id)
     ? { _id: new ObjectId(id) }
     : { legacyId: id };
 
   if (req.method === "GET") {
-    const song = await collection.findOne(filter);
-    if (!song) return res.status(404).json({ error: "Cifra não encontrada" });
-    return res.status(200).json(song);
+    const setlist = await collection.findOne(filter);
+    if (!setlist) return res.status(404).json({ error: "Repertório não encontrado" });
+    return res.status(200).json(setlist);
   }
 
   if (req.method === "PUT") {
     const { _id, legacyId, ...data } = req.body;
-    const $set: Record<string, unknown> = { updatedAt: new Date() };
-    const $unset: Record<string, ""> = {};
-    for (const [k, v] of Object.entries(data)) {
-      if (v === null || v === "") {
-        $unset[k] = "";
-      } else {
-        $set[k] = v;
-      }
-    }
-    const updateOp: Record<string, unknown> = { $set };
-    if (Object.keys($unset).length > 0) updateOp.$unset = $unset;
-    await collection.updateOne(filter, updateOp);
+    await collection.updateOne(
+      filter,
+      { $set: { ...data, updatedAt: new Date() } }
+    );
     const updated = await collection.findOne(filter);
     return res.status(200).json(updated);
-  }
-
-  if (req.method === "PATCH") {
-    await collection.updateOne(filter, { $inc: { accessCount: 1 } });
-    return res.status(204).end();
   }
 
   if (req.method === "DELETE") {
