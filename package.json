@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -16,6 +17,9 @@
     "mongodb": "^7.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -31,6 +35,7 @@
     "jimp": "^1.6.1",
     "png-to-ico": "^3.0.1",
     "sharp": "^0.35.1",
+    "tsx": "^4.22.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vercel": "^54.14.2",
