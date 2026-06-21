@@ -1,6 +1,42 @@
 ﻿import type { Song } from "../types/music";
 import { songs as seedSongs } from "../data/songs";
 
+type RawApiSong = {
+  _id: string;
+  legacyId?: string;
+  title: string;
+  artist: string;
+  key: string;
+  category: string;
+  liturgy?: string;
+  content: string;
+  accessCount: number;
+  referenceUrl?: string;
+};
+
+function mapApiSong(raw: RawApiSong): Song {
+  return {
+    id: raw.legacyId ?? raw._id,
+    title: raw.title,
+    artist: raw.artist,
+    key: raw.key,
+    category: raw.category,
+    liturgy: raw.liturgy,
+    content: raw.content,
+    accessCount: raw.accessCount ?? 0,
+    referenceUrl: raw.referenceUrl,
+  };
+}
+
+export async function fetchSongs(): Promise<Song[]> {
+  const response = await fetch("/api/songs");
+  if (!response.ok) throw new Error("API indisponível");
+  const raw: RawApiSong[] = await response.json();
+  const list = raw.map(mapApiSong);
+  persist(list);
+  return list;
+}
+
 const STORAGE_KEY = "cifras_songs";
 
 function load(): Song[] {
