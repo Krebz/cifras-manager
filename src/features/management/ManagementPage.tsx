@@ -9,7 +9,18 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconDownload, IconEdit, IconMusic, IconPlus, IconSearch, IconTrash, IconX } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconChevronLeft,
+  IconChevronRight,
+  IconDownload,
+  IconEdit,
+  IconMusic,
+  IconPlus,
+  IconSearch,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import {
   createSong,
   deleteSong,
@@ -30,7 +41,7 @@ export default function ManagementPage({ isDark }: Props) {
   const [view, setView] = useState<View>({ kind: "list" });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchSongs().then(setSongs).catch(() => {});
@@ -39,6 +50,7 @@ export default function ManagementPage({ isDark }: Props) {
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
   const textMuted = isDark ? "#94a3b8" : "#64748b";
+  const stickyBg = isDark ? "rgba(15,23,42,0.97)" : "rgba(248,250,252,0.97)";
 
   function handleExport() {
     const lines: string[] = [
@@ -126,50 +138,74 @@ export default function ManagementPage({ isDark }: Props) {
   }
 
   // --- Vista: lista ---
-  const filtered = songs.filter((s) => {
-    const q = query.trim().toLowerCase();
-    return !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
-  });
-  const visibleSongs = filtered.slice(0, visibleCount);
+  // Mostrar mais recente primeiro (inserção é append, reverso = mais novo no topo)
+  const filtered = songs
+    .filter((s) => {
+      const q = query.trim().toLowerCase();
+      return !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q);
+    })
+    .slice()
+    .reverse();
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const visibleSongs = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <Stack gap="md">
-      <Group justify="space-between" align="center">
-        <Stack gap={2}>
-          <Title order={2} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 22 }}>
-            Gestão de cifras
-          </Title>
-          <Text size="sm" c="dimmed">
-            {songs.length} música{songs.length !== 1 ? "s" : ""} cadastrada{songs.length !== 1 ? "s" : ""}
-          </Text>
-        </Stack>
-        <Group gap="xs">
-          <Button
-            variant="subtle"
-            leftSection={<IconDownload size={16} />}
-            onClick={handleExport}
-            disabled={songs.length === 0}
-            title="Baixa songs.ts com todas as músicas para substituir src/data/songs.ts"
-          >
-            Exportar songs.ts
-          </Button>
-          <Button leftSection={<IconPlus size={16} />} onClick={() => setView({ kind: "form" })}>
-            Nova cifra
-          </Button>
+      {/* Cabeçalho fixo — título, contador, botões e busca ficam sempre visíveis */}
+      <div
+        style={{
+          position: "sticky",
+          top: 68,
+          zIndex: 50,
+          background: stickyBg,
+          backdropFilter: "blur(10px)",
+          paddingBottom: 10,
+          marginBottom: -4,
+          borderBottom: isDark
+            ? "1px solid rgba(148,163,184,0.12)"
+            : "1px solid rgba(148,163,184,0.25)",
+        }}
+      >
+        <Group justify="space-between" align="center" mb="sm">
+          <Stack gap={2}>
+            <Title order={2} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 22 }}>
+              Gestão de cifras
+            </Title>
+            <Text size="sm" c="dimmed" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>𝄞</span>
+              {songs.length} música{songs.length !== 1 ? "s" : ""} cadastrada{songs.length !== 1 ? "s" : ""}
+            </Text>
+          </Stack>
+          <Group gap="xs">
+            <Button
+              variant="subtle"
+              leftSection={<IconDownload size={16} />}
+              onClick={handleExport}
+              disabled={songs.length === 0}
+              title="Baixa songs.ts com todas as músicas para substituir src/data/songs.ts"
+            >
+              Exportar songs.ts
+            </Button>
+            <Button leftSection={<IconPlus size={16} />} onClick={() => setView({ kind: "form" })}>
+              Nova cifra
+            </Button>
+          </Group>
         </Group>
-      </Group>
 
-      <TextInput
-        placeholder="Buscar por título ou artista..."
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); setVisibleCount(PAGE_SIZE); }}
-        leftSection={<IconSearch size={15} />}
-        rightSection={query ? (
-          <ActionIcon variant="subtle" size="sm" onClick={() => setQuery("")}>
-            <IconX size={13} />
-          </ActionIcon>
-        ) : null}
-      />
+        <TextInput
+          placeholder="Buscar por título ou artista..."
+          value={query}
+          onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+          leftSection={<IconSearch size={15} />}
+          rightSection={query ? (
+            <ActionIcon variant="subtle" size="sm" onClick={() => { setQuery(""); setPage(1); }}>
+              <IconX size={13} />
+            </ActionIcon>
+          ) : null}
+        />
+      </div>
 
       {songs.length === 0 && (
         <Stack align="center" gap="xs" py="xl">
@@ -214,7 +250,6 @@ export default function ManagementPage({ isDark }: Props) {
               </Group>
             </Stack>
 
-            {/* Confirmação inline de exclusão */}
             {deleteConfirm === song.id ? (
               <Group gap="xs" style={{ flexShrink: 0 }}>
                 <Text size="xs" c="dimmed">Excluir?</Text>
@@ -246,14 +281,36 @@ export default function ManagementPage({ isDark }: Props) {
         ))}
       </Stack>
 
-      {visibleCount < filtered.length && (
-        <Group justify="center" mt="sm">
-          <Button
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <Group justify="center" gap={4} mt="xs" mb="xs">
+          <ActionIcon
             variant="subtle"
-            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            disabled={currentPage === 1}
+            onClick={() => setPage((p) => p - 1)}
+            title="Página anterior"
           >
-            Carregar mais · {filtered.length - visibleCount} restantes
-          </Button>
+            <IconChevronLeft size={16} />
+          </ActionIcon>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <Button
+              key={p}
+              size="compact-sm"
+              variant={p === currentPage ? "filled" : "subtle"}
+              onClick={() => setPage(p)}
+              style={{ minWidth: 32 }}
+            >
+              {p}
+            </Button>
+          ))}
+          <ActionIcon
+            variant="subtle"
+            disabled={currentPage === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            title="Próxima página"
+          >
+            <IconChevronRight size={16} />
+          </ActionIcon>
         </Group>
       )}
     </Stack>
