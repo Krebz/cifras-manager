@@ -27,6 +27,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     setScrollSpeed: saveScrollSpeed,
   } = useUserPreferences();
   const [transpose, setTranspose] = useState(0);
+  const [capoActive, setCapoActive] = useState(true);
   const [toolbarHeight, setToolbarHeight] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -40,6 +41,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
     useAutoScroll(savedScrollSpeed);
   const selectedSong = getSongById(songId) ?? getAllSongs()[0];
+  const songCapo = selectedSong.capo ?? 0;
+  const effectiveTranspose = transpose - (capoActive ? songCapo : 0);
   const currentKey = transposeKey(selectedSong.key, transpose);
   const songDocument = useMemo(
     () => parseSong(selectedSong.title, currentKey, selectedSong.content),
@@ -55,6 +58,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
 
   useEffect(() => {
     setTranspose(0);
+    setCapoActive(true);
     setIsScrolling(false);
     swipeDir.current = null;
     if (restoreFullscreen.current) {
@@ -232,6 +236,9 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           songId={songId}
           transpose={transpose}
           currentKey={currentKey}
+          capo={songCapo}
+          capoActive={capoActive}
+          onCapoToggle={() => setCapoActive((c) => !c)}
           isScrolling={isScrolling}
           scrollSpeed={scrollSpeed}
           fontSize={fontSize}
@@ -282,7 +289,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           artist={selectedSong.artist}
           category={selectedSong.category}
           liturgy={selectedSong.liturgy}
-          transpose={transpose}
+          capo={capoActive ? songCapo : 0}
+          transpose={effectiveTranspose}
           fontSize={fontSize}
           referenceUrl={selectedSong.referenceUrl}
         />

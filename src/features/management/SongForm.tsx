@@ -26,6 +26,17 @@ Verso:
     G               D
 Discípulo amado do Senhor`;
 
+const CAPO_OPTIONS = [
+  { value: "0", label: "Sem capo" },
+  { value: "1", label: "Capo 1" },
+  { value: "2", label: "Capo 2" },
+  { value: "3", label: "Capo 3" },
+  { value: "4", label: "Capo 4" },
+  { value: "5", label: "Capo 5" },
+  { value: "6", label: "Capo 6" },
+  { value: "7", label: "Capo 7" },
+];
+
 type FormData = Omit<Song, "id" | "accessCount">;
 
 type Props = {
@@ -46,6 +57,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
   const [key, setKey] = useState(initial?.key ?? "G");
   const [category, setCategory] = useState(initial?.category ?? "");
   const [liturgy, setLiturgy] = useState(initial?.liturgy ?? "");
+  const [capo, setCapo] = useState(String(initial?.capo ?? 0));
   const [content, setContent] = useState(initial?.content ?? "");
   const [referenceUrl, setReferenceUrl] = useState(initial?.referenceUrl ?? "");
 
@@ -59,12 +71,14 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
 
   function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
+    const capoNum = parseInt(capo, 10);
     onSave({
       title: title.trim(),
       artist: artist.trim(),
       key,
       category: category.trim(),
       liturgy: liturgy.trim() || undefined,
+      capo: capoNum > 0 ? capoNum : undefined,
       content,
       referenceUrl: referenceUrl.trim() || undefined,
     });
@@ -128,19 +142,28 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
             />
           </Group>
 
-          <Autocomplete
-            label="Uso litúrgico (opcional)"
-            value={liturgy}
-            onChange={setLiturgy}
-            data={existingLiturgies}
-            placeholder="Entrada, Ofertório, Comunhão..."
-          />
+          <Group grow gap="sm">
+            <Autocomplete
+              label="Uso litúrgico (opcional)"
+              value={liturgy}
+              onChange={setLiturgy}
+              data={existingLiturgies}
+              placeholder="Entrada, Ofertório, Comunhão..."
+            />
+            <Select
+              label="Capotraste (opcional)"
+              value={capo}
+              onChange={(v) => setCapo(v ?? "0")}
+              data={CAPO_OPTIONS}
+              allowDeselect={false}
+            />
+          </Group>
 
           <TextInput
             label="Link de referência (opcional)"
             value={referenceUrl}
             onChange={(e) => setReferenceUrl(e.target.value)}
-            placeholder="https://cifraclub.com.br/..."
+            placeholder="https://youtube.com/..."
             type="url"
           />
 

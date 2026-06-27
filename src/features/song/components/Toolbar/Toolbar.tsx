@@ -27,6 +27,8 @@ type ToolbarStyles = {
 type Props = {
   transpose: number;
   currentKey: string;
+  capo?: number;
+  capoActive?: boolean;
   isScrolling: boolean;
   scrollSpeed: number;
   fontSize: number;
@@ -41,6 +43,7 @@ type Props = {
   onTransposeDecrease: () => void;
   onTransposeIncrease: () => void;
   onTransposeReset: () => void;
+  onCapoToggle?: () => void;
   onScrollToggle: () => void;
   onScrollSpeedDecrease: () => void;
   onScrollSpeedIncrease: () => void;
@@ -56,6 +59,8 @@ type Props = {
 const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   transpose,
   currentKey,
+  capo,
+  capoActive,
   isScrolling,
   scrollSpeed,
   fontSize,
@@ -69,6 +74,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   onTransposeDecrease,
   onTransposeIncrease,
   onTransposeReset,
+  onCapoToggle,
   onScrollToggle,
   onScrollSpeedDecrease,
   onScrollSpeedIncrease,
@@ -175,6 +181,35 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
         onIncrease={onTransposeIncrease}
         onReset={onTransposeReset}
       />
+
+      {capo ? (
+        <Tooltip label={capoActive ? "Clique para ver no tom real" : "Clique para ativar capo"}>
+          <button
+            type="button"
+            onClick={onCapoToggle}
+            style={{
+              ...button,
+              padding: "3px 10px",
+              borderRadius: 999,
+              fontSize: 12,
+              fontWeight: 700,
+              border: capoActive
+                ? "1px solid rgba(16,185,129,0.5)"
+                : "1px dashed rgba(148,163,184,0.4)",
+              background: capoActive
+                ? isDark ? "rgba(16,185,129,0.15)" : "rgba(16,185,129,0.12)"
+                : "transparent",
+              color: capoActive
+                ? isDark ? "#6ee7b7" : "#065f46"
+                : isDark ? "#64748b" : "#94a3b8",
+              textDecoration: capoActive ? "none" : "line-through",
+              cursor: "pointer",
+            }}
+          >
+            Capo {capo}
+          </button>
+        </Tooltip>
+      ) : null}
 
       <ScrollControl
         isScrolling={isScrolling}

@@ -42,6 +42,7 @@ export type Song = {
   key: string;
   category: SongCategory;
   liturgy?: string;
+  capo?: number;
   content: string;
   accessCount: number;
   referenceUrl?: string;

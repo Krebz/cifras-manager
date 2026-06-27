@@ -10,6 +10,7 @@ type RawApiSong = {
   key: string;
   category: string;
   liturgy?: string;
+  capo?: number;
   content: string;
   accessCount: number;
   referenceUrl?: string;
@@ -23,6 +24,7 @@ function mapApiSong(raw: RawApiSong): Song {
     key: raw.key,
     category: raw.category,
     liturgy: raw.liturgy,
+    capo: raw.capo,
     content: raw.content,
     accessCount: raw.accessCount ?? 0,
     referenceUrl: raw.referenceUrl,
@@ -100,6 +102,7 @@ export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): P
   const body = {
     ...data,
     liturgy: data.liturgy === undefined ? null : data.liturgy,
+    capo: data.capo === undefined ? null : data.capo,
     referenceUrl: data.referenceUrl === undefined ? null : data.referenceUrl,
   };
   const response = await fetch(`/api/songs/${id}`, {
