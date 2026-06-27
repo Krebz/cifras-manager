@@ -44,6 +44,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const songCapo = selectedSong.capo ?? 0;
   const effectiveTranspose = transpose + (capoActive ? 0 : songCapo);
   const currentKey = transposeKey(selectedSong.key, transpose);
+  // quando capo ativo: a tonalidade tocada é a sounding key menos o capo
+  const playedKey = capoActive ? transposeKey(selectedSong.key, transpose - songCapo) : currentKey;
   const songDocument = useMemo(
     () => parseSong(selectedSong.title, currentKey, selectedSong.content),
     [currentKey, selectedSong.content, selectedSong.title],
@@ -290,6 +292,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           category={selectedSong.category}
           liturgy={selectedSong.liturgy}
           capo={capoActive ? songCapo : 0}
+          playedKey={playedKey}
           transpose={effectiveTranspose}
           fontSize={fontSize}
           referenceUrl={selectedSong.referenceUrl}

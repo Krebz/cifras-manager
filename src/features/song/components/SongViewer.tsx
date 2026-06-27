@@ -10,6 +10,7 @@ type Props = {
   category: string;
   liturgy?: string;
   capo?: number;
+  playedKey?: string;
   transpose: number;
   fontSize: number;
   referenceUrl?: string;
@@ -21,6 +22,7 @@ export default function SongViewer({
   category,
   liturgy,
   capo,
+  playedKey,
   transpose,
   fontSize,
   referenceUrl,
@@ -28,7 +30,7 @@ export default function SongViewer({
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = songViewerStyles(isDark);
-  const preferFlat = keyPrefersFlat(songDocument.key);
+  const preferFlat = keyPrefersFlat(playedKey ?? songDocument.key);
 
   return (
     <div

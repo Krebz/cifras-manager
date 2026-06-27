@@ -4,6 +4,7 @@ import { IconDownload } from "@tabler/icons-react";
 import { parseSong } from "../../utils/parseSong";
 import { convertNaturalToChordPro } from "../../utils/importChords";
 import { getAllSongs } from "../../services/songRepository";
+import { transposeKey } from "../../services/transposeKey";
 import SongViewer from "../song/components/SongViewer";
 import type { Song } from "../../types/music";
 
@@ -260,6 +261,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
                 artist={artist}
                 category={category}
                 liturgy={liturgy.trim() || undefined}
+                playedKey={parseInt(capo, 10) > 0 ? transposeKey(key, -parseInt(capo, 10)) : key}
                 transpose={0}
                 fontSize={14}
                 referenceUrl={referenceUrl.trim() || undefined}
