@@ -30,7 +30,7 @@ import {
   moveSongUp,
   removeSongFromSetlist,
 } from "../../services/setlistRepository";
-import { getAllSongs } from "../../services/songRepository";
+import { fetchSongs, getAllSongs } from "../../services/songRepository";
 import { searchSongs } from "../../services/songRepository";
 import { navigate, songInSetlistRouteFor } from "../../app/router";
 import { routes } from "../../app/routes";
@@ -45,11 +45,15 @@ type Props = {
 
 export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   const [setlist, setSetlist] = useState<Setlist | null>(() => getSetlistById(setlistId) ?? null);
+  const [allSongs, setAllSongs] = useState<Song[]>(() => getAllSongs());
   const [addOpen, setAddOpen] = useState(false);
 
   useEffect(() => {
     fetchSetlists()
       .then(() => setSetlist(getSetlistById(setlistId) ?? null))
+      .catch(() => {});
+    fetchSongs()
+      .then(setAllSongs)
       .catch(() => {});
   }, [setlistId]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,7 +64,6 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
   const textMuted = isDark ? "#94a3b8" : "#64748b";
 
-  const allSongs = getAllSongs();
   const catalogSongs = searchQuery.trim()
     ? searchSongs(allSongs, searchQuery)
     : allSongs;
