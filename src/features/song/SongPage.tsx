@@ -42,7 +42,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     useAutoScroll(savedScrollSpeed);
   const selectedSong = getSongById(songId) ?? getAllSongs()[0];
   const songCapo = selectedSong.capo ?? 0;
-  const effectiveTranspose = transpose - (capoActive ? songCapo : 0);
+  const effectiveTranspose = transpose + (capoActive ? 0 : songCapo);
   const currentKey = transposeKey(selectedSong.key, transpose);
   const songDocument = useMemo(
     () => parseSong(selectedSong.title, currentKey, selectedSong.content),

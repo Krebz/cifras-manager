@@ -183,7 +183,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
       />
 
       {capo ? (
-        <Tooltip label={capoActive ? "Clique para ver no tom real" : "Clique para ativar capo"}>
+        <Tooltip label={capoActive ? "Ver acordes no tom real (sem capo)" : "Ver shape com Capo " + capo}>
           <button
             type="button"
             onClick={onCapoToggle}
