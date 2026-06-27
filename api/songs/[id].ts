@@ -21,6 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "GET") {
     const song = await collection.findOne(filter);
     if (!song) return res.status(404).json({ error: "Cifra não encontrada" });
+    res.setHeader("Cache-Control", "no-store");
     return res.status(200).json(song);
   }
 

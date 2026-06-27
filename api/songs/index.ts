@@ -8,6 +8,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     const songs = await collection.find({}).toArray();
+    res.setHeader("Cache-Control", "no-store");
     return res.status(200).json(songs);
   }
 

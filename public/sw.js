@@ -1,4 +1,4 @@
-const CACHE = "katando-v1";
+const CACHE = "katando-v2";
 const PRECACHE = ["/", "/index.html"];
 
 self.addEventListener("install", (e) => {
@@ -19,6 +19,8 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  // API calls are never cached — always go to the network
+  if (e.request.url.includes("/api/")) return;
   e.respondWith(
     fetch(e.request)
       .then((res) => {
