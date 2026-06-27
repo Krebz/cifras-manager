@@ -27,6 +27,7 @@ function App() {
   const isDark = colorScheme === "dark";
   const styles = appStyles(isDark);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [swUpdate, setSwUpdate] = useState<ServiceWorkerRegistration | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [importPayload, setImportPayload] = useState<{ name: string; date?: string; songIds: string[] } | null>(() => {
     const encoded = extractImportParam();
@@ -49,6 +50,14 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const handler = (e: Event) => {
+      setSwUpdate((e as CustomEvent).detail as ServiceWorkerRegistration);
+    };
+    window.addEventListener("sw-update-ready", handler);
+    return () => window.removeEventListener("sw-update-ready", handler);
+  }, []);
+
+  useEffect(() => {
     const onFSChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFSChange);
     return () => document.removeEventListener("fullscreenchange", onFSChange);
@@ -59,6 +68,12 @@ function App() {
       window.location.hash = `#${routes.setlists}`;
     }
   }, []);
+
+  function handleSwUpdate() {
+    if (!swUpdate?.waiting) return;
+    swUpdate.waiting.postMessage({ type: "SKIP_WAITING" });
+    navigator.serviceWorker.addEventListener("controllerchange", () => window.location.reload());
+  }
 
   function handleInstall() {
     if (!installPrompt) return;
@@ -84,6 +99,33 @@ function App() {
   return (
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
       <Stack p="xs" gap="xs" style={{ ...styles.content, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
+        {swUpdate && (
+          <div
+            style={{
+              position: "fixed",
+              bottom: 16,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 2000,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "10px 16px",
+              borderRadius: 12,
+              background: isDark ? "rgba(30,41,59,0.97)" : "#fff",
+              border: isDark ? "1px solid rgba(96,165,250,0.4)" : "1px solid rgba(37,99,235,0.3)",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ fontSize: 13, color: isDark ? "#e2e8f0" : "#1e293b" }}>
+              Nova versão disponível
+            </span>
+            <Button size="xs" onClick={handleSwUpdate}>Atualizar agora</Button>
+            <Button size="xs" variant="subtle" onClick={() => setSwUpdate(null)}>Agora não</Button>
+          </div>
+        )}
+
         {!isPresentation && !isFullscreen && route.page !== "song" && (
           <div style={isNavSticky ? { position: "sticky", top: "10px", zIndex: 100 } : undefined}>
             <MainNavigation
