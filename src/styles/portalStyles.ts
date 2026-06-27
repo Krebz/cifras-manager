@@ -196,6 +196,7 @@ export const portalStyles = (isDark: boolean) => ({
   },
   songCard: {
     display: "grid",
+    alignContent: "start",
     gap: "9px",
     padding: "15px",
     borderRadius: "13px",
