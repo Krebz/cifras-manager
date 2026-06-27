@@ -54,6 +54,7 @@ type Props = {
   onNavigateSetlist?: () => void;
   onNavigateBack?: () => void;
   onToggleFullscreen?: () => void;
+  onAddedToSetlist?: (targetSetlistId: string) => void;
 };
 
 const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
@@ -85,6 +86,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   onNavigateSetlist,
   onNavigateBack,
   onToggleFullscreen,
+  onAddedToSetlist,
 }: Props, ref) {
   const group = toolbarStyles.toolbarGroup;
   const button = toolbarStyles.toolbarButton;
@@ -102,9 +104,10 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
     setTimeout(() => setCopied(false), 2000);
   }
 
-  async function handleAddToSetlist(setlistId: string) {
-    await addSongToSetlist(setlistId, songId);
-    setAddedTo(setlistId);
+  async function handleAddToSetlist(targetSetlistId: string) {
+    await addSongToSetlist(targetSetlistId, songId);
+    onAddedToSetlist?.(targetSetlistId);
+    setAddedTo(targetSetlistId);
     setTimeout(() => { setAddedTo(null); setPlaylistOpen(false); }, 1200);
   }
 
@@ -113,6 +116,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
     if (!name) return;
     const sl = await createSetlist(name);
     await addSongToSetlist(sl.id, songId);
+    onAddedToSetlist?.(sl.id);
     setNewName("");
     setCreatingNew(false);
     setAddedTo(sl.id);

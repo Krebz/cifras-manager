@@ -11,6 +11,7 @@ import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
 import { useUserPreferences } from "../../hooks/useUserPreferences";
 import { navigate, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
+import { loadSetlistTranspose, saveSetlistTranspose } from "../../services/setlistTransposeStore";
 
 type Props = {
   songId: string;
@@ -26,7 +27,9 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     setFontSize,
     setScrollSpeed: saveScrollSpeed,
   } = useUserPreferences();
-  const [transpose, setTranspose] = useState(0);
+  const [transpose, setTranspose] = useState(() =>
+    setlistId ? loadSetlistTranspose(setlistId, songId) : 0
+  );
   const [capoActive, setCapoActive] = useState(true);
   const [toolbarHeight, setToolbarHeight] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -59,7 +62,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const nextSongId = setlist && setlistIndex < setlist.songIds.length - 1 ? setlist.songIds[setlistIndex + 1] : undefined;
 
   useEffect(() => {
-    setTranspose(0);
+    setTranspose(setlistId ? loadSetlistTranspose(setlistId, songId) : 0);
     setCapoActive(true);
     setIsScrolling(false);
     swipeDir.current = null;
@@ -132,6 +135,12 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
       document.removeEventListener("touchend", onEnd);
     };
   }, [setFontSize]);
+
+  // Persiste transpose por música dentro do repertório
+  useEffect(() => {
+    if (!setlistId) return;
+    saveSetlistTranspose(setlistId, songId, transpose);
+  }, [setlistId, songId, transpose]);
 
   // Access count
   useEffect(() => {
@@ -272,6 +281,9 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
           onNavigateBack={!setlistId ? () => window.history.back() : undefined}
           onToggleFullscreen={toggleFullscreen}
+          onAddedToSetlist={(targetSetlistId) => {
+            if (transpose !== 0) saveSetlistTranspose(targetSetlistId, songId, transpose);
+          }}
         />
       )}
       {presentationMode && <div style={{ height: toolbarHeight }} />}
