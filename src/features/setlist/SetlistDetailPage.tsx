@@ -207,7 +207,7 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
               {song.title}
             </Text>
             <Group gap="xs">
-              {song.liturgy && <Text size="xs" c="dimmed">{song.liturgy}</Text>}
+              {song.liturgy && <Badge size="xs" variant="light" color="green">{song.liturgy}</Badge>}
               <Text size="xs" c="dimmed">{song.artist}</Text>
               <Badge size="xs" variant="light">{song.key}</Badge>
             </Group>
