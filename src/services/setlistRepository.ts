@@ -54,21 +54,14 @@ export async function fetchSetlists(): Promise<Setlist[]> {
   if (!response.ok) throw new Error("API indisponível");
   const raw: RawApiSetlist[] = await response.json();
   const list = raw.map(mapApiSetlist);
-
-  // Migração única: se API vazia mas localStorage tem repertórios, migra para o banco
-  if (list.length === 0) {
-    const local = getSetlists();
-    if (local.length > 0) {
-      const migrated = await Promise.all(
-        local.map((s) => postSetlist(s.name, s.date, s.songIds))
-      );
-      persist(migrated);
-      return migrated;
-    }
-  }
-
   persist(list);
   return list;
+}
+
+// Setlists são por usuário; limpar o cache ao trocar de conta evita
+// que um usuário veja (ou herde) os repertórios cacheados de outro.
+export function clearSetlistCache(): void {
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 export async function createSetlist(name: string, date?: string, songIds: string[] = []): Promise<Setlist> {

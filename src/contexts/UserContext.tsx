@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { clearSetlistCache } from "../services/setlistRepository";
 
 export interface SessionUser {
   sub: string;
@@ -34,6 +35,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    clearSetlistCache();
     setUser(null);
   }
 
