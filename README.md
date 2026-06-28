@@ -10,7 +10,7 @@ PWA litúrgico para consulta e gestão de cifras musicais, criado para uso duran
 - Renderização com acordes alinhados acima da letra (formato ChordPro)
 - Transposição de tom em tempo real (semitom acima/abaixo)
 - Blocos de seção: Verso, Refrão, Ponte, Intro, Final — com identidade visual distinta
-- CRUD completo (criar, editar, excluir) — área protegida por senha
+- CRUD completo (criar, editar, excluir) — área restrita a administrador (login Google)
 
 ### Leitura e apresentação
 - Auto-scroll com controle de velocidade
@@ -19,10 +19,16 @@ PWA litúrgico para consulta e gestão de cifras musicais, criado para uso duran
 - Responsivo para celular e tablet
 
 ### Repertórios
-- Criação e gerenciamento de repertórios (setlists)
+- Criação e gerenciamento de repertórios (setlists) — requer login com Google
+- Cada usuário vê e edita apenas os próprios repertórios
 - Adição, remoção e reordenação de músicas
 - Navegação sequencial entre músicas do repertório
-- Compartilhamento de repertório via link
+- Compartilhamento de repertório via link (recebimento é público)
+
+### Autenticação
+- Login com Google (OAuth 2.0) via backend próprio + JWT em cookie httpOnly
+- Catálogo de cifras é público; repertórios e gestão exigem login
+- Papel de administrador definido pela variável `ADMIN_EMAIL`
 
 ### Busca e organização
 - Busca por título, artista, categoria e trecho da letra
@@ -51,8 +57,10 @@ pnpm install
 pnpm dev
 ```
 
-> As API Routes requerem `MONGODB_URI` e `ADMIN_PASS` configurados em `.env.local`.  
-> Para testar sem backend local, use a URL de Preview do Vercel.
+> As API Routes requerem `MONGODB_URI` em `.env.local` (e as variáveis de OAuth
+> para testar login — ver tabela abaixo).  
+> O login Google só funciona no domínio de produção cadastrado no Google Cloud;
+> em Preview o catálogo público funciona, mas o login não.
 
 Build para produção:
 
@@ -72,22 +80,25 @@ pnpm seed
 
 ```
 api/                    Vercel serverless functions
-  auth/verify.ts        Validação de senha
-  lib/                  mongodb.ts + auth.ts
+  auth/                 google, callback, me, logout (OAuth Google + JWT)
+  lib/                  mongodb.ts + auth.ts + jwt.ts
   songs/                GET (público) / POST, PUT, DELETE (admin)
-  setlists/             CRUD público
+  setlists/             GET por id (público) / lista e escrita (login)
 
 src/
   app/                  Roteamento e navegação
   components/           Componentes compartilhados
+  contexts/             UserContext (useUser)
   data/                 Seed estático (fallback offline)
   features/             Pages por domínio (home, song, setlist, management)
   hooks/
-  services/             Repositórios (songRepository, setlistRepository, authStore)
+  services/             Repositórios (songRepository, setlistRepository)
   styles/
   types/                Song, Setlist, ParsedLine…
 
-scripts/seed.ts         Popula o MongoDB com o catálogo inicial
+scripts/
+  seed.ts               Popula o MongoDB com o catálogo inicial
+  migrate-setlists.ts   Associa setlists órfãos ao admin
 docs/                   Arquitetura, Roadmap, decisões técnicas
 ```
 
@@ -98,8 +109,11 @@ docs/                   Arquitetura, Roadmap, decisões técnicas
 | Variável | Onde | Descrição |
 |---|---|---|
 | `MONGODB_URI` | servidor | URI de conexão ao Atlas |
-| `ADMIN_PASS` | servidor | Senha das rotas de escrita |
-| `SEED_KEY` | servidor | Chave para autorizar o endpoint de seed |
+| `JWT_SECRET` | servidor | Assina o JWT de sessão |
+| `GOOGLE_CLIENT_ID` | servidor | OAuth Google |
+| `GOOGLE_CLIENT_SECRET` | servidor | OAuth Google |
+| `APP_URL` | servidor | URL de produção (monta o `redirect_uri`) |
+| `ADMIN_EMAIL` | servidor | Email que recebe papel de admin no login |
 
 ---
 
@@ -111,5 +125,5 @@ Deploy automático no Vercel a cada push em `main`. Variáveis configuradas no p
 
 ## Versão
 
-**v2.0.0** — backend MongoDB Atlas + autenticação por senha  
+**v3.0.0** — login com Google (OAuth próprio + JWT), repertórios por usuário  
 Histórico completo em [docs/Roadmap.md](docs/Roadmap.md)

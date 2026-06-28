@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Katando Cifras é um PWA litúrgico para consulta e gestão de cifras com suporte offline. A partir da v2.0, os dados são persistidos em nuvem (MongoDB Atlas) e expostos via API serverless no Vercel, mantendo o `localStorage` como cache/fallback para uso offline.
+Katando Cifras é um PWA litúrgico para consulta e gestão de cifras com suporte offline. A partir da v2.0, os dados são persistidos em nuvem (MongoDB Atlas) e expostos via API serverless no Vercel, mantendo o `localStorage` como cache/fallback para uso offline. A v3.0 adicionou login com Google (OAuth próprio + JWT), tornando os repertórios pessoais por usuário.
 
 ## Stack Tecnológica
 
@@ -20,11 +20,16 @@ Katando Cifras é um PWA litúrgico para consulta e gestão de cifras com suport
 - MongoDB Atlas M0 (free tier, GCP São Paulo)
 - Driver oficial `mongodb` (sem ORM)
 
-### Autenticação (v2.0)
+### Autenticação (v3.0)
 
-- Senha no header `Authorization: Bearer` nas rotas de escrita
-- Variável `ADMIN_PASS` server-side (não exposta no bundle)
-- Validação via `POST /api/auth/verify`; token guardado em `sessionStorage`
+- Login com Google (OAuth 2.0) via backend próprio — sem Clerk/Firebase
+- `api/auth/google` redireciona ao Google; `api/auth/callback` troca o code por
+  tokens, faz upsert do usuário na coleção `users` e emite um JWT de sessão
+- JWT guardado em cookie `httpOnly` `Secure` `SameSite=Lax` (30 dias)
+- `api/lib/jwt.ts` assina/verifica o token; `api/lib/auth.ts` expõe
+  `requireAdmin()` e `requireUser()`
+- Papel de admin definido pela variável `ADMIN_EMAIL`
+- Catálogo de cifras público; repertórios e escrita de cifras exigem login
 
 ## Estrutura Arquitetural
 
@@ -40,17 +45,22 @@ Frontend (React PWA)
 Backend (Vercel Serverless)
 ├── api/songs/index.ts      GET (público) / POST (admin)
 ├── api/songs/[id].ts       GET (público) / PUT, DELETE (admin) / PATCH (público — accessCount)
-├── api/setlists/index.ts   GET / POST (público)
-├── api/setlists/[id].ts    GET / PUT / DELETE (público)
-├── api/auth/verify.ts      POST — valida senha
+├── api/setlists/index.ts   GET, POST (login — filtra por userId)
+├── api/setlists/[id].ts    GET (público) / PUT, DELETE (login — dono ou admin)
+├── api/auth/google.ts      GET — redireciona ao Google OAuth
+├── api/auth/callback.ts    GET — troca code, upsert user, emite JWT
+├── api/auth/me.ts          GET — usuário logado (lê cookie)
+├── api/auth/logout.ts      POST — apaga cookie
 └── api/lib/
     ├── mongodb.ts           Singleton de conexão
-    └── auth.ts              Helper requireAuth()
+    ├── jwt.ts               Sign/verify JWT + cookie de sessão
+    └── auth.ts              requireAdmin() / requireUser()
 
 Banco de Dados
 └── MongoDB Atlas M0 — database: katando-cifras
     ├── collection: songs
-    └── collection: setlists
+    ├── collection: setlists
+    └── collection: users
 ```
 
 ## Modelo de Domínio
@@ -80,6 +90,19 @@ Banco de Dados
 | `name` | string | |
 | `date` | string? | Data da celebração (ISO 8601) |
 | `songIds` | string[] | IDs na ordem definida pelo usuário |
+| `userId` | string | `googleId` do dono (filtra a listagem) |
+| `createdAt` / `updatedAt` | Date | |
+
+### User
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `_id` | ObjectId | Gerado pelo Atlas |
+| `googleId` | string | `sub` do Google — chave de identificação |
+| `email` | string | |
+| `name` | string | Nome de exibição |
+| `picture` | string | URL do avatar |
+| `role` | `"admin" \| "user"` | Admin = email igual a `ADMIN_EMAIL` |
 | `createdAt` / `updatedAt` | Date | |
 
 ## Estratégia Offline
@@ -104,20 +127,23 @@ const filter = ObjectId.isValid(id)
 ```text
 cifras-manager/
 ├── api/                    Vercel serverless functions
-│   ├── auth/verify.ts
-│   ├── lib/mongodb.ts + auth.ts
+│   ├── auth/              google, callback, me, logout
+│   ├── lib/mongodb.ts + auth.ts + jwt.ts
 │   ├── songs/index.ts + [id].ts
 │   ├── setlists/index.ts + [id].ts
 │   └── tsconfig.json       CJS, node16, ignoreDeprecations
 ├── src/
 │   ├── app/               Router e rotas
 │   ├── components/        Componentes compartilhados
+│   ├── contexts/          UserContext (useUser)
 │   ├── data/              Seed estático (fallback offline)
 │   ├── features/          Pages por domínio
 │   ├── hooks/
-│   ├── services/          songRepository, setlistRepository, authStore
+│   ├── services/          songRepository, setlistRepository
 │   ├── styles/
 │   └── types/
-├── scripts/seed.ts        Popula o MongoDB com o catálogo inicial
+├── scripts/
+│   ├── seed.ts            Popula o MongoDB com o catálogo inicial
+│   └── migrate-setlists.ts  Associa setlists órfãos ao admin
 └── docs/
 ```
