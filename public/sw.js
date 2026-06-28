@@ -1,4 +1,4 @@
-const CACHE = "katando-v2";
+const CACHE = "katando-v3";
 const PRECACHE = ["/", "/index.html"];
 
 self.addEventListener("install", (e) => {
