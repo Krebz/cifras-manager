@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "seed": "tsx scripts/seed.ts",
     "migrate:setlists": "tsx scripts/migrate-setlists.ts",
-    "gen:icons": "tsx scripts/gen-icons.ts"
+    "gen:icons": "tsx scripts/gen-icons.ts",
+    "ensure:indexes": "tsx scripts/ensure-indexes.ts",
+    "backup": "node scripts/backup.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

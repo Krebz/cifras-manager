@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Dumps de backup local (contêm dados pessoais — nunca versionar)
+backup/
+*.tar.gz
+*.tar.gz.gpg

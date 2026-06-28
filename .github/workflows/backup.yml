@@ -1,0 +1,44 @@
+name: Backup MongoDB
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # diário às 06:00 UTC (03:00 BRT)
+  workflow_dispatch: {} # permite rodar manualmente pela aba Actions
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      # Só dependências de produção: traz o driver mongodb, pula sharp/tsx/etc.
+      - run: pnpm install --prod --frozen-lockfile
+
+      - name: Dump das coleções
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: pnpm backup
+
+      - name: Compacta e criptografa
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          tar czf backup.tar.gz -C backup .
+          gpg --batch --yes --passphrase "$BACKUP_PASSPHRASE" \
+            --symmetric --cipher-algo AES256 \
+            -o backup.tar.gz.gpg backup.tar.gz
+
+      - name: Sobe o artifact criptografado
+        uses: actions/upload-artifact@v4
+        with:
+          name: mongo-backup-${{ github.run_id }}
+          path: backup.tar.gz.gpg
+          retention-days: 90

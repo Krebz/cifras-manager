@@ -39,6 +39,22 @@
 - Migração dos setlists órfãos da v2.0 para o admin (`pnpm migrate:setlists`)
 - Remoção do legado de senha (`api/auth/verify.ts`, `authStore`, `requireAuth`)
 
+## Melhorias técnicas (backlog)
+
+Itens de robustez/infra mantendo tudo no plano gratuito. Os três primeiros
+(índices, pool de conexões, backup) já foram implementados.
+
+- **Open Graph nos links compartilhados** — preview com título/imagem ao colar
+  link de cifra no WhatsApp. Exige um endpoint de prerender (function que
+  devolve HTML com meta tags por música), já que é SPA em host estático.
+- **Service Worker mais offline** — pré-cachear o app shell + ícones (hoje só
+  `/` e `index.html`), melhorando o primeiro uso sem rede.
+- **Monitoramento de erros** — Sentry (free tier) para capturar erros de JS no
+  cliente que não aparecem nos logs efêmeros da Vercel.
+- **Latência EUA↔Brasil** — co-localizar função e banco em São Paulo (`gru1`)
+  reduz o round-trip; exige Vercel Pro. Hoje a estratégia offline-first
+  (localStorage) já mascara bem.
+
 ## Futuro
 
 - Estatísticas de uso mais detalhadas
