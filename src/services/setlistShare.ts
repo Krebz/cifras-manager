@@ -37,3 +37,29 @@ export function extractImportParam(): string | null {
   const match = window.location.hash.match(/[?&]importar=([^&]+)/);
   return match ? match[1] : null;
 }
+
+// Import pendente: guardado antes do redirect do OAuth para ser salvo
+// automaticamente quando o usuário voltar logado (sessionStorage sobrevive
+// à navegação para o Google e de volta, na mesma aba).
+const PENDING_KEY = "pending_setlist_import";
+
+export function stashPendingImport(payload: SharePayload): void {
+  try {
+    sessionStorage.setItem(PENDING_KEY, JSON.stringify(payload));
+  } catch {
+    // ignore
+  }
+}
+
+export function readPendingImport(): SharePayload | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    return raw ? (JSON.parse(raw) as SharePayload) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingImport(): void {
+  sessionStorage.removeItem(PENDING_KEY);
+}

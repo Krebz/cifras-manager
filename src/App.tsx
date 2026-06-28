@@ -13,7 +13,13 @@ import SetlistListPage from "./features/setlist/SetlistListPage";
 import SetlistDetailPage from "./features/setlist/SetlistDetailPage";
 import { appStyles } from "./styles/appStyles";
 import { createSetlist } from "./services/setlistRepository";
-import { decodeSetlist, extractImportParam } from "./services/setlistShare";
+import {
+  decodeSetlist,
+  extractImportParam,
+  stashPendingImport,
+  readPendingImport,
+  clearPendingImport,
+} from "./services/setlistShare";
 import { routes } from "./app/routes";
 import { useUser } from "./contexts/UserContext";
 import { IconBrandGoogle } from "@tabler/icons-react";
@@ -25,7 +31,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(readRoute);
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = appStyles(isDark);
@@ -74,6 +80,23 @@ function App() {
     }
   }, []);
 
+  // Após voltar do login, salva automaticamente o repertório que estava
+  // pendente (guardado antes do redirect do OAuth).
+  useEffect(() => {
+    if (userLoading || !user) return;
+    const pending = readPendingImport();
+    if (!pending) return;
+    clearPendingImport();
+    setImportPayload(null);
+    createSetlist(pending.name, pending.date, pending.songIds)
+      .then(() => navigate(routes.setlists))
+      .catch(() => {
+        // Reabre o modal (agora logado) com o erro e a opção de tentar de novo
+        setImportPayload(pending);
+        setImportError("Não foi possível salvar. Tente novamente.");
+      });
+  }, [user, userLoading]);
+
   function handleSwUpdate() {
     if (!swUpdate?.waiting) return;
     swUpdate.waiting.postMessage({ type: "SKIP_WAITING" });
@@ -112,6 +135,12 @@ function App() {
   function handleImportClose() {
     setImportPayload(null);
     setImportError(null);
+  }
+
+  function handleLoginAndSave() {
+    if (!importPayload) return;
+    stashPendingImport(importPayload);
+    window.location.href = "/api/auth/google";
   }
 
   return (
@@ -224,12 +253,11 @@ function App() {
             <Group justify="flex-end" mt="xs">
               <Button variant="subtle" onClick={handleImportClose}>Cancelar</Button>
               <Button
-                component="a"
-                href="/api/auth/google"
                 variant="default"
                 leftSection={<IconBrandGoogle size={16} />}
+                onClick={handleLoginAndSave}
               >
-                Entrar com Google
+                Entrar e salvar
               </Button>
             </Group>
           )}
