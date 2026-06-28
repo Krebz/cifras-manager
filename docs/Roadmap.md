@@ -28,11 +28,16 @@
 - `accessCount` persistido no banco a cada abertura de cifra
 - Senha nunca exposta no bundle — validação server-side via `ADMIN_PASS`
 
-## v3.0 — Login com Google (planejado)
+## v3.0 — Login com Google (concluído)
 
-- Autenticação com Google OAuth
-- Somente o administrador acessa a gestão de cifras
-- Substituição da senha simples por sessão autenticada
+- Autenticação com Google OAuth 2.0 via backend próprio (sem Clerk/Firebase)
+- Sessão por JWT em cookie `httpOnly`; substitui a senha simples da v2.0
+- Coleção `users` no Atlas (googleId, email, name, picture, role)
+- Repertórios pessoais por usuário (`userId`); GET por link continua público
+- Gestão de cifras restrita ao administrador (papel definido por `ADMIN_EMAIL`)
+- Catálogo de cifras permanece público (consulta, transposição, auto-scroll)
+- Migração dos setlists órfãos da v2.0 para o admin (`pnpm migrate:setlists`)
+- Remoção do legado de senha (`api/auth/verify.ts`, `authStore`, `requireAuth`)
 
 ## Futuro
 
