@@ -4,114 +4,108 @@
 
 PWA litúrgico para consulta e gestão de cifras musicais (Missas Católicas).  
 Stack: React 19 + TypeScript + Mantine UI + Vite + Vercel API Routes + MongoDB Atlas M0.  
-Repositório: `main` é produção. Branch `backend` foi mesclada como v2.0.
+Repositório: `main` é produção. Domínio: `katandocifras.com.br`.
 
-## Estado atual — v2.0 (concluída)
+## Estado atual — v3.0 (concluída)
 
-- Cifras e repertórios persistidos no MongoDB Atlas (GCP São Paulo)
-- CRUD de cifras protegido por senha via `Authorization: Bearer` (variável `ADMIN_PASS` server-side)
-- Repertórios públicos — qualquer visitante pode criar/editar
-- `accessCount` incrementado no banco a cada abertura de cifra
-- localStorage como cache/fallback para uso offline
-- `api/auth/verify.ts` — valida senha do admin
-- `src/services/authStore.ts` — guarda token em `sessionStorage`
+Login com Google via backend próprio (sem Clerk/Firebase). Catálogo público,
+setlists e gestão de cifras requerem login.
 
-## Próximo passo — v3.0: Login com Google
-
-### Decisão de modelo de acesso (já tomada)
-
-**Opção C** — catálogo público, setlists requerem login:
+### Modelo de acesso
 
 | Funcionalidade | Sem login | Com login |
 |---|---|---|
-| Consultar cifras | ✓ | ✓ |
-| Transpor, auto-scroll | ✓ | ✓ |
-| Gestão de cifras (admin) | ✗ | ✓ (só admin) |
+| Consultar cifras, transpor, auto-scroll | ✓ | ✓ |
+| Receber repertório via link | ✓ | ✓ |
 | Criar/editar repertórios | ✗ | ✓ |
-| Compartilhar repertório via link | ✓ (receber) | ✓ (criar e receber) |
+| Gestão de cifras (admin) | ✗ | ✓ (só admin) |
 
-### Decisão de implementação (já tomada)
+### Autenticação (OAuth próprio + JWT)
 
-**Próprio backend com MongoDB** — sem Clerk, sem Firebase Auth.
+- `api/auth/google.ts` — redireciona para o Google OAuth (state CSRF em cookie)
+- `api/auth/callback.ts` — troca code por tokens, faz upsert do usuário em `users`,
+  gera JWT de sessão em cookie httpOnly. Admin = email igual a `ADMIN_EMAIL`.
+- `api/auth/me.ts` — retorna usuário logado (lê cookie)
+- `api/auth/logout.ts` — apaga cookie
+- `api/lib/jwt.ts` — sign/verify JWT, parse/set/clear cookie de sessão
+- `api/lib/auth.ts` — `requireAdmin()` e `requireUser()` por role no JWT
+  (`requireAuth()` legado por senha mantido só para `api/auth/verify.ts`)
 
-Motivos:
-- Dados (nome, email, Google ID) ficam no Atlas GCP São Paulo — mais limpo para LGPD
-- Sem dependência de serviço externo
-- Sem risco de mudança de preço
-- A complexidade é administrável para um único provedor OAuth (Google)
+### Frontend
 
-### Fluxo técnico planejado
+- `src/contexts/UserContext.tsx` — `UserProvider` + hook `useUser()`; busca
+  `/api/auth/me` na montagem. Envolve o app em `src/main.tsx`.
+- `AdminGate.tsx` — botão "Entrar com Google", libera só quando `role === "admin"`
+- `SetlistListPage.tsx` — gate de login antes de listar repertórios
+- `MainNavigation.tsx` — avatar + logout (ou botão "Entrar")
+- `setlistRepository.ts` — `credentials: "include"` em todos os fetch
+
+### Backend de dados
+
+- `api/setlists/` — exige login; lista/cria filtrando por `userId` (= googleId).
+  GET por id é público (compartilhamento por link). Mutações exigem dono ou admin.
+- `api/songs/` — escrita protegida por `requireAdmin` (substituiu Bearer senha)
+
+### Coleção `users` no Atlas
 
 ```
-1. Google Cloud Console
-   → Registrar app OAuth 2.0
-   → client_id + client_secret → variáveis GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET no Vercel
-
-2. api/auth/google.ts       → redireciona para Google (OAuth authorize URL)
-3. api/auth/callback.ts     → recebe code, troca por tokens, busca/cria usuário no MongoDB
-                            → gera JWT de sessão → cookie httpOnly
-4. api/auth/me.ts           → retorna usuário logado (lê cookie)
-5. api/auth/logout.ts       → apaga cookie
-
-6. MongoDB — nova coleção: users
-   { googleId, email, name, picture, role: "admin" | "user", createdAt }
-
-7. api/setlists/ → filtrar por userId do JWT (usuário só vê/edita seus próprios)
-8. api/songs/ escrita → trocar Bearer senha por verificação de role: "admin" no JWT
+{ googleId, email, name, picture, role: "admin" | "user", createdAt, updatedAt }
 ```
 
-### Dados recebidos do Google (mínimo necessário)
+### Migração executada
 
-| Campo | Uso |
-|---|---|
-| `sub` | Google ID — chave de identificação |
-| `email` | Exibição e identificação |
-| `name` | Nome de exibição (opcional) |
-| `picture` | Avatar (opcional) |
+Os 2 setlists da v2.0 sem `userId` foram associados ao admin via
+`scripts/migrate-setlists.ts` (`pnpm migrate:setlists`). O script busca o admin
+por `ADMIN_EMAIL` e carimba `userId` nos órfãos. Nota: força DNS público
+(`dns.setServers`) porque o c-ares do Node recusa a query SRV do Atlas em
+algumas redes.
 
-Sem CPF, sem telefone. Só perfil básico do Google.
-
-### Impacto sobre o código v2.0
-
-| Arquivo | O que muda |
-|---|---|
-| `api/setlists/index.ts` + `[id].ts` | Filtrar por `userId` extraído do JWT |
-| `api/songs/index.ts` + `[id].ts` | Trocar `requireAuth` (senha) por verificação de `role: admin` no JWT |
-| `src/services/setlistRepository.ts` | Passar cookie de sessão automaticamente (credenciais fetch) |
-| `AdminGate.tsx` | Verificar role do usuário logado em vez de senha |
-| `src/services/authStore.ts` | Substituir por contexto de usuário (hook `useUser`) |
-
-### Setlists existentes no Atlas (sem userId)
-
-Os setlists criados na v2.0 não têm `userId`. Decisão a tomar:
-- Descartar (limpar o banco antes do go-live)
-- Associar ao admin (migração simples via script)
-
-### LGPD
-
-- Dados de usuário ficam no Atlas (São Paulo) — sem transferência internacional de armazenamento
-- A autenticação em si passa pelo Google (EU/EUA) — isso precisa estar na política de privacidade
-- Mínimo de dados coletados — apenas o necessário para identificação
-
-## Variáveis de ambiente existentes no Vercel
+## Variáveis de ambiente no Vercel
 
 | Variável | Uso |
 |---|---|
 | `MONGODB_URI` | Conexão ao Atlas |
-| `ADMIN_PASS` | Senha atual do admin (será substituída na v3.0) |
+| `JWT_SECRET` | Assina o JWT de sessão |
+| `GOOGLE_CLIENT_ID` | OAuth Google |
+| `GOOGLE_CLIENT_SECRET` | OAuth Google |
+| `APP_URL` | `https://katandocifras.com.br` (monta o redirect_uri) |
+| `ADMIN_EMAIL` | `krasuz@gmail.com` — recebe role admin no login |
 | `SEED_KEY` | Autoriza o endpoint de seed |
-| `VITE_ADMIN_PASS` | Legado — não mais utilizada |
+| `ADMIN_PASS` | Legado v2.0 — só usado por `api/auth/verify.ts` (pode remover) |
+| `VITE_ADMIN_PASS` | Legado — não utilizada |
+
+## Google Cloud (OAuth)
+
+- Google Auth Platform → app "Externo" (publicado ou com usuários de teste)
+- Cliente Web "Katando Web":
+  - Origens JS: `https://katandocifras.com.br`, `https://www.katandocifras.com.br`
+  - Redirect: `https://katandocifras.com.br/api/auth/callback`
+- `www` deve redirecionar para o domínio raiz (o cookie de sessão é por domínio)
+
+## LGPD
+
+- Dados de usuário (googleId, email, name, picture) ficam no Atlas (São Paulo)
+- A autenticação passa pelo Google (EUA) — mencionar na política de privacidade
+- Coleta mínima — sem CPF, sem telefone
+
+## Pendências / legado a limpar
+
+- `api/auth/verify.ts` e `src/services/authStore.ts` — sobras da v2.0, sem uso
+  no fluxo atual; podem ser removidos
+- `ADMIN_PASS` / `VITE_ADMIN_PASS` no Vercel — removíveis após apagar `verify.ts`
 
 ## Estrutura de pastas relevante
 
 ```
 api/
-  auth/verify.ts          Validação de senha (v2.0 — será substituído)
-  lib/auth.ts             requireAuth() — será atualizado para JWT
-  lib/mongodb.ts          Singleton de conexão (reutilizar)
-  songs/index.ts + [id].ts
-  setlists/index.ts + [id].ts
+  auth/  google.ts callback.ts me.ts logout.ts  verify.ts(legado)
+  lib/   jwt.ts auth.ts mongodb.ts
+  songs/ index.ts + [id].ts
+  setlists/ index.ts + [id].ts
 src/
-  services/authStore.ts   Token sessionStorage (v2.0 — será substituído)
+  contexts/UserContext.tsx
   features/management/AdminGate.tsx
+  features/setlist/SetlistListPage.tsx
+  components/MainNavigation.tsx
+scripts/ seed.ts migrate-setlists.ts
 ```

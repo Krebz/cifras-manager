@@ -1,6 +1,11 @@
 import { MongoClient } from "mongodb";
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import dns from "dns";
+
+// O resolvedor DNS interno do Node (c-ares) recusa a query SRV do Atlas
+// em algumas redes. Forçar um DNS público resolve o mongodb+srv://.
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 // Load .env.local before using env vars (mesmo padrão do seed.ts)
 const envPath = resolve(process.cwd(), ".env.local");
