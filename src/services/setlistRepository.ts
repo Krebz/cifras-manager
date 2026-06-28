@@ -40,6 +40,7 @@ export function getSetlistById(id: string): Setlist | undefined {
 async function postSetlist(name: string, date?: string, songIds: string[] = []): Promise<Setlist> {
   const response = await fetch("/api/setlists", {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, date: date ?? null, songIds }),
   });
@@ -49,7 +50,7 @@ async function postSetlist(name: string, date?: string, songIds: string[] = []):
 }
 
 export async function fetchSetlists(): Promise<Setlist[]> {
-  const response = await fetch("/api/setlists");
+  const response = await fetch("/api/setlists", { credentials: "include" });
   if (!response.ok) throw new Error("API indisponível");
   const raw: RawApiSetlist[] = await response.json();
   const list = raw.map(mapApiSetlist);
@@ -79,6 +80,7 @@ export async function createSetlist(name: string, date?: string, songIds: string
 export async function updateSetlist(updated: Setlist): Promise<void> {
   const response = await fetch(`/api/setlists/${updated.id}`, {
     method: "PUT",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: updated.name, date: updated.date ?? null, songIds: updated.songIds }),
   });
@@ -87,7 +89,7 @@ export async function updateSetlist(updated: Setlist): Promise<void> {
 }
 
 export async function deleteSetlist(id: string): Promise<void> {
-  const response = await fetch(`/api/setlists/${id}`, { method: "DELETE" });
+  const response = await fetch(`/api/setlists/${id}`, { method: "DELETE", credentials: "include" });
   if (!response.ok) throw new Error("Falha ao excluir repertório");
   persist(getSetlists().filter((s) => s.id !== id));
 }

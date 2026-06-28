@@ -3,13 +3,14 @@ import {
   ActionIcon,
   Button,
   Group,
+  Loader,
   Modal,
   Stack,
   Text,
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconCalendar, IconMusic, IconPlaylist, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconBrandGoogle, IconCalendar, IconMusic, IconPlaylist, IconPlus, IconTrash } from "@tabler/icons-react";
 import {
   createSetlist,
   deleteSetlist,
@@ -19,19 +20,52 @@ import {
 import { navigate } from "../../app/router";
 import { routes } from "../../app/routes";
 import type { Setlist } from "../../types/setlist";
+import { useUser } from "../../contexts/UserContext";
 
 type Props = { isDark: boolean };
 
 export default function SetlistListPage({ isDark }: Props) {
+  const { user, loading } = useUser();
   const [setlists, setSetlists] = useState<Setlist[]>(getSetlists);
   const [createOpen, setCreateOpen] = useState(false);
 
   useEffect(() => {
-    fetchSetlists().then(setSetlists).catch(() => {});
-  }, []);
+    if (user) fetchSetlists().then(setSetlists).catch(() => {});
+  }, [user]);
   const [newName, setNewName] = useState("");
   const [newDate, setNewDate] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Setlist | null>(null);
+
+  if (loading) {
+    return (
+      <Stack align="center" py="xl">
+        <Loader size="sm" />
+      </Stack>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Stack align="center" gap="md" py="xl">
+        <IconPlaylist size={40} color={isDark ? "#94a3b8" : "#64748b"} />
+        <Text fw={600} style={{ color: isDark ? "#e2e8f0" : "#1e293b" }}>
+          Login necessário para ver repertórios
+        </Text>
+        <Text size="sm" c="dimmed" ta="center">
+          Os repertórios são pessoais. Faça login para criar e gerenciar os seus.
+        </Text>
+        <Button
+          component="a"
+          href="/api/auth/google"
+          leftSection={<IconBrandGoogle size={18} />}
+          variant="default"
+          mt="xs"
+        >
+          Entrar com Google
+        </Button>
+      </Stack>
+    );
+  }
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
