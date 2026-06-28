@@ -244,9 +244,9 @@ export default function ManagementPage({ isDark }: Props) {
               </Text>
               <Group gap="xs">
                 <Text size="xs" c="dimmed">{song.artist}</Text>
-                <Badge size="xs" variant="light">{song.key}</Badge>
-                {song.category && <Badge size="xs" variant="light" color="green">{song.category}</Badge>}
-                {song.liturgy && <Badge size="xs" variant="light" color="violet">{song.liturgy}</Badge>}
+                <Badge size="xs" variant="light" color="green">{song.key}</Badge>
+                {song.category && <Badge size="xs" variant="light" color="blue">{song.category}</Badge>}
+                {song.liturgy && <Badge size="xs" variant="light" color="blue">{song.liturgy}</Badge>}
               </Group>
             </Stack>
 
