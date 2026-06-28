@@ -15,6 +15,8 @@ import { appStyles } from "./styles/appStyles";
 import { createSetlist } from "./services/setlistRepository";
 import { decodeSetlist, extractImportParam } from "./services/setlistShare";
 import { routes } from "./app/routes";
+import { useUser } from "./contexts/UserContext";
+import { IconBrandGoogle } from "@tabler/icons-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -23,6 +25,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(readRoute);
+  const { user } = useUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = appStyles(isDark);
@@ -33,6 +36,8 @@ function App() {
     const encoded = extractImportParam();
     return encoded ? decodeSetlist(encoded) : null;
   });
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     const handleRouteChange = () => setRoute(readRoute());
@@ -91,9 +96,22 @@ function App() {
 
   async function handleImportConfirm() {
     if (!importPayload) return;
-    await createSetlist(importPayload.name, importPayload.date, importPayload.songIds);
+    setImporting(true);
+    setImportError(null);
+    try {
+      await createSetlist(importPayload.name, importPayload.date, importPayload.songIds);
+      setImportPayload(null);
+      navigate(routes.setlists);
+    } catch {
+      setImportError("Não foi possível salvar. Faça login e tente novamente.");
+    } finally {
+      setImporting(false);
+    }
+  }
+
+  function handleImportClose() {
     setImportPayload(null);
-    navigate(routes.setlists);
+    setImportError(null);
   }
 
   return (
@@ -176,7 +194,7 @@ function App() {
 
       <Modal
         opened={!!importPayload}
-        onClose={() => setImportPayload(null)}
+        onClose={handleImportClose}
         title="Repertório recebido"
         size="sm"
         centered
@@ -189,12 +207,32 @@ function App() {
             )}.
           </Text>
           <Text size="xs" c="dimmed">
-            {importPayload?.songIds.length} música{importPayload?.songIds.length !== 1 ? "s" : ""}. Deseja salvar nos seus repertórios?
+            {importPayload?.songIds.length} música{importPayload?.songIds.length !== 1 ? "s" : ""}.
+            {user ? " Deseja salvar nos seus repertórios?" : " Faça login para salvar nos seus repertórios."}
           </Text>
-          <Group justify="flex-end" mt="xs">
-            <Button variant="subtle" onClick={() => setImportPayload(null)}>Cancelar</Button>
-            <Button onClick={handleImportConfirm}>Salvar repertório</Button>
-          </Group>
+
+          {importError && (
+            <Text size="xs" c="red">{importError}</Text>
+          )}
+
+          {user ? (
+            <Group justify="flex-end" mt="xs">
+              <Button variant="subtle" onClick={handleImportClose}>Cancelar</Button>
+              <Button onClick={handleImportConfirm} loading={importing}>Salvar repertório</Button>
+            </Group>
+          ) : (
+            <Group justify="flex-end" mt="xs">
+              <Button variant="subtle" onClick={handleImportClose}>Cancelar</Button>
+              <Button
+                component="a"
+                href="/api/auth/google"
+                variant="default"
+                leftSection={<IconBrandGoogle size={16} />}
+              >
+                Entrar com Google
+              </Button>
+            </Group>
+          )}
         </Stack>
       </Modal>
     </div>
