@@ -15,17 +15,18 @@ jobs:
         with:
           node-version: 22
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11
-
-      # Só dependências de produção: traz o driver mongodb, pula sharp/tsx/etc.
-      - run: pnpm install --prod --frozen-lockfile
-
+      # Sem pnpm: instala só o driver mongodb num diretório isolado (resolução
+      # ESM acha o módulo ao lado do script) e roda o dump com node puro.
       - name: Dump das coleções
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: pnpm backup
+        run: |
+          mkdir -p "$RUNNER_TEMP/bk"
+          cp scripts/backup.mjs "$RUNNER_TEMP/bk/backup.mjs"
+          cd "$RUNNER_TEMP/bk"
+          npm init -y >/dev/null 2>&1
+          npm install mongodb@7 --no-fund --no-audit >/dev/null
+          BACKUP_DIR="$GITHUB_WORKSPACE/backup" node backup.mjs
 
       - name: Compacta e criptografa
         env:
