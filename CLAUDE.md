@@ -29,7 +29,6 @@ setlists e gestão de cifras requerem login.
 - `api/auth/logout.ts` — apaga cookie
 - `api/lib/jwt.ts` — sign/verify JWT, parse/set/clear cookie de sessão
 - `api/lib/auth.ts` — `requireAdmin()` e `requireUser()` por role no JWT
-  (`requireAuth()` legado por senha mantido só para `api/auth/verify.ts`)
 
 ### Frontend
 
@@ -70,9 +69,9 @@ algumas redes.
 | `GOOGLE_CLIENT_SECRET` | OAuth Google |
 | `APP_URL` | `https://katandocifras.com.br` (monta o redirect_uri) |
 | `ADMIN_EMAIL` | `krasuz@gmail.com` — recebe role admin no login |
-| `SEED_KEY` | Autoriza o endpoint de seed |
-| `ADMIN_PASS` | Legado v2.0 — só usado por `api/auth/verify.ts` (pode remover) |
-| `VITE_ADMIN_PASS` | Legado — não utilizada |
+| `SEED_KEY` | Legado — nenhum endpoint usa hoje (seed roda local por `pnpm seed`) |
+| `ADMIN_PASS` | Legado v2.0 — código que a usava foi removido; removível do Vercel |
+| `VITE_ADMIN_PASS` | Legado — não utilizada; removível do Vercel |
 
 ## Google Cloud (OAuth)
 
@@ -88,17 +87,21 @@ algumas redes.
 - A autenticação passa pelo Google (EUA) — mencionar na política de privacidade
 - Coleta mínima — sem CPF, sem telefone
 
-## Pendências / legado a limpar
+## Legado já removido
 
-- `api/auth/verify.ts` e `src/services/authStore.ts` — sobras da v2.0, sem uso
-  no fluxo atual; podem ser removidos
-- `ADMIN_PASS` / `VITE_ADMIN_PASS` no Vercel — removíveis após apagar `verify.ts`
+Limpeza pós-v3.0: apagados `api/auth/verify.ts`, `src/services/authStore.ts`,
+`src/data/setlists.ts` (array vazio órfão) e a função `requireAuth` de
+`api/lib/auth.ts`. O `songRepository.ts` passou a usar `credentials: "include"`
+em vez de `authHeaders()`.
+
+Pode-se remover do Vercel (sem impacto no código): `ADMIN_PASS`,
+`VITE_ADMIN_PASS`, `SEED_KEY`.
 
 ## Estrutura de pastas relevante
 
 ```
 api/
-  auth/  google.ts callback.ts me.ts logout.ts  verify.ts(legado)
+  auth/  google.ts callback.ts me.ts logout.ts
   lib/   jwt.ts auth.ts mongodb.ts
   songs/ index.ts + [id].ts
   setlists/ index.ts + [id].ts

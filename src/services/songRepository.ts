@@ -1,6 +1,5 @@
 ﻿import type { Song } from "../types/music";
 import { songs as seedSongs } from "../data/songs";
-import { authHeaders } from "./authStore";
 
 type RawApiSong = {
   _id: string;
@@ -86,7 +85,8 @@ export function getSongAccessCounts(): Record<string, number> {
 export async function createSong(data: Omit<Song, "id" | "accessCount">): Promise<Song> {
   const response = await fetch("/api/songs", {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!response.ok) throw new Error("Falha ao criar cifra");
@@ -107,7 +107,8 @@ export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): P
   };
   const response = await fetch(`/api/songs/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!response.ok) throw new Error("Falha ao atualizar cifra");
@@ -124,7 +125,7 @@ export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): P
 }
 
 export async function deleteSong(id: string): Promise<void> {
-  const response = await fetch(`/api/songs/${id}`, { method: "DELETE", headers: authHeaders() });
+  const response = await fetch(`/api/songs/${id}`, { method: "DELETE", credentials: "include" });
   if (!response.ok) throw new Error("Falha ao excluir cifra");
   persist(load().filter((s) => s.id !== id));
 }
