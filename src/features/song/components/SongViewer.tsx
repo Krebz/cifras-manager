@@ -43,10 +43,10 @@ export default function SongViewer({
         <h1 style={styles.title}>{songDocument.title}</h1>
         <div style={styles.artist}>{artist}</div>
         <div style={styles.metaRow}>
-          <div style={styles.songKey}>Tom: {songDocument.key}</div>
-          {capo ? <div style={styles.songCategory}>Capo: {capo}</div> : null}
-          {category && <div style={styles.songCategory}>Categoria: {category}</div>}
-          {liturgy && <div style={styles.songCategory}>Liturgia: {liturgy}</div>}
+          <div style={styles.badgeGreen}>Tom: {songDocument.key}</div>
+          {capo ? <div style={styles.badgeGreen}>Capo: {capo}</div> : null}
+          {category && <div style={styles.badgeBlue}>Categoria: {category}</div>}
+          {liturgy && <div style={styles.badgeBlue}>Liturgia: {liturgy}</div>}
         </div>
         {referenceUrl && (
           <div style={{ marginTop: 6 }}>

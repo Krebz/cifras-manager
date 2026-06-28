@@ -210,9 +210,9 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
               {song.title}
             </Text>
             <Group gap="xs">
-              {song.liturgy && <Badge size="xs" variant="light" color="green">{song.liturgy}</Badge>}
+              {song.liturgy && <Badge size="xs" variant="light" color="blue">{song.liturgy}</Badge>}
               <Text size="xs" c="dimmed">{song.artist}</Text>
-              <Badge size="xs" variant="light">{song.key}</Badge>
+              <Badge size="xs" variant="light" color="green">{song.key}</Badge>
             </Group>
           </Stack>
 
@@ -284,7 +284,7 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
                     </Text>
                     <Group gap="xs">
                       <Text size="xs" c="dimmed">{song.artist}</Text>
-                      <Badge size="xs" variant="light">{song.key}</Badge>
+                      <Badge size="xs" variant="light" color="green">{song.key}</Badge>
                     </Group>
                   </Stack>
                   <Button

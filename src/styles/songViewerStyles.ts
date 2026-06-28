@@ -55,7 +55,7 @@ export const songViewerStyles = (isDark: boolean) => ({
     opacity: 0.9,
   },
 
-  songKey: {
+  badgeBlue: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
@@ -65,14 +65,13 @@ export const songViewerStyles = (isDark: boolean) => ({
     color: isDark ? "#90cdf4" : "#2563eb",
     fontSize: "12px",
     fontWeight: "bold",
-    letterSpacing: "1px",
+    letterSpacing: "0.7px",
     border: isDark
       ? "1px solid rgba(144,205,244,0.2)"
       : "1px solid rgba(37,99,235,0.18)",
-    marginTop: "2px",
   },
 
-  songCategory: {
+  badgeGreen: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
