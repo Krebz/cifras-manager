@@ -28,7 +28,7 @@ import {
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   closestCenter,
   useSensor,
@@ -147,10 +147,12 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     setRemoveTarget(null);
   }
 
-  // Toque longo (mobile) ou clique-e-arraste (PC) reordenam a lista.
+  // Arraste pela alça (ícone ≡): clique-e-arraste no PC (MouseSensor) e toque-e-
+  // arraste no tablet/celular (TouchSensor). Sensores separados evitam conflito
+  // no touch; a alça tem touch-action:none para o navegador não roubar o gesto.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
@@ -543,12 +545,18 @@ function SongRow({ song, index, isDark, onOpen }: RowProps) {
   );
 }
 
-// Linha reordenável (dono): toque longo no mobile ou clique-arraste no PC. A
-// linha inteira é a área de arrasto; o toque curto abre a música e o toque no
-// lixo remove (sem iniciar arrasto).
+// Linha reordenável (dono): arraste pela alça ≡ à esquerda. O resto da linha
+// rola normalmente; o toque curto no título abre a música e o lixo remove.
 function SortableSongRow({ song, index, isDark, onOpen, onRemove }: RowProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: song.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: song.id });
   const style: CSSProperties = {
     ...rowCardStyle(isDark),
     transform: CSS.Transform.toString(transform),
@@ -558,21 +566,35 @@ function SortableSongRow({ song, index, isDark, onOpen, onRemove }: RowProps) {
     boxShadow: isDragging
       ? "0 12px 28px rgba(0,0,0,0.45)"
       : (isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 1px 4px rgba(0,0,0,0.06)"),
-    cursor: "grab",
   };
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <IconGripVertical
-        size={16}
-        color={isDark ? "#64748b" : "#94a3b8"}
-        style={{ flexShrink: 0 }}
-      />
+    <div ref={setNodeRef} style={style}>
+      <div
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        aria-label="Arraste para reordenar"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          alignSelf: "stretch",
+          // alvo de toque generoso, preenchendo a altura do card
+          padding: "0 10px",
+          margin: "-12px -4px -12px -14px",
+          touchAction: "none",
+          cursor: "grab",
+          color: isDark ? "#64748b" : "#94a3b8",
+          flexShrink: 0,
+        }}
+      >
+        <IconGripVertical size={18} />
+      </div>
       <RowContent song={song} index={index} isDark={isDark} onOpen={onOpen} />
       <ActionIcon
         variant="subtle"
         color="red"
         size="sm"
-        onPointerDown={(e) => e.stopPropagation()}
         onClick={onRemove}
         title="Remover do repertório"
       >
