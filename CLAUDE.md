@@ -3,8 +3,20 @@
 ## O projeto
 
 PWA litúrgico para consulta e gestão de cifras musicais (Missas Católicas).  
-Stack: React 19 + TypeScript + Mantine UI + Vite + Vercel API Routes + MongoDB Atlas M0.  
+Stack: React 19 + TypeScript + Mantine UI + Vite + Vercel API Routes + MongoDB Atlas M0.
+Drag-and-drop de músicas via `@dnd-kit`.  
 Repositório: `main` é produção. Domínio: `katandocifras.com.br`.
+
+## Desenvolvimento local
+
+- `pnpm dev` sobe **só o front** (Vite). Não há proxy de `/api`, então as rotas
+  serverless em `api/` (login, repertórios, compartilhamento) dão 404 no
+  localhost — funcionam apenas mudanças de front (HMR).
+- `vercel dev` sobe front **e** as funções `api/` juntas. Precisa das variáveis
+  de ambiente (`vercel env pull` gera um `.env`). Use isto para testar qualquer
+  coisa que dependa do backend.
+- Após instalar uma dependência nova, **reinicie o dev server** (o Vite
+  pré-empacota deps na inicialização).
 
 ## Estado atual — v3.0 (concluída)
 
@@ -43,6 +55,7 @@ setlists e gestão de cifras requerem login.
 
 - `api/setlists/` — exige login; lista/cria filtrando por `userId` (= googleId).
   GET por id é público (compartilhamento por link). Mutações exigem dono ou admin.
+  POST aceita `sourceId` (id do repertório original quando é cópia de um link).
 - `api/songs/` — escrita protegida por `requireAdmin` (substituiu Bearer senha)
 
 ### Coleção `users` no Atlas
@@ -58,6 +71,53 @@ Os 2 setlists da v2.0 sem `userId` foram associados ao admin via
 por `ADMIN_EMAIL` e carimba `userId` nos órfãos. Nota: força DNS público
 (`dns.setServers`) porque o c-ares do Node recusa a query SRV do Atlas em
 algumas redes.
+
+## v3.1 — compartilhamento, reordenação e ajustes de UX
+
+### Compartilhamento por referência (não duplica mais)
+
+O modelo antigo embutia o repertório na URL (`?importar=<base64>`) e criava uma
+cópia a cada abertura. Agora o link é a **rota de detalhe por id**
+(`#/repertorios/<id>`), apontando para o repertório real no servidor.
+
+- `buildShareUrl` (em `setlistShare.ts`) devolve `#/repertorios/<id>`. As
+  funções de encode/decode/pending-import foram removidas; sobraram
+  `stashPendingShare`/`takePendingShare` (guardam o id na sessão para reabrir o
+  link após o login, já que o OAuth sempre volta para `APP_URL`).
+- `Setlist` ganhou `sourceId?` (id do original). Cópias salvas o carregam para
+  **deduplicar**: se o usuário já salvou aquele link, a página oferece "abrir
+  minha cópia" em vez de duplicar.
+- `setlistRepository.ts`: `fetchSetlistById(id)` (GET público) + cache **em
+  memória** (`adhocSetlists`) para visualizar repertórios de terceiros sem
+  poluir a lista pessoal; `getSetlistById` consulta os dois caches;
+  `createSetlist` aceita `sourceId`.
+- `SetlistDetailPage.tsx`: decide `isOwner` (o id está na lista do usuário).
+  Não-dono vê em **modo leitura** (só "Iniciar") com bloco "Salvar nos meus" /
+  "Entrar para salvar"; **botões de edição só aparecem para o dono**.
+- `App.tsx`: removido todo o modal/fluxo de import por payload; ao voltar do
+  login reabre o link compartilhado pendente.
+
+### Repertório: renomear + reordenar arrastando
+
+- Ícone de lápis no cabeçalho (só dono) abre modal para editar nome/data
+  (`updateSetlist`).
+- As setas ↑/↓ foram substituídas por **drag** com `@dnd-kit`: toque longo no
+  mobile (`TouchSensor`, delay 220ms) e clique-arraste no PC (`PointerSensor`,
+  8px), `KeyboardSensor` para acessibilidade. `onDragEnd` reordena via
+  `arrayMove` e persiste com `updateSetlist`. `moveSongUp/Down` removidas.
+
+### Pinça só ajusta a fonte
+
+`SongPage.tsx`: o `touchmove` de 2 dedos virou não-passivo com `preventDefault()`
+e os eventos `gesture*` do WebKit (iOS Safari ignora `user-scalable=no`) são
+barrados — some a barra de arrasto horizontal. Reforço `touch-action: pan-y` no
+container. O swipe horizontal de troca de música é JS, então não é afetado.
+
+### Grafia enarmônica preservada
+
+`transposeChord.ts`: com `steps === 0`, respeita a grafia digitada — um acorde
+`Bb` não vira mais `A#` na prévia da Gestão nem na visualização padrão. A
+transposição por N semitons segue derivando a grafia pela tonalidade.
 
 ## Variáveis de ambiente no Vercel
 
@@ -108,7 +168,8 @@ api/
 src/
   contexts/UserContext.tsx
   features/management/AdminGate.tsx
-  features/setlist/SetlistListPage.tsx
+  features/setlist/ SetlistListPage.tsx SetlistDetailPage.tsx
+  services/ setlistRepository.ts setlistShare.ts transposeChord.ts
   components/MainNavigation.tsx
 scripts/ seed.ts migrate-setlists.ts
 ```
