@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   ActionIcon,
   Badge,
@@ -12,12 +12,11 @@ import {
   Title,
 } from "@mantine/core";
 import {
-  IconArrowDown,
   IconArrowLeft,
-  IconArrowUp,
   IconBrandGoogle,
   IconCheck,
   IconDeviceFloppy,
+  IconGripVertical,
   IconMusic,
   IconPencil,
   IconPlayerPlay,
@@ -27,13 +26,29 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   addSongToSetlist,
   createSetlist,
   fetchSetlistById,
   fetchSetlists,
   getSetlistById,
-  moveSongDown,
-  moveSongUp,
   removeSongFromSetlist,
   updateSetlist,
 } from "../../services/setlistRepository";
@@ -104,8 +119,6 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     };
   }, [setlistId, user]);
 
-  const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
-  const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
   const textMuted = isDark ? "#94a3b8" : "#64748b";
 
   const catalogSongs = searchQuery.trim()
@@ -134,13 +147,22 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     setRemoveTarget(null);
   }
 
-  async function handleMoveUp(songId: string) {
-    await moveSongUp(setlistId, songId);
-    reload();
-  }
+  // Toque longo (mobile) ou clique-e-arraste (PC) reordenam a lista.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
-  async function handleMoveDown(songId: string) {
-    await moveSongDown(setlistId, songId);
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!setlist || !over || active.id === over.id) return;
+    const oldIndex = setlist.songIds.indexOf(String(active.id));
+    const newIndex = setlist.songIds.indexOf(String(over.id));
+    if (oldIndex < 0 || newIndex < 0) return;
+    const songIds = arrayMove(setlist.songIds, oldIndex, newIndex);
+    setSetlist({ ...setlist, songIds }); // otimista
+    await updateSetlist({ ...setlist, songIds });
     reload();
   }
 
@@ -326,76 +348,34 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
         </Stack>
       )}
 
-      {orderedSongs.map((song, idx) => (
-        <div
-          key={song.id}
-          style={{
-            background: cardBg,
-            border: cardBorder,
-            borderRadius: 10,
-            padding: "12px 14px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            boxShadow: isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 1px 4px rgba(0,0,0,0.06)",
-          }}
-        >
-          <Text
-            size="sm"
-            fw={700}
-            style={{ color: textMuted, minWidth: 24, textAlign: "center" }}
-          >
-            {idx + 1}
-          </Text>
-
-          <Stack
-            gap={2}
-            style={{ flex: 1, minWidth: 0, cursor: "pointer" }}
-            onClick={() => navigate(songInSetlistRouteFor(song.id, setlistId))}
-          >
-            <Text fw={600} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 14 }} truncate>
-              {song.title}
-            </Text>
-            <Group gap="xs">
-              {song.liturgy && <Badge size="xs" variant="light" color="blue">{song.liturgy}</Badge>}
-              <Text size="xs" c="dimmed">{song.artist}</Text>
-              <Badge size="xs" variant="light" color="green">{song.key}</Badge>
-            </Group>
-          </Stack>
-
-          {isOwner && (
-            <Group gap={4}>
-              <ActionIcon
-                variant="subtle"
-                size="sm"
-                disabled={idx === 0}
-                onClick={() => handleMoveUp(song.id)}
-                title="Mover para cima"
-              >
-                <IconArrowUp size={15} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                size="sm"
-                disabled={idx === orderedSongs.length - 1}
-                onClick={() => handleMoveDown(song.id)}
-                title="Mover para baixo"
-              >
-                <IconArrowDown size={15} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color="red"
-                size="sm"
-                onClick={() => setRemoveTarget(song)}
-                title="Remover do repertório"
-              >
-                <IconTrash size={15} />
-              </ActionIcon>
-            </Group>
-          )}
-        </div>
-      ))}
+      {isOwner ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={orderedSongs.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+            <Stack gap="md">
+              {orderedSongs.map((song, idx) => (
+                <SortableSongRow
+                  key={song.id}
+                  song={song}
+                  index={idx}
+                  isDark={isDark}
+                  onOpen={() => navigate(songInSetlistRouteFor(song.id, setlistId))}
+                  onRemove={() => setRemoveTarget(song)}
+                />
+              ))}
+            </Stack>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        orderedSongs.map((song, idx) => (
+          <SongRow
+            key={song.id}
+            song={song}
+            index={idx}
+            isDark={isDark}
+            onOpen={() => navigate(songInSetlistRouteFor(song.id, setlistId))}
+          />
+        ))
+      )}
 
       {/* Modal: adicionar músicas */}
       <Modal
@@ -504,5 +484,100 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
         </Stack>
       </Modal>
     </Stack>
+  );
+}
+
+function rowCardStyle(isDark: boolean): CSSProperties {
+  return {
+    background: isDark ? "rgba(30,41,59,0.8)" : "#fff",
+    border: isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0",
+    borderRadius: 10,
+    padding: "12px 14px",
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    boxShadow: isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 1px 4px rgba(0,0,0,0.06)",
+  };
+}
+
+type RowProps = {
+  song: Song;
+  index: number;
+  isDark: boolean;
+  onOpen: () => void;
+  onRemove?: () => void;
+};
+
+// Conteúdo compartilhado da linha (número + título/metadados clicáveis).
+function RowContent({ song, index, isDark, onOpen }: Omit<RowProps, "onRemove">) {
+  const textMuted = isDark ? "#94a3b8" : "#64748b";
+  return (
+    <>
+      <Text size="sm" fw={700} style={{ color: textMuted, minWidth: 24, textAlign: "center" }}>
+        {index + 1}
+      </Text>
+      <Stack
+        gap={2}
+        style={{ flex: 1, minWidth: 0, cursor: "pointer" }}
+        onClick={onOpen}
+      >
+        <Text fw={600} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 14 }} truncate>
+          {song.title}
+        </Text>
+        <Group gap="xs">
+          {song.liturgy && <Badge size="xs" variant="light" color="blue">{song.liturgy}</Badge>}
+          <Text size="xs" c="dimmed">{song.artist}</Text>
+          <Badge size="xs" variant="light" color="green">{song.key}</Badge>
+        </Group>
+      </Stack>
+    </>
+  );
+}
+
+// Linha estática (visualização compartilhada — sem reordenar/remover).
+function SongRow({ song, index, isDark, onOpen }: RowProps) {
+  return (
+    <div style={rowCardStyle(isDark)}>
+      <RowContent song={song} index={index} isDark={isDark} onOpen={onOpen} />
+    </div>
+  );
+}
+
+// Linha reordenável (dono): toque longo no mobile ou clique-arraste no PC. A
+// linha inteira é a área de arrasto; o toque curto abre a música e o toque no
+// lixo remove (sem iniciar arrasto).
+function SortableSongRow({ song, index, isDark, onOpen, onRemove }: RowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: song.id });
+  const style: CSSProperties = {
+    ...rowCardStyle(isDark),
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.9 : 1,
+    zIndex: isDragging ? 2 : undefined,
+    boxShadow: isDragging
+      ? "0 12px 28px rgba(0,0,0,0.45)"
+      : (isDark ? "0 2px 8px rgba(0,0,0,0.3)" : "0 1px 4px rgba(0,0,0,0.06)"),
+    cursor: "grab",
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <IconGripVertical
+        size={16}
+        color={isDark ? "#64748b" : "#94a3b8"}
+        style={{ flexShrink: 0 }}
+      />
+      <RowContent song={song} index={index} isDark={isDark} onOpen={onOpen} />
+      <ActionIcon
+        variant="subtle"
+        color="red"
+        size="sm"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={onRemove}
+        title="Remover do repertório"
+      >
+        <IconTrash size={15} />
+      </ActionIcon>
+    </div>
   );
 }

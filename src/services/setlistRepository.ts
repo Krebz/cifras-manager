@@ -126,23 +126,3 @@ export async function removeSongFromSetlist(setlistId: string, songId: string): 
   if (!setlist) return;
   await updateSetlist({ ...setlist, songIds: setlist.songIds.filter((id) => id !== songId) });
 }
-
-export async function moveSongUp(setlistId: string, songId: string): Promise<void> {
-  const setlist = getSetlistById(setlistId);
-  if (!setlist) return;
-  const idx = setlist.songIds.indexOf(songId);
-  if (idx <= 0) return;
-  const ids = [...setlist.songIds];
-  [ids[idx - 1], ids[idx]] = [ids[idx], ids[idx - 1]];
-  await updateSetlist({ ...setlist, songIds: ids });
-}
-
-export async function moveSongDown(setlistId: string, songId: string): Promise<void> {
-  const setlist = getSetlistById(setlistId);
-  if (!setlist) return;
-  const idx = setlist.songIds.indexOf(songId);
-  if (idx < 0 || idx >= setlist.songIds.length - 1) return;
-  const ids = [...setlist.songIds];
-  [ids[idx], ids[idx + 1]] = [ids[idx + 1], ids[idx]];
-  await updateSetlist({ ...setlist, songIds: ids });
-}
