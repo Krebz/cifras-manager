@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Group, Modal, Stack, Text, useMantineColorScheme } from "@mantine/core";
+import { Button, Stack, useMantineColorScheme } from "@mantine/core";
 import MainNavigation from "./components/MainNavigation";
 import { navigate, readRoute } from "./app/router";
-import { routePathFor, type AppRoute, type NavigationPage } from "./app/routes";
+import { routePathFor, routes, type AppRoute, type NavigationPage } from "./app/routes";
+import { takePendingShare } from "./services/setlistShare";
 import HomePage from "./features/home/HomePage";
 import InfoPage from "./features/info/InfoPage";
 import ManagementPage from "./features/management/ManagementPage";
@@ -12,17 +13,6 @@ import SongPage from "./features/song/SongPage";
 import SetlistListPage from "./features/setlist/SetlistListPage";
 import SetlistDetailPage from "./features/setlist/SetlistDetailPage";
 import { appStyles } from "./styles/appStyles";
-import { createSetlist } from "./services/setlistRepository";
-import {
-  decodeSetlist,
-  extractImportParam,
-  stashPendingImport,
-  readPendingImport,
-  clearPendingImport,
-} from "./services/setlistShare";
-import { routes } from "./app/routes";
-import { useUser } from "./contexts/UserContext";
-import { IconBrandGoogle } from "@tabler/icons-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -31,19 +21,12 @@ interface BeforeInstallPromptEvent extends Event {
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(readRoute);
-  const { user, loading: userLoading } = useUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = appStyles(isDark);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [swUpdate, setSwUpdate] = useState<ServiceWorkerRegistration | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [importPayload, setImportPayload] = useState<{ name: string; date?: string; songIds: string[] } | null>(() => {
-    const encoded = extractImportParam();
-    return encoded ? decodeSetlist(encoded) : null;
-  });
-  const [importError, setImportError] = useState<string | null>(null);
-  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     const handleRouteChange = () => setRoute(readRoute());
@@ -74,28 +57,12 @@ function App() {
     return () => document.removeEventListener("fullscreenchange", onFSChange);
   }, []);
 
+  // Ao voltar do login (que sempre redireciona para a raiz), reabre o
+  // repertório compartilhado que o usuário estava tentando salvar.
   useEffect(() => {
-    if (extractImportParam()) {
-      window.location.hash = `#${routes.setlists}`;
-    }
+    const pending = takePendingShare();
+    if (pending) navigate(routes.setlist(pending));
   }, []);
-
-  // Após voltar do login, salva automaticamente o repertório que estava
-  // pendente (guardado antes do redirect do OAuth).
-  useEffect(() => {
-    if (userLoading || !user) return;
-    const pending = readPendingImport();
-    if (!pending) return;
-    clearPendingImport();
-    setImportPayload(null);
-    createSetlist(pending.name, pending.date, pending.songIds)
-      .then(() => navigate(routes.setlists))
-      .catch(() => {
-        // Reabre o modal (agora logado) com o erro e a opção de tentar de novo
-        setImportPayload(pending);
-        setImportError("Não foi possível salvar. Tente novamente.");
-      });
-  }, [user, userLoading]);
 
   function handleSwUpdate() {
     if (!swUpdate?.waiting) return;
@@ -116,32 +83,6 @@ function App() {
 
   const isPresentation = route.page === "song" && !!route.setlistId;
   const isNavSticky = route.page !== "song" && route.page !== "setlist";
-
-  async function handleImportConfirm() {
-    if (!importPayload) return;
-    setImporting(true);
-    setImportError(null);
-    try {
-      await createSetlist(importPayload.name, importPayload.date, importPayload.songIds);
-      setImportPayload(null);
-      navigate(routes.setlists);
-    } catch {
-      setImportError("Não foi possível salvar. Faça login e tente novamente.");
-    } finally {
-      setImporting(false);
-    }
-  }
-
-  function handleImportClose() {
-    setImportPayload(null);
-    setImportError(null);
-  }
-
-  function handleLoginAndSave() {
-    if (!importPayload) return;
-    stashPendingImport(importPayload);
-    window.location.href = "/api/auth/google";
-  }
 
   return (
     <div style={{ ...styles.page, ...(isPresentation ? { paddingTop: 0 } : {}) }}>
@@ -220,49 +161,6 @@ function App() {
           </footer>
         )}
       </Stack>
-
-      <Modal
-        opened={!!importPayload}
-        onClose={handleImportClose}
-        title="Repertório recebido"
-        size="sm"
-        centered
-      >
-        <Stack gap="sm">
-          <Text size="sm">
-            Você recebeu o repertório <strong>{importPayload?.name}</strong>
-            {importPayload?.date && (
-              <> — {new Date(importPayload.date + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</>
-            )}.
-          </Text>
-          <Text size="xs" c="dimmed">
-            {importPayload?.songIds.length} música{importPayload?.songIds.length !== 1 ? "s" : ""}.
-            {user ? " Deseja salvar nos seus repertórios?" : " Faça login para salvar nos seus repertórios."}
-          </Text>
-
-          {importError && (
-            <Text size="xs" c="red">{importError}</Text>
-          )}
-
-          {user ? (
-            <Group justify="flex-end" mt="xs">
-              <Button variant="subtle" onClick={handleImportClose}>Cancelar</Button>
-              <Button onClick={handleImportConfirm} loading={importing}>Salvar repertório</Button>
-            </Group>
-          ) : (
-            <Group justify="flex-end" mt="xs">
-              <Button variant="subtle" onClick={handleImportClose}>Cancelar</Button>
-              <Button
-                variant="default"
-                leftSection={<IconBrandGoogle size={16} />}
-                onClick={handleLoginAndSave}
-              >
-                Entrar e salvar
-              </Button>
-            </Group>
-          )}
-        </Stack>
-      </Modal>
     </div>
   );
 }

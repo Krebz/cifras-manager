@@ -5,7 +5,7 @@ import { transposeKey } from "../../services/transposeKey";
 import { appStyles } from "../../styles/appStyles";
 import { parseSong } from "../../utils/parseSong";
 import { getAllSongs, getSongById } from "../../services/songRepository";
-import { getSetlistById } from "../../services/setlistRepository";
+import { fetchSetlistById, getSetlistById } from "../../services/setlistRepository";
 import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
@@ -34,6 +34,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const [toolbarHeight, setToolbarHeight] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [, forceUpdate] = useState(0);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const countedSong = useRef<string | undefined>(undefined);
   const swipeDir = useRef<"next" | "prev" | null>(null);
@@ -58,6 +59,17 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
 
   const setlist = setlistId ? getSetlistById(setlistId) : undefined;
   const setlistIndex = setlist ? setlist.songIds.indexOf(songId) : -1;
+
+  // Repertório compartilhado aberto por deep-link: busca por id (GET público)
+  // para que prev/next e o nome apareçam mesmo fora do cache local.
+  useEffect(() => {
+    if (setlistId && !getSetlistById(setlistId)) {
+      fetchSetlistById(setlistId)
+        .then(() => forceUpdate((n) => n + 1))
+        .catch(() => {});
+    }
+  }, [setlistId]);
+
   const prevSongId = setlist && setlistIndex > 0 ? setlist.songIds[setlistIndex - 1] : undefined;
   const nextSongId = setlist && setlistIndex < setlist.songIds.length - 1 ? setlist.songIds[setlistIndex + 1] : undefined;
 

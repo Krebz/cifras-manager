@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Group,
+  Loader,
   Modal,
   Stack,
   Text,
@@ -14,7 +15,9 @@ import {
   IconArrowDown,
   IconArrowLeft,
   IconArrowUp,
+  IconBrandGoogle,
   IconCheck,
+  IconDeviceFloppy,
   IconMusic,
   IconPlayerPlay,
   IconPlus,
@@ -24,19 +27,21 @@ import {
 } from "@tabler/icons-react";
 import {
   addSongToSetlist,
+  createSetlist,
+  fetchSetlistById,
   fetchSetlists,
   getSetlistById,
   moveSongDown,
   moveSongUp,
   removeSongFromSetlist,
 } from "../../services/setlistRepository";
-import { fetchSongs, getAllSongs } from "../../services/songRepository";
-import { searchSongs } from "../../services/songRepository";
+import { fetchSongs, getAllSongs, searchSongs } from "../../services/songRepository";
 import { navigate, songInSetlistRouteFor } from "../../app/router";
 import { routes } from "../../app/routes";
 import type { Setlist } from "../../types/setlist";
 import type { Song } from "../../types/music";
-import { buildShareUrl } from "../../services/setlistShare";
+import { buildShareUrl, stashPendingShare } from "../../services/setlistShare";
+import { useUser } from "../../contexts/UserContext";
 
 type Props = {
   setlistId: string;
@@ -44,21 +49,55 @@ type Props = {
 };
 
 export default function SetlistDetailPage({ setlistId, isDark }: Props) {
+  const { user } = useUser();
   const [setlist, setSetlist] = useState<Setlist | null>(() => getSetlistById(setlistId) ?? null);
   const [allSongs, setAllSongs] = useState<Song[]>(() => getAllSongs());
+  const [isOwner, setIsOwner] = useState(false);
+  const [savedCopyId, setSavedCopyId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
-
-  useEffect(() => {
-    fetchSetlists()
-      .then(() => setSetlist(getSetlistById(setlistId) ?? null))
-      .catch(() => {});
-    fetchSongs()
-      .then(setAllSongs)
-      .catch(() => {});
-  }, [setlistId]);
   const [searchQuery, setSearchQuery] = useState("");
   const [removeTarget, setRemoveTarget] = useState<Song | null>(null);
   const [shared, setShared] = useState(false);
+
+  useEffect(() => {
+    fetchSongs().then(setAllSongs).catch(() => {});
+  }, []);
+
+  // Descobre se o usuário é dono deste repertório (está na lista dele) ou se é
+  // uma visualização compartilhada (busca pública por id). Também deduplica:
+  // se já salvou uma cópia deste link, guarda o id da cópia.
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      let mine: Setlist[] = [];
+      if (user) mine = await fetchSetlists().catch(() => []);
+      if (cancelled) return;
+
+      const owned = mine.find((s) => s.id === setlistId);
+      if (owned) {
+        setSetlist(owned);
+        setIsOwner(true);
+        setSavedCopyId(null);
+        setLoading(false);
+        return;
+      }
+
+      const sharedSetlist = await fetchSetlistById(setlistId).catch(() => null);
+      if (cancelled) return;
+      setSetlist(sharedSetlist);
+      setIsOwner(false);
+      const copy = mine.find((s) => s.sourceId === setlistId);
+      setSavedCopyId(copy ? copy.id : null);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [setlistId, user]);
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
@@ -112,6 +151,34 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     navigate(songInSetlistRouteFor(setlist.songIds[0], setlistId));
   }
 
+  // Visualização compartilhada: salva uma cópia no usuário logado (com sourceId
+  // para deduplicar) e abre a cópia própria.
+  async function handleSaveCopy() {
+    if (!setlist) return;
+    setSaving(true);
+    try {
+      const copy = await createSetlist(setlist.name, setlist.date, setlist.songIds, setlistId);
+      navigate(routes.setlist(copy.id));
+    } catch {
+      // silencioso — o botão volta ao estado normal e o usuário pode tentar de novo
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleLoginToSave() {
+    stashPendingShare(setlistId);
+    window.location.href = "/api/auth/google";
+  }
+
+  if (loading && !setlist) {
+    return (
+      <Stack align="center" py="xl">
+        <Loader size="sm" />
+      </Stack>
+    );
+  }
+
   if (!setlist) {
     return (
       <Stack align="center" py="xl">
@@ -146,6 +213,56 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
         </Stack>
       </Group>
 
+      {/* Visualização compartilhada — ver ou salvar (sem duplicar) */}
+      {!isOwner && (
+        <div
+          style={{
+            background: isDark ? "rgba(37,99,235,0.12)" : "rgba(37,99,235,0.06)",
+            border: isDark ? "1px solid rgba(96,165,250,0.35)" : "1px solid rgba(37,99,235,0.25)",
+            borderRadius: 10,
+            padding: "12px 14px",
+          }}
+        >
+          <Group justify="space-between" align="center" wrap="nowrap" gap="sm">
+            <Text size="sm" style={{ color: isDark ? "#e2e8f0" : "#1e293b" }}>
+              {savedCopyId
+                ? "Você já salvou este repertório nos seus."
+                : "Repertório compartilhado — você pode visualizar e iniciar."}
+            </Text>
+            {savedCopyId ? (
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() => navigate(routes.setlist(savedCopyId))}
+                style={{ flexShrink: 0 }}
+              >
+                Abrir meu repertório
+              </Button>
+            ) : user ? (
+              <Button
+                size="xs"
+                leftSection={<IconDeviceFloppy size={15} />}
+                loading={saving}
+                onClick={handleSaveCopy}
+                style={{ flexShrink: 0 }}
+              >
+                Salvar nos meus
+              </Button>
+            ) : (
+              <Button
+                size="xs"
+                variant="default"
+                leftSection={<IconBrandGoogle size={15} />}
+                onClick={handleLoginToSave}
+                style={{ flexShrink: 0 }}
+              >
+                Entrar para salvar
+              </Button>
+            )}
+          </Group>
+        </div>
+      )}
+
       <Group>
         <Button
           leftSection={<IconPlayerPlay size={16} />}
@@ -154,28 +271,34 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
         >
           Iniciar repertório
         </Button>
-        <Button
-          variant="light"
-          leftSection={<IconPlus size={16} />}
-          onClick={() => setAddOpen(true)}
-        >
-          Adicionar músicas
-        </Button>
-        <Button
-          variant="subtle"
-          leftSection={shared ? <IconCheck size={16} /> : <IconShare size={16} />}
-          disabled={orderedSongs.length === 0}
-          onClick={handleShare}
-        >
-          {shared ? "Link copiado!" : "Compartilhar"}
-        </Button>
+        {isOwner && (
+          <>
+            <Button
+              variant="light"
+              leftSection={<IconPlus size={16} />}
+              onClick={() => setAddOpen(true)}
+            >
+              Adicionar músicas
+            </Button>
+            <Button
+              variant="subtle"
+              leftSection={shared ? <IconCheck size={16} /> : <IconShare size={16} />}
+              disabled={orderedSongs.length === 0}
+              onClick={handleShare}
+            >
+              {shared ? "Link copiado!" : "Compartilhar"}
+            </Button>
+          </>
+        )}
       </Group>
 
       {orderedSongs.length === 0 && (
         <Stack align="center" gap="xs" py="xl">
           <IconMusic size={40} color={textMuted} />
           <Text c="dimmed" size="sm">Nenhuma música neste repertório.</Text>
-          <Text c="dimmed" size="xs">Adicione músicas para montar o seu repertório.</Text>
+          {isOwner && (
+            <Text c="dimmed" size="xs">Adicione músicas para montar o seu repertório.</Text>
+          )}
         </Stack>
       )}
 
@@ -216,35 +339,37 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
             </Group>
           </Stack>
 
-          <Group gap={4}>
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              disabled={idx === 0}
-              onClick={() => handleMoveUp(song.id)}
-              title="Mover para cima"
-            >
-              <IconArrowUp size={15} />
-            </ActionIcon>
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              disabled={idx === orderedSongs.length - 1}
-              onClick={() => handleMoveDown(song.id)}
-              title="Mover para baixo"
-            >
-              <IconArrowDown size={15} />
-            </ActionIcon>
-            <ActionIcon
-              variant="subtle"
-              color="red"
-              size="sm"
-              onClick={() => setRemoveTarget(song)}
-              title="Remover do repertório"
-            >
-              <IconTrash size={15} />
-            </ActionIcon>
-          </Group>
+          {isOwner && (
+            <Group gap={4}>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                disabled={idx === 0}
+                onClick={() => handleMoveUp(song.id)}
+                title="Mover para cima"
+              >
+                <IconArrowUp size={15} />
+              </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                disabled={idx === orderedSongs.length - 1}
+                onClick={() => handleMoveDown(song.id)}
+                title="Mover para baixo"
+              >
+                <IconArrowDown size={15} />
+              </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color="red"
+                size="sm"
+                onClick={() => setRemoveTarget(song)}
+                title="Remover do repertório"
+              >
+                <IconTrash size={15} />
+              </ActionIcon>
+            </Group>
+          )}
         </div>
       ))}
 
