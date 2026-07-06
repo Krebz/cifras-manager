@@ -19,6 +19,7 @@ import {
   IconCheck,
   IconDeviceFloppy,
   IconMusic,
+  IconPencil,
   IconPlayerPlay,
   IconPlus,
   IconSearch,
@@ -34,6 +35,7 @@ import {
   moveSongDown,
   moveSongUp,
   removeSongFromSetlist,
+  updateSetlist,
 } from "../../services/setlistRepository";
 import { fetchSongs, getAllSongs, searchSongs } from "../../services/songRepository";
 import { navigate, songInSetlistRouteFor } from "../../app/router";
@@ -60,6 +62,9 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [removeTarget, setRemoveTarget] = useState<Song | null>(null);
   const [shared, setShared] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDate, setEditDate] = useState("");
 
   useEffect(() => {
     fetchSongs().then(setAllSongs).catch(() => {});
@@ -146,6 +151,20 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
     setTimeout(() => setShared(false), 2500);
   }
 
+  function openEdit() {
+    if (!setlist) return;
+    setEditName(setlist.name);
+    setEditDate(setlist.date ?? "");
+    setEditOpen(true);
+  }
+
+  async function handleRename() {
+    if (!setlist || !editName.trim()) return;
+    await updateSetlist({ ...setlist, name: editName.trim(), date: editDate || undefined });
+    setEditOpen(false);
+    reload();
+  }
+
   function handleStart() {
     if (!setlist || setlist.songIds.length === 0) return;
     navigate(songInSetlistRouteFor(setlist.songIds[0], setlistId));
@@ -196,7 +215,7 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
         <ActionIcon variant="subtle" onClick={() => navigate(routes.setlists)}>
           <IconArrowLeft size={18} />
         </ActionIcon>
-        <Stack gap={2} style={{ flex: 1 }}>
+        <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
           <Title order={2} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 20 }}>
             {setlist.name}
           </Title>
@@ -211,6 +230,11 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
             </Text>
           )}
         </Stack>
+        {isOwner && (
+          <ActionIcon variant="subtle" onClick={openEdit} title="Editar nome/data">
+            <IconPencil size={18} />
+          </ActionIcon>
+        )}
       </Group>
 
       {/* Visualização compartilhada — ver ou salvar (sem duplicar) */}
@@ -427,6 +451,36 @@ export default function SetlistDetailPage({ setlistId, isDark }: Props) {
               <Text c="dimmed" size="sm" ta="center" py="md">Nenhuma música encontrada.</Text>
             )}
           </Stack>
+        </Stack>
+      </Modal>
+
+      {/* Modal: editar nome/data */}
+      <Modal
+        opened={editOpen}
+        onClose={() => setEditOpen(false)}
+        title="Editar repertório"
+        size="sm"
+      >
+        <Stack gap="sm">
+          <TextInput
+            label="Nome"
+            placeholder="Ex: Missa Domingo 10h"
+            value={editName}
+            onChange={(e) => setEditName(e.currentTarget.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleRename()}
+            autoFocus
+            required
+          />
+          <TextInput
+            label="Data (opcional)"
+            type="date"
+            value={editDate}
+            onChange={(e) => setEditDate(e.currentTarget.value)}
+          />
+          <Group justify="flex-end" mt="xs">
+            <Button variant="subtle" onClick={() => setEditOpen(false)}>Cancelar</Button>
+            <Button onClick={handleRename} disabled={!editName.trim()}>Salvar</Button>
+          </Group>
         </Stack>
       </Modal>
 
