@@ -18,11 +18,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "POST") {
-    const { name, date, songIds } = req.body;
+    const { name, date, songIds, sourceId } = req.body;
     const result = await collection.insertOne({
       name,
       date: date ?? null,
       songIds: songIds ?? [],
+      sourceId: sourceId ?? null,
       userId: user.sub,
       createdAt: new Date(),
       updatedAt: new Date(),

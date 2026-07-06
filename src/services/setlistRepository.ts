@@ -8,6 +8,7 @@ type RawApiSetlist = {
   name: string;
   date?: string | null;
   songIds: string[];
+  sourceId?: string | null;
 };
 
 function mapApiSetlist(raw: RawApiSetlist): Setlist {
@@ -16,8 +17,14 @@ function mapApiSetlist(raw: RawApiSetlist): Setlist {
     name: raw.name,
     date: raw.date ?? undefined,
     songIds: raw.songIds ?? [],
+    sourceId: raw.sourceId ?? undefined,
   };
 }
+
+// Cache em memória para repertórios compartilhados sendo visualizados por
+// quem não é o dono. Não vai para o localStorage (não polui a lista pessoal),
+// mas permite que getSetlistById — e portanto o player — os encontre.
+const adhocSetlists = new Map<string, Setlist>();
 
 function persist(list: Setlist[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
@@ -34,15 +41,31 @@ export function getSetlists(): Setlist[] {
 }
 
 export function getSetlistById(id: string): Setlist | undefined {
-  return getSetlists().find((s) => s.id === id);
+  return getSetlists().find((s) => s.id === id) ?? adhocSetlists.get(id);
 }
 
-async function postSetlist(name: string, date?: string, songIds: string[] = []): Promise<Setlist> {
+// Busca um repertório por id no backend (GET público). Usado para visualizar
+// repertórios compartilhados por link, mesmo sem login ou sem ser o dono.
+export async function fetchSetlistById(id: string): Promise<Setlist> {
+  const response = await fetch(`/api/setlists/${id}`, { credentials: "include" });
+  if (!response.ok) throw new Error("Repertório não encontrado");
+  const raw: RawApiSetlist = await response.json();
+  const setlist = mapApiSetlist(raw);
+  adhocSetlists.set(setlist.id, setlist);
+  return setlist;
+}
+
+async function postSetlist(
+  name: string,
+  date?: string,
+  songIds: string[] = [],
+  sourceId?: string,
+): Promise<Setlist> {
   const response = await fetch("/api/setlists", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, date: date ?? null, songIds }),
+    body: JSON.stringify({ name, date: date ?? null, songIds, sourceId: sourceId ?? null }),
   });
   if (!response.ok) throw new Error("Falha ao criar repertório");
   const raw: RawApiSetlist = await response.json();
@@ -64,8 +87,13 @@ export function clearSetlistCache(): void {
   localStorage.removeItem(STORAGE_KEY);
 }
 
-export async function createSetlist(name: string, date?: string, songIds: string[] = []): Promise<Setlist> {
-  const setlist = await postSetlist(name, date, songIds);
+export async function createSetlist(
+  name: string,
+  date?: string,
+  songIds: string[] = [],
+  sourceId?: string,
+): Promise<Setlist> {
+  const setlist = await postSetlist(name, date, songIds, sourceId);
   persist([...getSetlists(), setlist]);
   return setlist;
 }
