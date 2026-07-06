@@ -19,6 +19,9 @@ export function keyPrefersFlat(key: string): boolean {
 }
 
 function transposeNote(note: string, steps: number, preferFlat: boolean): string {
+  // Sem transposição, respeita a grafia exatamente como foi digitada
+  // (ex.: Bb continua Bb em vez de virar A#).
+  if (steps === 0) return note;
   const normalized = FLAT_TO_SHARP[note] ?? note;
   const idx = sharpNotes.indexOf(normalized);
   if (idx === -1) return note;
