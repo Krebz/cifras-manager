@@ -71,5 +71,8 @@ export const appStyles = (isDark: boolean, presentationMode = false) => ({
 
   songContainer: {
     marginTop: "2px",
+    // só pan vertical; a pinça (zoom) e o pan horizontal nativos ficam
+    // desativados — o swipe de troca de música é tratado via JS.
+    touchAction: "pan-y" as const,
   },
 });

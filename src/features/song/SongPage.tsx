@@ -107,7 +107,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     };
   }, [setlistId, prevSongId, nextSongId]);
 
-  // Pinch-to-font-size
+  // Pinch-to-font-size — a pinça mexe SÓ na fonte; o zoom nativo do navegador
+  // (que gera a barra de arrasto horizontal) é bloqueado.
   useEffect(() => {
     function dist(t: TouchList) {
       return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
@@ -119,6 +120,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     function onMove(e: TouchEvent) {
       const p = pinch.current;
       if (!p.active || e.touches.length !== 2) return;
+      // touchmove não-passivo: barra o pinch-zoom nativo enquanto ajusta a fonte
+      e.preventDefault();
       const scale = dist(e.touches) / p.initialDist;
       const next = Math.round(p.baseSize * scale);
       setFontSize(Math.min(40, Math.max(10, next)));
@@ -126,13 +129,24 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     function onEnd(e: TouchEvent) {
       if (e.touches.length === 0) pinch.current.active = false;
     }
+    // iOS Safari ignora user-scalable=no; o zoom de página só é barrado pelos
+    // eventos gesture* (não-padrão, mas necessários no WebKit).
+    function onGesture(e: Event) {
+      e.preventDefault();
+    }
     document.addEventListener("touchstart", onStart, { passive: true });
-    document.addEventListener("touchmove", onMove, { passive: true });
+    document.addEventListener("touchmove", onMove, { passive: false });
     document.addEventListener("touchend", onEnd, { passive: true });
+    document.addEventListener("gesturestart", onGesture as EventListener);
+    document.addEventListener("gesturechange", onGesture as EventListener);
+    document.addEventListener("gestureend", onGesture as EventListener);
     return () => {
       document.removeEventListener("touchstart", onStart);
       document.removeEventListener("touchmove", onMove);
       document.removeEventListener("touchend", onEnd);
+      document.removeEventListener("gesturestart", onGesture as EventListener);
+      document.removeEventListener("gesturechange", onGesture as EventListener);
+      document.removeEventListener("gestureend", onGesture as EventListener);
     };
   }, [setFontSize]);
 
