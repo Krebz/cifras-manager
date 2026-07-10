@@ -1,4 +1,4 @@
-import type { ParsedLine, MusicalChunk } from "../../types/music";
+import type { ParsedLine, MusicalChunk, TextToken } from "../../types/music";
 import { transposeChord } from "../../services/transposeChord";
 
 type Props = {
@@ -18,7 +18,7 @@ function buildChunks(line: ParsedLine, transpose: number, preferFlat: boolean): 
       if (pendingChord !== undefined) chunks.push({ chord: pendingChord, lyric: "" });
       pendingChord = transposeChord(token.value, transpose, preferFlat);
     } else if (token.type === "text") {
-      chunks.push({ chord: pendingChord, lyric: token.value });
+      chunks.push({ chord: pendingChord, lyric: token.value, bold: token.bold, italic: token.italic });
       pendingChord = undefined;
     }
   }
@@ -44,9 +44,9 @@ function expandToWordPieces(chunks: MusicalChunk[]): MusicalChunk[] {
       continue;
     }
 
-    result.push({ chord: chunk.chord, lyric: parts[0] });
+    result.push({ chord: chunk.chord, lyric: parts[0], bold: chunk.bold, italic: chunk.italic });
     for (let i = 1; i < parts.length; i++) {
-      result.push({ chord: undefined, lyric: parts[i] });
+      result.push({ chord: undefined, lyric: parts[i], bold: chunk.bold, italic: chunk.italic });
     }
   }
 
@@ -81,14 +81,22 @@ export default function LineRenderer({ line, transpose, fontSize, preferFlat = f
   const hasChords = line.tokens.some((t) => t.type === "chord");
 
   if (!hasChords) {
-    const lyric = line.tokens
-      .filter((t) => t.type === "text")
-      .map((t) => t.value)
-      .join("");
+    const textTokens = line.tokens.filter((t): t is TextToken => t.type === "text");
+    const lyric = textTokens.map((t) => t.value).join("");
     if (!lyric.trim()) return null;
     return (
       <div style={{ fontFamily: "monospace", fontSize: `${fontSize}px`, lineHeight: 1.6 }}>
-        {lyric}
+        {textTokens.map((t, i) => (
+          <span
+            key={i}
+            style={{
+              fontWeight: t.bold ? 700 : undefined,
+              fontStyle: t.italic ? "italic" : undefined,
+            }}
+          >
+            {t.value}
+          </span>
+        ))}
       </div>
     );
   }
@@ -129,16 +137,20 @@ export default function LineRenderer({ line, transpose, fontSize, preferFlat = f
                 >
                   {chord}
                 </span>
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: `${fontSize}px`,
-                    lineHeight: 1.6,
-                    whiteSpace: "pre",
-                  }}
-                >
-                  {piece.lyric || (piece.chord ? " " : "")}
-                </span>
+                {!isInstrumental && (
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: `${fontSize}px`,
+                      lineHeight: 1.6,
+                      whiteSpace: "pre",
+                      fontWeight: piece.bold ? 700 : undefined,
+                      fontStyle: piece.italic ? "italic" : undefined,
+                    }}
+                  >
+                    {piece.lyric || (piece.chord ? " " : "")}
+                  </span>
+                )}
               </span>
             );
           })}

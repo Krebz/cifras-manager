@@ -5,9 +5,10 @@ const STORAGE_KEY = "cifras_user_prefs";
 type UserPreferences = {
   fontSize: number;
   scrollSpeed: number;
+  columns: 1 | 2;
 };
 
-const DEFAULTS: UserPreferences = { fontSize: 16, scrollSpeed: 5 };
+const DEFAULTS: UserPreferences = { fontSize: 16, scrollSpeed: 5, columns: 1 };
 
 function load(): UserPreferences {
   try {
@@ -46,10 +47,20 @@ export function useUserPreferences() {
     });
   }, []);
 
+  const setColumns = useCallback((columns: 1 | 2) => {
+    setPrefs((current) => {
+      const next = { ...current, columns };
+      save(next);
+      return next;
+    });
+  }, []);
+
   return {
     fontSize: prefs.fontSize,
     scrollSpeed: prefs.scrollSpeed,
+    columns: prefs.columns,
     setFontSize,
     setScrollSpeed,
+    setColumns,
   };
 }

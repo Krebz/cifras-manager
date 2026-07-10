@@ -221,7 +221,7 @@ export default function SongForm({ initial, isDark, onSave, onCancel }: Props) {
 
           <Textarea
             label="Cifra"
-            description='Use [Acorde] antes das sílabas. Ex: [G]Se[D]nhor'
+            description='Use [Acorde] antes das sílabas. Ex: [G]Se[D]nhor · Ênfase: **negrito** e _itálico_'
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required

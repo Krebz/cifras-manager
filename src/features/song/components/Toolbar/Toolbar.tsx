@@ -4,6 +4,8 @@ import {
   IconCheck,
   IconChevronLeft,
   IconChevronRight,
+  IconColumns1,
+  IconColumns2,
   IconKeyboard,
   IconMaximize,
   IconMinimize,
@@ -32,6 +34,8 @@ type Props = {
   isScrolling: boolean;
   scrollSpeed: number;
   fontSize: number;
+  columns?: 1 | 2;
+  showColumns?: boolean;
   isDark: boolean;
   toolbarStyles: ToolbarStyles;
   songId: string;
@@ -49,6 +53,7 @@ type Props = {
   onScrollSpeedIncrease: () => void;
   onFontDecrease: () => void;
   onFontIncrease: () => void;
+  onColumnsToggle?: () => void;
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
   onNavigateSetlist?: () => void;
@@ -65,6 +70,8 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   isScrolling,
   scrollSpeed,
   fontSize,
+  columns,
+  showColumns,
   isDark,
   toolbarStyles,
   songId,
@@ -81,6 +88,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   onScrollSpeedIncrease,
   onFontDecrease,
   onFontIncrease,
+  onColumnsToggle,
   onNavigatePrev,
   onNavigateNext,
   onNavigateSetlist,
@@ -234,6 +242,23 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
         onDecrease={onFontDecrease}
         onIncrease={onFontIncrease}
       />
+
+      {/* Uma / duas colunas — só em telas largas (notebook/desktop) */}
+      {showColumns && onColumnsToggle && (
+        <Tooltip label={columns === 2 ? "Voltar para uma coluna" : "Exibir em duas colunas"}>
+          <ActionIcon
+            size="lg"
+            radius="xl"
+            variant={columns === 2 ? "filled" : "subtle"}
+            color={columns === 2 ? "blue" : undefined}
+            style={columns === 2 ? undefined : iconButton}
+            onClick={onColumnsToggle}
+            aria-label={columns === 2 ? "Voltar para uma coluna" : "Exibir em duas colunas"}
+          >
+            {columns === 2 ? <IconColumns2 size={17} /> : <IconColumns1 size={17} />}
+          </ActionIcon>
+        </Tooltip>
+      )}
 
       {/* Utilidades: compartilhar, repertório, atalhos, tela cheia */}
       <div style={{ ...group, gap: 4 }}>

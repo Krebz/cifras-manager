@@ -25,6 +25,9 @@ export const songViewerStyles = (isDark: boolean) => ({
       ? "rgba(255,255,255,0.03)"
       : "rgba(255, 255, 255, 0.58)",
     borderRadius: "8px",
+    // No modo 2 colunas, não deixa uma seção ser cortada entre as colunas.
+    breakInside: "avoid" as const,
+    WebkitColumnBreakInside: "avoid" as const,
   },
 
   header: {

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconMinimize, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { transposeKey } from "../../services/transposeKey";
@@ -24,9 +25,14 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const {
     fontSize,
     scrollSpeed: savedScrollSpeed,
+    columns,
     setFontSize,
     setScrollSpeed: saveScrollSpeed,
+    setColumns,
   } = useUserPreferences();
+  // Duas colunas só faz sentido com largura de sobra (notebook/desktop).
+  const wideScreen = useMediaQuery("(min-width: 1024px)") ?? false;
+  const activeColumns = wideScreen ? columns : 1;
   const [transpose, setTranspose] = useState(() =>
     setlistId ? loadSetlistTranspose(setlistId, songId) : 0
   );
@@ -279,6 +285,8 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           isScrolling={isScrolling}
           scrollSpeed={scrollSpeed}
           fontSize={fontSize}
+          columns={activeColumns}
+          showColumns={wideScreen}
           isDark={isDark}
           toolbarStyles={styles}
           setlistId={setlistId}
@@ -302,6 +310,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           }}
           onFontDecrease={() => setFontSize(Math.max(10, fontSize - 2))}
           onFontIncrease={() => setFontSize(Math.min(40, fontSize + 2))}
+          onColumnsToggle={() => setColumns(columns === 2 ? 1 : 2)}
           onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
           onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
           onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
@@ -333,6 +342,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           playedKey={playedKey}
           transpose={effectiveTranspose}
           fontSize={fontSize}
+          columns={activeColumns}
           referenceUrl={selectedSong.referenceUrl}
         />
       </div>

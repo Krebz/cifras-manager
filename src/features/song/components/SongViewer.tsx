@@ -13,6 +13,7 @@ type Props = {
   playedKey?: string;
   transpose: number;
   fontSize: number;
+  columns?: 1 | 2;
   referenceUrl?: string;
 };
 
@@ -25,17 +26,20 @@ export default function SongViewer({
   playedKey,
   transpose,
   fontSize,
+  columns = 1,
   referenceUrl,
 }: Props) {
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const styles = songViewerStyles(isDark);
   const preferFlat = keyPrefersFlat(playedKey ?? songDocument.key);
+  const twoColumns = columns === 2;
 
   return (
     <div
       style={{
         ...styles.container,
+        ...(twoColumns ? { maxWidth: 1700 } : {}),
         fontSize: `${fontSize}px`,
       }}
     >
@@ -68,16 +72,30 @@ export default function SongViewer({
         )}
       </div>
 
-      {songDocument.sections.map((section, index) => (
-        <SectionRenderer
-          key={index}
-          section={section}
-          transpose={transpose}
-          fontSize={fontSize}
-          styles={styles}
-          preferFlat={preferFlat}
-        />
-      ))}
+      <div
+        style={
+          twoColumns
+            ? {
+                columnCount: 2,
+                columnGap: 24,
+                columnRule: isDark
+                  ? "1px solid rgba(148,163,184,0.18)"
+                  : "1px solid rgba(148,163,184,0.28)",
+              }
+            : undefined
+        }
+      >
+        {songDocument.sections.map((section, index) => (
+          <SectionRenderer
+            key={index}
+            section={section}
+            transpose={transpose}
+            fontSize={fontSize}
+            styles={styles}
+            preferFlat={preferFlat}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -119,6 +119,53 @@ container. O swipe horizontal de troca de música é JS, então não é afetado.
 `Bb` não vira mais `A#` na prévia da Gestão nem na visualização padrão. A
 transposição por N semitons segue derivando a grafia pela tonalidade.
 
+## v3.2 — duas colunas, ênfase inline e trecho instrumental compacto
+
+### Modo duas colunas (aproveitar telas largas)
+
+Botão 1/2 colunas na toolbar da música (`IconColumns1`/`IconColumns2`), **só
+aparece em telas ≥ 1024px** (notebook/desktop). A preferência é global e fica no
+`localStorage` junto de fonte/velocidade.
+
+- `useUserPreferences.ts`: nova pref `columns: 1 | 2` (default 1) + `setColumns`.
+- `SongPage.tsx`: `useMediaQuery("(min-width: 1024px)")` (do `@mantine/hooks`)
+  decide `wideScreen`; `activeColumns = wideScreen ? columns : 1` (em tela
+  estreita força 1 coluna e esconde o botão, mas mantém a pref salva).
+- `SongViewer.tsx`: em 2 colunas, envolve as seções num container com
+  `column-count: 2`, `column-gap` e `column-rule` (divisória sutil); `maxWidth`
+  sobe de 1200 → 1700px.
+- `songViewerStyles.ts`: `break-inside: avoid` (+ prefixo WebKit) em `.section`
+  para nenhuma seção ser cortada entre as colunas. Inócuo em 1 coluna.
+- A rolagem/auto-scroll continua **vertical** — as colunas são balanceadas e
+  sobem juntas, como um caderno. Vale também em tela cheia (escolha antes de
+  entrar). O `Toolbar` recebe `columns`, `showColumns` e `onColumnsToggle`.
+
+### Ênfase inline: **negrito** e _itálico_
+
+Marcação estilo Markdown, resolvida no parser (funciona em toda a música,
+inclusive atravessando acorde e em linhas cantadas):
+
+- `**texto**` → negrito · `_texto_` → itálico.
+- `parseLine.ts`: `applyInlineMarkup(tokens)` percorre os tokens já divididos
+  por acordes mantendo o estado de negrito/itálico aberto, remove os marcadores
+  e carimba `bold`/`italic` em cada trecho de texto. Estado **local à linha**
+  (reinicia por linha; marcador não fechado só afeta a própria linha).
+- `TextToken` e `MusicalChunk` (`types/music.ts`) ganharam `bold?`/`italic?`;
+  `LineRenderer.tsx` propaga as flags por `buildChunks`/`expandToWordPieces` e
+  aplica `fontWeight`/`fontStyle` no span da letra e nas linhas de texto puro.
+- Dica de sintaxe adicionada ao campo Cifra em `SongForm.tsx` (o preview usa o
+  mesmo `SongViewer`, então mostra tudo).
+- Cuidado: `**` e `_` passam a ser sempre interpretados; um `_` literal numa
+  letra antiga viraria itálico e sumiria (raro em pt-BR).
+
+### Trecho instrumental sem linha de letra vazia
+
+`LineRenderer.tsx`: numa linha **100% instrumental** (só acordes, `isInstrumental`),
+o span de letra vazio deixou de ser renderizado — antes abria uma linha inteira
+(`lineHeight 1.6`) embaixo dos acordes (o vão da introdução). Correção central,
+vale para **qualquer seção**. Em linhas mistas o placeholder `" "` continua para
+manter o alinhamento acorde↔sílaba.
+
 ## Variáveis de ambiente no Vercel
 
 | Variável | Uso |

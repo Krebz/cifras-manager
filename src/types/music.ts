@@ -8,6 +8,8 @@ export type TextToken = {
   type: "text";
   value: string;
   position: number;
+  bold?: boolean;
+  italic?: boolean;
 };
 
 export type DirectiveToken = {
@@ -63,4 +65,6 @@ export type ChordData = {
 export type MusicalChunk = {
   chord?: ChordData;
   lyric: string;
+  bold?: boolean;
+  italic?: boolean;
 };
