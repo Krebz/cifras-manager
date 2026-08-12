@@ -9,9 +9,11 @@ import {
   IconKeyboard,
   IconMaximize,
   IconMinimize,
+  IconMoon,
   IconPlaylistAdd,
   IconPlus,
   IconShare,
+  IconSun,
 } from "@tabler/icons-react";
 import { forwardRef, useState, type CSSProperties } from "react";
 import { addSongToSetlist, createSetlist, getSetlists } from "../../../../services/setlistRepository";
@@ -59,6 +61,7 @@ type Props = {
   onNavigateSetlist?: () => void;
   onNavigateBack?: () => void;
   onToggleFullscreen?: () => void;
+  onToggleTheme?: () => void;
   onAddedToSetlist?: (targetSetlistId: string) => void;
 };
 
@@ -94,6 +97,7 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
   onNavigateSetlist,
   onNavigateBack,
   onToggleFullscreen,
+  onToggleTheme,
   onAddedToSetlist,
 }: Props, ref) {
   const group = toolbarStyles.toolbarGroup;
@@ -394,6 +398,24 @@ const Toolbar = forwardRef<HTMLDivElement, Props>(function Toolbar({
           </Tooltip>
         )}
       </div>
+
+      {/* Tema é do app, não da música: fica isolado na ponta direita, longe das
+          ferramentas da cifra (`margin-left: auto` empurra até a borda). */}
+      {onToggleTheme && (
+        <div style={{ ...group, gap: 4, marginLeft: "auto" }}>
+          <Tooltip label={isDark ? "Modo claro" : "Modo escuro"}>
+            <ActionIcon
+              size="sm"
+              variant="subtle"
+              style={iconButton}
+              onClick={onToggleTheme}
+              aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
+            >
+              {isDark ? <IconSun size={15} /> : <IconMoon size={15} />}
+            </ActionIcon>
+          </Tooltip>
+        </div>
+      )}
     </div>
   );
 });

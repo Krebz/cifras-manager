@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
+import { useMantineColorScheme } from "@mantine/core";
 import { IconMinimize, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { transposeKey } from "../../services/transposeKey";
@@ -22,6 +23,9 @@ type Props = {
 
 export default function SongPage({ songId, setlistId, isDark }: Props) {
   const { registerAccess } = useSongAccessCounts();
+  // A navegação principal (que tem o botão de tema) fica escondida na página da
+  // música, então o toggle vive na toolbar.
+  const { toggleColorScheme } = useMantineColorScheme();
   const {
     fontSize,
     scrollSpeed: savedScrollSpeed,
@@ -316,6 +320,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
           onNavigateBack={!setlistId ? () => window.history.back() : undefined}
           onToggleFullscreen={toggleFullscreen}
+          onToggleTheme={toggleColorScheme}
           onAddedToSetlist={(targetSetlistId) => {
             if (transpose !== 0) saveSetlistTranspose(targetSetlistId, songId, transpose);
           }}
