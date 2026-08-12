@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { navigate } from "../../app/router";
+import { useEffect, useRef, useState } from "react";
+import { getNavigationKind, navigate } from "../../app/router";
 import { routes } from "../../app/routes";
 import SongCard from "../../components/catalog/SongCard";
 import { useSongCatalog } from "../../hooks/useSongCatalog";
 import { getSetlists } from "../../services/setlistRepository";
+import { loadViewState, saveViewState } from "../../services/viewStateStore";
 import { portalStyles } from "../../styles/portalStyles";
 import { useSongAccessCounts } from "./songAccessStore";
 
 const HISTORY_KEY = "cifras_search_history";
+const VISIBLE_KEY = "catalog-visible";
 const MAX_HISTORY = 5;
 const PAGE_SIZE = 12;
 
@@ -45,7 +47,11 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
   } = useSongCatalog({ accessCounts, initialQuery });
   const styles = portalStyles(isDark);
   const [history, setHistory] = useState<string[]>(getHistory);
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  // No "voltar", reabre com a mesma quantidade de cards já carregados — sem
+  // isso a lista encolhe e a rolagem não tem para onde ser restaurada.
+  const [visibleCount, setVisibleCount] = useState(() =>
+    getNavigationKind() === "pop" ? loadViewState(VISIBLE_KEY, PAGE_SIZE) : PAGE_SIZE,
+  );
   const setlists = getSetlists();
 
   useEffect(() => {
@@ -57,9 +63,20 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
     return () => clearTimeout(t);
   }, [query]);
 
+  // Mudar de filtro volta para a primeira página. Compara a assinatura em vez
+  // de rodar no primeiro efeito, senão o valor restaurado seria zerado na
+  // montagem (e no StrictMode, também na segunda execução do efeito).
+  const filterKey = `${query}|${category}|${liturgy}|${artist}|${sort}`;
+  const lastFilterKey = useRef(filterKey);
   useEffect(() => {
+    if (lastFilterKey.current === filterKey) return;
+    lastFilterKey.current = filterKey;
     setVisibleCount(PAGE_SIZE);
-  }, [query, category, liturgy, artist, sort]);
+  }, [filterKey]);
+
+  useEffect(() => {
+    saveViewState(VISIBLE_KEY, visibleCount);
+  }, [visibleCount]);
 
   const chipStyle: React.CSSProperties = {
     padding: "3px 11px",

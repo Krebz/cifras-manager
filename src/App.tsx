@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Stack, useMantineColorScheme } from "@mantine/core";
 import MainNavigation from "./components/MainNavigation";
-import { navigate, readRoute } from "./app/router";
+import { getNavigationKind, loadScrollPosition, navigate, readRoute } from "./app/router";
 import { routePathFor, routes, type AppRoute, type NavigationPage } from "./app/routes";
 import { takePendingShare } from "./services/setlistShare";
 import HomePage from "./features/home/HomePage";
@@ -33,6 +33,26 @@ function App() {
     window.addEventListener("hashchange", handleRouteChange);
     return () => window.removeEventListener("hashchange", handleRouteChange);
   }, []);
+
+  // Voltar/avançar devolve a página à posição em que ela estava. Só no "pop":
+  // abrir uma página nova pelo menu continua começando do topo.
+  useEffect(() => {
+    if (getNavigationKind() !== "pop") return;
+    const target = loadScrollPosition();
+    if (target <= 0) return;
+
+    let frame = 0;
+    let tries = 0;
+    const restore = () => {
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      window.scrollTo({ top: Math.min(target, max), behavior: "auto" });
+      // A lista revalida as músicas por fetch — a altura final pode levar
+      // alguns frames para existir; insiste por ~0,6s antes de desistir.
+      if (max < target && tries++ < 40) frame = requestAnimationFrame(restore);
+    };
+    frame = requestAnimationFrame(restore);
+    return () => cancelAnimationFrame(frame);
+  }, [route]);
 
   useEffect(() => {
     const handler = (e: Event) => {

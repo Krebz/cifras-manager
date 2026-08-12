@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ActionIcon,
   Badge,
@@ -42,10 +42,29 @@ export default function ManagementPage({ isDark }: Props) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const listScroll = useRef(0);
+  const lastViewKind = useRef(view.kind);
 
   useEffect(() => {
     fetchSongs().then(setSongs).catch(() => {});
   }, []);
+
+  // A lista e o formulário são a mesma rota, então a janela mantém a rolagem ao
+  // trocar de vista — o formulário abre no topo e, ao salvar/cancelar, a lista
+  // volta exatamente para a música que estava sendo editada.
+  useLayoutEffect(() => {
+    if (lastViewKind.current === view.kind) return;
+    lastViewKind.current = view.kind;
+    window.scrollTo({
+      top: view.kind === "form" ? 0 : listScroll.current,
+      behavior: "auto",
+    });
+  }, [view.kind]);
+
+  function openForm(song?: Song) {
+    listScroll.current = window.scrollY;
+    setView({ kind: "form", song });
+  }
 
   const cardBg = isDark ? "rgba(30,41,59,0.8)" : "#fff";
   const cardBorder = isDark ? "1px solid rgba(148,163,184,0.2)" : "1px solid #e2e8f0";
@@ -188,7 +207,7 @@ export default function ManagementPage({ isDark }: Props) {
             >
               Exportar songs.ts
             </Button>
-            <Button leftSection={<IconPlus size={16} />} onClick={() => setView({ kind: "form" })}>
+            <Button leftSection={<IconPlus size={16} />} onClick={() => openForm()}>
               Nova cifra
             </Button>
           </Group>
@@ -211,7 +230,7 @@ export default function ManagementPage({ isDark }: Props) {
         <Stack align="center" gap="xs" py="xl">
           <IconMusic size={40} color={textMuted} />
           <Text c="dimmed" size="sm">Nenhuma cifra cadastrada ainda.</Text>
-          <Button variant="light" leftSection={<IconPlus size={16} />} onClick={() => setView({ kind: "form" })}>
+          <Button variant="light" leftSection={<IconPlus size={16} />} onClick={() => openForm()}>
             Cadastrar primeira cifra
           </Button>
         </Stack>
@@ -261,7 +280,7 @@ export default function ManagementPage({ isDark }: Props) {
                 <ActionIcon
                   variant="subtle"
                   size="sm"
-                  onClick={() => setView({ kind: "form", song })}
+                  onClick={() => openForm(song)}
                   title="Editar"
                 >
                   <IconEdit size={15} />
