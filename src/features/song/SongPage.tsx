@@ -26,7 +26,7 @@ import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
 import { useUserPreferences } from "../../hooks/useUserPreferences";
-import { navigate, routeFor, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
+import { goBack, navigate, routeFor, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
 import { loadSetlistTranspose, saveSetlistTranspose } from "../../services/setlistTransposeStore";
 
 /**
@@ -430,7 +430,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
           onNavigatePrev={prevSongId && setlistId ? () => navigate(songInSetlistRouteFor(prevSongId, setlistId)) : undefined}
           onNavigateNext={nextSongId && setlistId ? () => navigate(songInSetlistRouteFor(nextSongId, setlistId)) : undefined}
           onNavigateSetlist={setlistId ? () => navigate(setlistRouteFor(setlistId)) : undefined}
-          onNavigateBack={!setlistId ? () => window.history.back() : undefined}
+          onNavigateBack={!setlistId ? () => goBack(routeFor("songs")) : undefined}
           onToggleFullscreen={toggleFullscreen}
           onToggleTheme={toggleColorScheme}
           onAddedToSetlist={(targetSetlistId) => {

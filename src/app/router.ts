@@ -21,13 +21,35 @@ export type NavigationKind = "push" | "pop";
 
 let programmaticNavigation = false;
 let navigationKind: NavigationKind = "push";
+// Profundidade que a próxima entrada criada por nós vai ter. Fica carimbada no
+// history.state, então sobrevive a voltar/avançar.
+let pendingDepth: number | null = null;
+
+/**
+ * Quantas telas o próprio app empilhou antes desta. Zero = esta é a primeira
+ * entrada da aba (link compartilhado aberto direto), e aí `history.back()` não
+ * tem para onde voltar dentro do site.
+ */
+function currentDepth(): number {
+  const state = window.history.state as { depth?: unknown } | null;
+  return typeof state?.depth === "number" ? state.depth : 0;
+}
 
 // Registrado na carga do módulo, antes dos listeners que o App cria em efeito,
 // para que a origem da navegação já esteja resolvida quando as páginas montam.
 window.addEventListener("hashchange", () => {
   navigationKind = programmaticNavigation ? "push" : "pop";
+  if (programmaticNavigation && pendingDepth !== null) {
+    window.history.replaceState({ depth: pendingDepth }, "");
+  }
+  pendingDepth = null;
   programmaticNavigation = false;
 });
+
+// A tela de entrada da aba é a profundidade 0.
+if (!window.history.state) {
+  window.history.replaceState({ depth: 0 }, "");
+}
 
 // Nós mesmos cuidamos da rolagem (topo no "push", posição salva no "pop"); sem
 // isto o navegador ainda tentaria restaurar por conta, brigando com o nosso.
@@ -109,6 +131,26 @@ export function navigate(path: string) {
   // restaura depois. Precisa ser aqui: o `scrollTo` abaixo já move a página.
   saveScrollPosition();
   programmaticNavigation = true;
+  pendingDepth = currentDepth() + 1;
   window.location.hash = hashForPath(path);
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/** Existe uma tela nossa atrás desta para o "voltar" do navegador alcançar? */
+export function canGoBack(): boolean {
+  return currentDepth() > 0;
+}
+
+/**
+ * Voltar que nunca fica inerte. Num link compartilhado aberto direto, a cifra é
+ * a primeira entrada da aba: `history.back()` não faz nada (ou larga o usuário
+ * fora do site). Nesse caso vamos para `fallbackPath` — uma tela que tem a
+ * navegação principal, que a rota da música esconde.
+ */
+export function goBack(fallbackPath: string) {
+  if (canGoBack()) {
+    window.history.back();
+    return;
+  }
+  navigate(fallbackPath);
 }

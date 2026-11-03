@@ -279,6 +279,42 @@ alternativa registrada é avisar antes de trocar.
 - `tsconfig.app.json` sem `strict`/`strictNullChecks`/`noUncheckedIndexedAccess`
   — é o que deixa toda essa família de bug compilar limpo.
 
+## v3.4.1 — voltar que não trava e auto-scroll mais lento
+
+### Link de música deixava o visitante preso
+
+Quem abria um `#/musicas/<id>` compartilhado não conseguia sair: o botão de
+voltar da toolbar chamava `window.history.back()` cru, e naquela aba a cifra era
+a **primeira entrada do histórico** — não havia para onde voltar. Pior quando a
+aba vinha de outro site: o `back()` levaria para fora do Katando. E a rota
+`song` esconde a `MainNavigation` inteira (`App.tsx`), então aquele botão era a
+única saída da tela.
+
+`router.ts` passou a carimbar uma **profundidade** no `history.state` de cada
+entrada: a tela de entrada da aba é 0 e cada `navigate()` soma 1 (`pendingDepth`
+é aplicado no `hashchange` que o próprio navigate dispara). Com isso:
+
+- `canGoBack()` = profundidade > 0.
+- `goBack(fallbackPath)` usa `history.back()` quando há tela nossa atrás
+  (preservando a restauração de filtros/rolagem do "pop") e, na profundidade 0,
+  **navega para o catálogo** — uma tela que tem a navegação principal.
+- `SongPage` chama `goBack(routeFor("songs"))` no lugar do `history.back()`.
+
+A profundidade sobrevive a voltar/avançar e a recarregar a página, porque mora
+no `history.state` da entrada e não num contador em memória.
+
+### Auto-scroll ~40% mais lento
+
+`useAutoScroll` rolava `scrollSpeed` pixels a cada 50ms — 20 px/s por ponto da
+escala 1–10, e até o passo 1 descia rápido demais para acompanhar cantando.
+Agora cada ponto vale `PIXELS_PER_SECOND_PER_STEP = 12` px/s (passo 1 = 12 px/s,
+passo 10 = 120 px/s). A preferência salva continua valendo, só mais devagar.
+
+O tick caiu para 16ms (~60fps) com **acumulador de sobra fracionária**: nas
+velocidades baixas um tick anda menos de 1px, e sem o acumulador o navegador
+arredondaria para zero e a página não sairia do lugar. De quebra, some o degrau
+visível dos antigos saltos de 5px a 20fps.
+
 ## Variáveis de ambiente no Vercel
 
 | Variável | Uso |
