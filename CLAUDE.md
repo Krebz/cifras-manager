@@ -221,6 +221,64 @@ inicial, então o **título desempata** para a ordem ser estável. O export
 `songs.ts` da Gestão passou a incluir `createdAt` para o bundle offline não
 perder a ordenação.
 
+## v3.4 — a cifra aberta se revalida sozinha
+
+### O problema
+
+Corrigir uma cifra durante a missa, de outro aparelho, não chegava ao tablet que
+estava sendo lido. A única saída era **limpar o cache do navegador** no tablet —
+uma marreta que apaga todo o `localStorage`: repertórios, preferências de
+fonte/rolagem/colunas e, pior, **todos os tons ajustados por música dentro do
+repertório** (`cifras_setlist_transposes`).
+
+Causa: só existia uma forma de atualizar o catálogo — `fetchSongs()`, que baixa
+as 177 músicas (203 KB; 71 KB gzipado) e só dispara ao montar catálogo, Gestão ou
+detalhe de repertório. **Nada revalidava a cifra aberta.** O `fetchSongById` da
+v3.3 cobre a cifra *ausente* do cache, não a *desatualizada* — são caminhos
+diferentes.
+
+### Revalidação barata
+
+- `api/songs/index.ts` e `api/songs/[id].ts`: `Cache-Control` passou de
+  `no-store` para `no-cache`. `no-store` proibia guardar, o que anulava o ETag
+  que a Vercel já emite; `no-cache` manda guardar e sempre revalidar, então o
+  browser envia `If-None-Match` sozinho e recebe **304 sem corpo** quando nada
+  mudou. Não se mexeu em `api/users/count.ts` nem em `api/auth/` — ali
+  `no-store` é o correto.
+- `Song` ganhou `updatedAt?` (ISO 8601), já presente nos 177 documentos.
+- `revalidateSong(id)` em `songRepository.ts`: devolve a cifra nova (já no
+  cache) ou `null` quando nada mudou — e também quando a rede falha ou dá 404,
+  porque revalidação é oportunista e não pode virar erro na cara de quem está
+  tocando. O `null` no caso "igual" é o que evita reescrever os ~186 KB do
+  cache a cada checagem.
+
+### Na SongPage
+
+- A versão vinda da rede agora **vence** o cache lido na montagem (antes o
+  `??` tinha a ordem inversa, e uma revalidação seria ignorada).
+- Efeito novo revalida ao abrir a música e a cada `visibilitychange` para
+  visível — que é o gesto do tablet voltando ao suporte. Como `revalidateSong`
+  devolve `null` quando nada mudou, não há re-render nem risco de laço.
+- A revalidação inicial só roda quando **há** cache: sem ele, o efeito de busca
+  por ausência já está buscando a mesma cifra, e checar aqui seria uma segunda
+  requisição. O listener de volta-ao-primeiro-plano vale nos dois casos.
+
+**Risco aceito:** se o conteúdo trocar com o auto-scroll rodando, a altura muda e
+a rolagem dá um salto. Foi escolha explícita (atualizar sem avisar). A
+alternativa registrada é avisar antes de trocar.
+
+### Dívidas conhecidas (mapeadas, não corrigidas)
+
+- `SetlistDetailPage.tsx:128-131` descarta em silêncio `songIds` fora do cache
+  (repertório de 6 mostra 2, renumerado); `handleStart` usa `songIds[0]` cru.
+- `SongPage.tsx`: `indexOf` dando `-1` faz a seta ">" voltar para a primeira.
+- `load()` (`songRepository.ts`) ressuscita música deletada que ainda está em
+  `src/data/songs.ts` — latente enquanto as 38 do seed existirem no servidor.
+- Botão "Atualizar agora" é inerte: `public/sw.js:8` chama `skipWaiting()` no
+  `install`, então `reg.waiting` é sempre `null`.
+- `tsconfig.app.json` sem `strict`/`strictNullChecks`/`noUncheckedIndexedAccess`
+  — é o que deixa toda essa família de bug compilar limpo.
+
 ## Variáveis de ambiente no Vercel
 
 | Variável | Uso |

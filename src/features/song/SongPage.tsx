@@ -18,6 +18,7 @@ import {
   fetchSongById,
   fetchSongs,
   getSongById,
+  revalidateSong,
 } from "../../services/songRepository";
 import type { Song } from "../../types/music";
 import { fetchSetlistById, getSetlistById } from "../../services/setlistRepository";
@@ -84,7 +85,7 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const remoteSong =
     remote.status !== "idle" && remote.songId === songId ? remote : undefined;
   const selectedSong =
-    cachedSong ?? (remoteSong?.status === "ready" ? remoteSong.song : undefined);
+    (remoteSong?.status === "ready" ? remoteSong.song : undefined) ?? cachedSong;
   const songKey = selectedSong?.key ?? "C";
   const songCapo = selectedSong?.capo ?? 0;
   const effectiveTranspose = transpose + (capoActive ? 0 : songCapo);
@@ -131,6 +132,39 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
       active = false;
     };
   }, [cachedSong, remoteSong, songId]);
+
+  // Revalida a cifra aberta em segundo plano: ao abrir, e de novo toda vez que o
+  // app volta para a frente. É o que faz uma correção salva noutro aparelho
+  // aparecer aqui sozinha — antes, a única saída era limpar o cache do navegador,
+  // que levava junto repertórios, preferências e os tons ajustados.
+  useEffect(() => {
+    let active = true;
+
+    const check = () => {
+      revalidateSong(songId)
+        .then((fresh) => {
+          // `null` = nada mudou. Não tocar em estado aqui é o que impede
+          // re-render desnecessário (e qualquer risco de laço).
+          if (active && fresh) setRemote({ status: "ready", songId, song: fresh });
+        })
+        .catch(() => {});
+    };
+
+    // Sem cache não há o que revalidar: o efeito acima já está buscando esta
+    // cifra da rede, e checar aqui seria uma segunda requisição para a mesma
+    // coisa. O listener abaixo continua valendo para as idas e vindas depois.
+    if (cachedSong) check();
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") check();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      active = false;
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [cachedSong, songId]);
 
   // Repertório compartilhado aberto por deep-link: busca por id (GET público)
   // para que prev/next e o nome apareçam mesmo fora do cache local.

@@ -50,6 +50,8 @@ export type Song = {
   referenceUrl?: string;
   /** ISO 8601, vindo da API. Ordena o catálogo por "mais recentes". */
   createdAt?: string;
+  /** ISO 8601, vindo da API. É o que detecta que a cifra foi corrigida. */
+  updatedAt?: string;
 };
 
 export type SongDocument = {

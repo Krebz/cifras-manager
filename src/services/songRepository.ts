@@ -14,6 +14,7 @@ type RawApiSong = {
   accessCount: number;
   referenceUrl?: string;
   createdAt?: string;
+  updatedAt?: string;
 };
 
 function mapApiSong(raw: RawApiSong): Song {
@@ -29,6 +30,7 @@ function mapApiSong(raw: RawApiSong): Song {
     accessCount: raw.accessCount ?? 0,
     referenceUrl: raw.referenceUrl,
     createdAt: raw.createdAt,
+    updatedAt: raw.updatedAt,
   };
 }
 
@@ -54,6 +56,35 @@ export async function fetchSongById(id: string): Promise<Song> {
   if (response.status === 404) throw new SongNotFoundError(id);
   if (!response.ok) throw new Error("API indisponível");
   return upsertCached(mapApiSong(await response.json()));
+}
+
+/** `updatedAt` resolve o caso normal; o stringify cobre entradas sem o campo. */
+function isSameSong(cached: Song, fresh: Song): boolean {
+  if (cached.updatedAt && fresh.updatedAt) return cached.updatedAt === fresh.updatedAt;
+  return JSON.stringify(cached) === JSON.stringify(fresh);
+}
+
+/**
+ * Confere no servidor se a cifra mudou. Devolve a versão nova (já gravada no
+ * cache) ou `null` quando nada mudou — e também quando a rede falha ou a cifra
+ * sumiu: revalidação é oportunista e nunca pode virar erro na cara de quem está
+ * tocando. Devolver `null` no caso "igual" é o que evita reescrever os ~186 KB
+ * do cache a cada checagem.
+ */
+export async function revalidateSong(id: string): Promise<Song | null> {
+  let fresh: Song;
+  try {
+    const response = await fetch(`/api/songs/${id}`);
+    if (!response.ok) return null;
+    fresh = mapApiSong(await response.json());
+  } catch {
+    return null;
+  }
+
+  const cached = getSongById(fresh.id);
+  if (cached && isSameSong(cached, fresh)) return null;
+
+  return upsertCached(fresh);
 }
 
 export async function fetchSongs(): Promise<Song[]> {

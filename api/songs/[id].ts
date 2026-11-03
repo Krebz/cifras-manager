@@ -21,7 +21,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "GET") {
     const song = await collection.findOne(filter);
     if (!song) return res.status(404).json({ error: "Cifra não encontrada" });
-    res.setHeader("Cache-Control", "no-store");
+    // `no-cache` = o browser guarda mas SEMPRE revalida. Com o ETag que a Vercel
+    // ja emite, uma cifra inalterada volta como 304 sem corpo — e e isso que torna
+    // barato revalidar a cifra aberta. `no-store` proibia guardar, anulando o ETag.
+    res.setHeader("Cache-Control", "no-cache");
     return res.status(200).json(song);
   }
 
