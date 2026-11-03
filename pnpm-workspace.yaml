@@ -1,2 +1,8 @@
+# Scripts de instalação aprovados. O pnpm 11 lê esta lista daqui — o campo
+# `pnpm.onlyBuiltDependencies` do package.json só vale para o pnpm 10 e segue
+# no lugar para quem ainda usa a versão antiga.
+#   esbuild: liga o binário da plataforma (@esbuild/win32-x64) — o Vite depende
+#   sharp:   compila/baixa o módulo nativo usado por scripts/gen-icons.ts
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
+  sharp: true
