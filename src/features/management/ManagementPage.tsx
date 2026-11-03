@@ -17,6 +17,7 @@ import {
   IconEdit,
   IconMusic,
   IconPlus,
+  IconUsers,
   IconSearch,
   IconTrash,
   IconX,
@@ -28,6 +29,7 @@ import {
   getAllSongs,
   updateSong,
 } from "../../services/songRepository";
+import { fetchUserCount } from "../../services/userRepository";
 import type { Song } from "../../types/music";
 import SongForm from "./SongForm";
 
@@ -42,11 +44,18 @@ export default function ManagementPage({ isDark }: Props) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  // null enquanto carrega (ou se a chamada falhar) — o contador só aparece
+  // quando há número de verdade para mostrar.
+  const [userCount, setUserCount] = useState<number | null>(null);
   const listScroll = useRef(0);
   const lastViewKind = useRef(view.kind);
 
   useEffect(() => {
     fetchSongs().then(setSongs).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetchUserCount().then(setUserCount).catch(() => {});
   }, []);
 
   // A lista e o formulário são a mesma rota, então a janela mantém a rolagem ao
@@ -94,6 +103,9 @@ export default function ManagementPage({ isDark }: Props) {
         lines.push(`    liturgy: ${JSON.stringify(song.liturgy)},`);
       }
       lines.push(`    accessCount: ${song.accessCount},`);
+      if (song.createdAt) {
+        lines.push(`    createdAt: ${JSON.stringify(song.createdAt)},`);
+      }
       if (song.referenceUrl) {
         lines.push(`    referenceUrl: ${JSON.stringify(song.referenceUrl)},`);
       }
@@ -192,10 +204,18 @@ export default function ManagementPage({ isDark }: Props) {
             <Title order={2} style={{ color: isDark ? "#e2e8f0" : "#1e293b", fontSize: 22 }}>
               Gestão de cifras
             </Title>
-            <Text size="sm" c="dimmed" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ fontSize: 16, lineHeight: 1 }}>𝄞</span>
-              {songs.length} música{songs.length !== 1 ? "s" : ""} cadastrada{songs.length !== 1 ? "s" : ""}
-            </Text>
+            <Group gap="md">
+              <Text size="sm" c="dimmed" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ fontSize: 16, lineHeight: 1 }}>𝄞</span>
+                {songs.length} música{songs.length !== 1 ? "s" : ""} cadastrada{songs.length !== 1 ? "s" : ""}
+              </Text>
+              {userCount !== null && (
+                <Text size="sm" c="dimmed" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <IconUsers size={15} />
+                  {userCount} usuário{userCount !== 1 ? "s" : ""} cadastrado{userCount !== 1 ? "s" : ""}
+                </Text>
+              )}
+            </Group>
           </Stack>
           <Group gap="xs">
             <Button

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getNavigationKind, navigate } from "../../app/router";
 import { routes } from "../../app/routes";
 import SongCard from "../../components/catalog/SongCard";
-import { useSongCatalog } from "../../hooks/useSongCatalog";
+import { useSongCatalog, type SortOrder } from "../../hooks/useSongCatalog";
 import { getSetlists } from "../../services/setlistRepository";
 import { loadViewState, saveViewState } from "../../services/viewStateStore";
 import { portalStyles } from "../../styles/portalStyles";
@@ -173,8 +173,9 @@ export default function SongListPage({ initialQuery, isDark }: Props) {
           aria-label="Ordenar por"
           value={sort}
           style={styles.select}
-          onChange={(event) => setSort(event.target.value as "acessos" | "az" | "za")}
+          onChange={(event) => setSort(event.target.value as SortOrder)}
         >
+          <option value="recentes">Mais recentes</option>
           <option value="acessos">Mais acessadas</option>
           <option value="az">A → Z</option>
           <option value="za">Z → A</option>

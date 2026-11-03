@@ -1,19 +1,42 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
-import { useMantineColorScheme } from "@mantine/core";
-import { IconMinimize, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-react";
+import { Button, Group, Loader, Stack, Text, useMantineColorScheme } from "@mantine/core";
+import {
+  IconMinimize,
+  IconMusicOff,
+  IconPlayerPlay,
+  IconPlayerStop,
+  IconRefresh,
+  IconWifiOff,
+} from "@tabler/icons-react";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { transposeKey } from "../../services/transposeKey";
 import { appStyles } from "../../styles/appStyles";
 import { parseSong } from "../../utils/parseSong";
-import { getAllSongs, getSongById } from "../../services/songRepository";
+import {
+  SongNotFoundError,
+  fetchSongById,
+  fetchSongs,
+  getSongById,
+} from "../../services/songRepository";
+import type { Song } from "../../types/music";
 import { fetchSetlistById, getSetlistById } from "../../services/setlistRepository";
 import SongViewer from "./components/SongViewer";
 import Toolbar from "./components/Toolbar/Toolbar";
 import { useSongAccessCounts } from "./songAccessStore";
 import { useUserPreferences } from "../../hooks/useUserPreferences";
-import { navigate, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
+import { navigate, routeFor, setlistRouteFor, songInSetlistRouteFor } from "../../app/router";
 import { loadSetlistTranspose, saveSetlistTranspose } from "../../services/setlistTransposeStore";
+
+/**
+ * A música pode não estar no cache local (link aberto noutro aparelho, cache
+ * velho). "notFound" é 404 confirmado pela API; "error" é falha de rede.
+ */
+type RemoteSong =
+  | { status: "idle" }
+  | { status: "ready"; songId: string; song: Song }
+  | { status: "notFound"; songId: string }
+  | { status: "error"; songId: string };
 
 type Props = {
   songId: string;
@@ -54,21 +77,60 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
   const pinch = useRef({ active: false, initialDist: 0, baseSize: 0 });
   const { isScrolling, setIsScrolling, scrollSpeed, setScrollSpeed } =
     useAutoScroll(savedScrollSpeed);
-  const selectedSong = getSongById(songId) ?? getAllSongs()[0];
-  const songCapo = selectedSong.capo ?? 0;
+  // O cache é lido no render, não espelhado em estado: trocar de música não
+  // passa por um frame "carregando" quando a cifra já está local.
+  const cachedSong = useMemo(() => getSongById(songId), [songId]);
+  const [remote, setRemote] = useState<RemoteSong>({ status: "idle" });
+  const remoteSong =
+    remote.status !== "idle" && remote.songId === songId ? remote : undefined;
+  const selectedSong =
+    cachedSong ?? (remoteSong?.status === "ready" ? remoteSong.song : undefined);
+  const songKey = selectedSong?.key ?? "C";
+  const songCapo = selectedSong?.capo ?? 0;
   const effectiveTranspose = transpose + (capoActive ? 0 : songCapo);
-  const currentKey = transposeKey(selectedSong.key, transpose);
+  const currentKey = transposeKey(songKey, transpose);
   // quando capo ativo: a tonalidade tocada é a sounding key menos o capo
-  const playedKey = capoActive ? transposeKey(selectedSong.key, transpose - songCapo) : currentKey;
+  const playedKey = capoActive ? transposeKey(songKey, transpose - songCapo) : currentKey;
   const songDocument = useMemo(
-    () => parseSong(selectedSong.title, currentKey, selectedSong.content),
-    [currentKey, selectedSong.content, selectedSong.title],
+    () => (selectedSong ? parseSong(selectedSong.title, currentKey, selectedSong.content) : null),
+    [currentKey, selectedSong],
   );
   const presentationMode = !!setlistId;
   const styles = appStyles(isDark, presentationMode);
 
   const setlist = setlistId ? getSetlistById(setlistId) : undefined;
   const setlistIndex = setlist ? setlist.songIds.indexOf(songId) : -1;
+
+  // Resolve a música: cache local, senão busca por id na API. Antes daqui
+  // existia um `?? getAllSongs()[0]` que, num aparelho sem a cifra em cache,
+  // abria silenciosamente a primeira música do catálogo no lugar da pedida.
+  useEffect(() => {
+    if (cachedSong || remoteSong) return;
+    let active = true;
+
+    fetchSongById(songId)
+      .then((song) => {
+        if (active) setRemote({ status: "ready", songId, song });
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        // Último recurso: algo pode ter populado o cache (outra aba, um
+        // fetchSongs em voo) enquanto esta requisição estava no ar.
+        const fallback = getSongById(songId);
+        if (fallback) {
+          setRemote({ status: "ready", songId, song: fallback });
+          return;
+        }
+        setRemote({
+          status: error instanceof SongNotFoundError ? "notFound" : "error",
+          songId,
+        });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [cachedSong, remoteSong, songId]);
 
   // Repertório compartilhado aberto por deep-link: busca por id (GET público)
   // para que prev/next e o nome apareçam mesmo fora do cache local.
@@ -178,12 +240,14 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     saveSetlistTranspose(setlistId, songId, transpose);
   }, [setlistId, songId, transpose]);
 
-  // Access count
+  // Access count — só depois de resolver a cifra. Antes, um link que caía no
+  // fallback somava acesso para um id que a tela nunca chegou a mostrar.
   useEffect(() => {
+    if (!selectedSong) return;
     if (countedSong.current === songId) return;
     countedSong.current = songId;
     registerAccess(songId);
-  }, [registerAccess, songId]);
+  }, [registerAccess, selectedSong, songId]);
 
   // Toolbar height observer (presentation mode)
   useEffect(() => {
@@ -218,6 +282,14 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     return () => window.removeEventListener("scroll", update);
   }, [isScrolling]);
 
+  function handleRetry() {
+    // Revalida o catálogo inteiro junto: se o cache estava só velho, isto
+    // conserta a lista toda e não só esta música.
+    fetchSongs().catch(() => {});
+    // Voltar para "idle" é o próprio gatilho da nova busca no efeito acima.
+    setRemote({ status: "idle" });
+  }
+
   function toggleFullscreen() {
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
@@ -237,6 +309,12 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
     justifyContent: "center",
     backdropFilter: "blur(10px)",
   };
+
+  if (!selectedSong || !songDocument) {
+    const status =
+      remoteSong && remoteSong.status !== "ready" ? remoteSong.status : "loading";
+    return <SongStatusScreen status={status} isDark={isDark} onRetry={handleRetry} />;
+  }
 
   return (
     <>
@@ -369,5 +447,80 @@ export default function SongPage({ songId, setlistId, isDark }: Props) {
         />
       )}
     </>
+  );
+}
+
+/**
+ * Tela de espera/erro da música. A navegação principal fica escondida na rota
+ * da cifra, então estes estados precisam oferecer a própria saída.
+ */
+function SongStatusScreen({
+  status,
+  isDark,
+  onRetry,
+}: {
+  status: "loading" | "notFound" | "error";
+  isDark: boolean;
+  onRetry: () => void;
+}) {
+  const muted = isDark ? "#94a3b8" : "#64748b";
+  const strong = isDark ? "#e2e8f0" : "#1e293b";
+
+  return (
+    <Stack
+      align="center"
+      justify="center"
+      gap="md"
+      style={{ minHeight: "60vh", padding: "24px", textAlign: "center" }}
+    >
+      {status === "loading" && (
+        <>
+          <Loader size="md" />
+          <Text size="sm" style={{ color: muted }}>
+            Carregando a cifra…
+          </Text>
+        </>
+      )}
+
+      {status === "notFound" && (
+        <>
+          <IconMusicOff size={40} color={muted} />
+          <Text fw={600} style={{ color: strong }}>
+            Cifra não encontrada
+          </Text>
+          <Text size="sm" style={{ color: muted, maxWidth: 360 }}>
+            Este link aponta para uma cifra que não está mais no catálogo.
+          </Text>
+          <Button variant="light" onClick={() => navigate(routeFor("songs"))}>
+            Ver catálogo
+          </Button>
+        </>
+      )}
+
+      {status === "error" && (
+        <>
+          <IconWifiOff size={40} color={muted} />
+          <Text fw={600} style={{ color: strong }}>
+            Não foi possível carregar
+          </Text>
+          <Text size="sm" style={{ color: muted, maxWidth: 360 }}>
+            Não deu para buscar esta cifra agora. Verifique a conexão e tente de
+            novo.
+          </Text>
+          <Group gap="xs">
+            <Button
+              variant="light"
+              leftSection={<IconRefresh size={16} />}
+              onClick={onRetry}
+            >
+              Tentar novamente
+            </Button>
+            <Button variant="subtle" onClick={() => navigate(routeFor("songs"))}>
+              Ver catálogo
+            </Button>
+          </Group>
+        </>
+      )}
+    </Stack>
   );
 }

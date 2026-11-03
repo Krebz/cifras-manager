@@ -10,7 +10,7 @@ import {
 } from "../services/songRepository";
 import { loadViewState, saveViewState } from "../services/viewStateStore";
 
-export type SortOrder = "acessos" | "az" | "za";
+export type SortOrder = "recentes" | "acessos" | "az" | "za";
 
 export const CATALOG_FILTERS_KEY = "catalog-filters";
 
@@ -27,7 +27,7 @@ const emptyFilters: CatalogFilters = {
   category: "",
   artist: "",
   liturgy: "",
-  sort: "acessos",
+  sort: "recentes",
 };
 
 /**
@@ -83,6 +83,16 @@ export function useSongCatalog({
     const base = getCatalogSongs(songs, accessCounts, query, category, artist, liturgy);
     if (sort === "az") return [...base].sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
     if (sort === "za") return [...base].sort((a, b) => b.title.localeCompare(a.title, "pt-BR"));
+    if (sort === "recentes") {
+      return [...base].sort((a, b) => {
+        // Datas ISO 8601 comparam lexicograficamente na ordem cronológica.
+        const left = a.createdAt ?? "";
+        const right = b.createdAt ?? "";
+        // As 38 cifras do seed compartilham o timestamp da carga inicial;
+        // o título desempata para a ordem não variar entre renders.
+        return right.localeCompare(left) || a.title.localeCompare(b.title, "pt-BR");
+      });
+    }
     return base;
   }, [accessCounts, artist, category, liturgy, query, sort, songs]);
 

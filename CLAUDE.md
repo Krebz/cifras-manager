@@ -166,6 +166,61 @@ o span de letra vazio deixou de ser renderizado — antes abria uma linha inteir
 vale para **qualquer seção**. Em linhas mistas o placeholder `" "` continua para
 manter o alinhamento acorde↔sílaba.
 
+## v3.3 — link de música resolvido por id, contador de usuários, ordem por data
+
+### Link compartilhado abria a música errada (corrigido)
+
+Um link `#/musicas/<id>` aberto num aparelho sem aquela cifra em cache exibia
+**outra música**, sem aviso. A causa era um fallback silencioso na `SongPage`:
+
+```ts
+const selectedSong = getSongById(songId) ?? getAllSongs()[0];  // removido
+```
+
+`getSongById` lê só o `localStorage` (`cifras_songs`) e a `SongPage` nunca
+chamava `fetchSongs` — quem busca da API é o `useSongCatalog`, usado apenas no
+catálogo/home. Num cache ausente ou velho, o `?? getAllSongs()[0]` entregava a
+primeira cifra da lista (a do seed: "Compadesse-te"). Pior: a contagem de
+acesso era registrada com o id **da URL**, então a música certa somava acesso
+enquanto a tela mostrava outra.
+
+Resolução agora é **cache → rede → erro**:
+
+- `songRepository.ts`: `fetchSongById(id)` usa o `GET /api/songs/[id]` (público,
+  aceita ObjectId e UUID legado) e grava o resultado no cache via o novo
+  `upsertCached` — o deep link conserta o cache sozinho. `createSong`/
+  `updateSong` passaram a usar o mesmo helper.
+- `SongNotFoundError` separa **404 confirmado** de **falha de rede**. São telas
+  diferentes: "Cifra não encontrada" (saída: Ver catálogo) e "Não foi possível
+  carregar" (saída: Tentar novamente, que também dispara `fetchSongs()` para
+  revalidar o catálogo inteiro).
+- `SongPage.tsx`: o cache é lido no render (`useMemo`), não espelhado em estado
+  — trocar de música não passa por um frame "carregando" quando a cifra já é
+  local. O estado `RemoteSong` carrega o `songId` junto, para um resultado nunca
+  ser lido como se fosse de outra música; voltar para `idle` é o próprio
+  gatilho do retry. `SongStatusScreen` (no fim do arquivo) desenha os três
+  estados — a navegação principal fica escondida nessa rota, então cada estado
+  oferece a própria saída.
+- A contagem de acesso só dispara com a cifra resolvida.
+
+### Quantidade de usuários na Gestão
+
+`api/users/count.ts` (`GET`, `requireAdmin`) devolve `{ total }` — só o número,
+nenhum dado pessoal (LGPD). `src/services/userRepository.ts` expõe
+`fetchUserCount()`; a `ManagementPage` mostra o total ao lado de "N músicas
+cadastradas", e esconde o contador se a chamada falhar.
+
+### Catálogo ordenado por "Mais recentes" (novo padrão)
+
+`Song` ganhou `createdAt?: string` (ISO 8601), mapeado em `mapApiSong` — as 177
+cifras do Atlas já tinham o campo, sem migração. `SortOrder` ganhou
+`"recentes"` e ele virou o default de `emptyFilters` no `useSongCatalog`
+(o filtro salvo ainda manda no "voltar"). Datas ISO comparam lexicograficamente
+na ordem cronológica; as 38 cifras do seed compartilham o timestamp da carga
+inicial, então o **título desempata** para a ordem ser estável. O export
+`songs.ts` da Gestão passou a incluir `createdAt` para o bundle offline não
+perder a ordenação.
+
 ## Variáveis de ambiente no Vercel
 
 | Variável | Uso |
@@ -212,11 +267,13 @@ api/
   lib/   jwt.ts auth.ts mongodb.ts
   songs/ index.ts + [id].ts
   setlists/ index.ts + [id].ts
+  users/ count.ts
 src/
   contexts/UserContext.tsx
   features/management/AdminGate.tsx
   features/setlist/ SetlistListPage.tsx SetlistDetailPage.tsx
   services/ setlistRepository.ts setlistShare.ts transposeChord.ts
+            songRepository.ts userRepository.ts
   components/MainNavigation.tsx
 scripts/ seed.ts migrate-setlists.ts
 ```

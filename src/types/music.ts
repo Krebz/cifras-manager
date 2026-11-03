@@ -48,6 +48,8 @@ export type Song = {
   content: string;
   accessCount: number;
   referenceUrl?: string;
+  /** ISO 8601, vindo da API. Ordena o catálogo por "mais recentes". */
+  createdAt?: string;
 };
 
 export type SongDocument = {

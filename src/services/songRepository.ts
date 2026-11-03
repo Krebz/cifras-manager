@@ -13,6 +13,7 @@ type RawApiSong = {
   content: string;
   accessCount: number;
   referenceUrl?: string;
+  createdAt?: string;
 };
 
 function mapApiSong(raw: RawApiSong): Song {
@@ -27,7 +28,32 @@ function mapApiSong(raw: RawApiSong): Song {
     content: raw.content,
     accessCount: raw.accessCount ?? 0,
     referenceUrl: raw.referenceUrl,
+    createdAt: raw.createdAt,
   };
+}
+
+/**
+ * 404 confirmado pela API. Distingue "a cifra não existe" de "não deu para
+ * carregar agora" — as duas situações pedem telas (e saídas) diferentes.
+ */
+export class SongNotFoundError extends Error {
+  constructor(id: string) {
+    super(`Cifra ${id} não encontrada`);
+    this.name = "SongNotFoundError";
+  }
+}
+
+/**
+ * Busca uma cifra por id direto na API, alimentando o cache local com o
+ * resultado. É o que faz um link compartilhado abrir num aparelho cujo cache
+ * não tem aquela música — antes a página caía silenciosamente na primeira
+ * cifra do catálogo.
+ */
+export async function fetchSongById(id: string): Promise<Song> {
+  const response = await fetch(`/api/songs/${id}`);
+  if (response.status === 404) throw new SongNotFoundError(id);
+  if (!response.ok) throw new Error("API indisponível");
+  return upsertCached(mapApiSong(await response.json()));
 }
 
 export async function fetchSongs(): Promise<Song[]> {
@@ -70,6 +96,20 @@ function persist(list: Song[]): void {
   }
 }
 
+/** Grava uma música no cache, substituindo a versão antiga se já houver. */
+function upsertCached(song: Song): Song {
+  const list = load();
+  const index = list.findIndex((item) => item.id === song.id);
+  if (index === -1) {
+    persist([...list, song]);
+    return song;
+  }
+  const next = [...list];
+  next[index] = song;
+  persist(next);
+  return song;
+}
+
 export function getAllSongs(): Song[] {
   return load();
 }
@@ -91,9 +131,7 @@ export async function createSong(data: Omit<Song, "id" | "accessCount">): Promis
   });
   if (!response.ok) throw new Error("Falha ao criar cifra");
   const raw = await response.json();
-  const song = mapApiSong(raw);
-  persist([...load(), song]);
-  return song;
+  return upsertCached(mapApiSong(raw));
 }
 
 export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): Promise<Song> {
@@ -113,15 +151,7 @@ export async function updateSong(id: string, data: Partial<Omit<Song, "id">>): P
   });
   if (!response.ok) throw new Error("Falha ao atualizar cifra");
   const raw = await response.json();
-  const updated = mapApiSong(raw);
-  const list = load();
-  const idx = list.findIndex((s) => s.id === id);
-  if (idx !== -1) {
-    const next = [...list];
-    next[idx] = updated;
-    persist(next);
-  }
-  return updated;
+  return upsertCached(mapApiSong(raw));
 }
 
 export async function deleteSong(id: string): Promise<void> {
